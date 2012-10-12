@@ -1,0 +1,43 @@
+#! /usr/bin/zsh -fuex
+
+victim=$1
+
+GIT_DIR=.git
+### detect that nothing depends on it.
+
+
+## Sums
+foreach sum ($GIT_DIR/mmc/*)
+{
+    if grep $victim $sum; then
+	cecho red "Sum $sum depends on it"
+	exit -1
+    fi
+}
+## segment bases & other refs.
+setopt extendedglob
+foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
+{
+    #$GIT_DIR/refs/bases/
+    if grep "ref: refs/heads/$victim" $ref; then
+	cecho red "it's a base for $ref"
+	exit -1
+    fi
+}
+
+
+
+# is it a sum itself?
+if [ -e $GIT_DIR/mmc/$victim ]; then
+    cecho yellow "it's a sum"
+fi
+
+# a segment?
+if [ -e $GIT_DIR/refs/base/$victim ]; then
+    cecho yellow "it's a Segment"
+    rm -f $GIT_DIR/refs/base/$victim
+    rm -f $GIT_DIR/refs/start/$victim
+fi
+
+
+git br -d $victim

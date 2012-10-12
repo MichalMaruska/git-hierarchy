@@ -1,0 +1,5 @@
+git-hierarchy (1.0) release; urgency=low
+
+  * Initial import (from mmc-shell)
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 12 Oct 2012 02:02:04 +0200

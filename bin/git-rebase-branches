@@ -1,0 +1,64 @@
+#! /usr/bin/zsh -fuex
+
+
+GITDIR=.git
+usage()
+{
+    echo "$0 [-b {branchesfile}] [new-base]"
+
+    cat <<EOF
+Rebase branches out of git tag  '$base_tag', over new base at [new-base]
+Default:
+branchesfile ...  .git/mmc/$BRANCHES_FILE
+new-base   ...    $new_base
+
+EOF
+
+cat $GITDIR/mmc/$BRANCHES_FILE
+}
+
+
+# DEFAULTS:
+new_base=m/master
+base_tag=base
+old_base_tag=old_base
+BRANCHES_FILE=branches
+
+while getopts :hb: OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit
+	    ;;
+	b)
+	    BRANCHES_FILE=$OPTARG
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [ $# -ge 1 ]; then
+    new_base=$1
+    shift;
+fi
+
+# fixme: I have this implemented, somewhere
+tag_exists()
+{
+    test -f $GITDIR/refs/tags/$1;
+}
+
+
+tag_exists $old_base_tag && git tag -d $old_base_tag
+
+foreach branch ($(cat $GITDIR/mmc/$BRANCHES_FILE))
+{
+    git-rebase-branch $branch $base_tag $new_base
+}
+
+git tag $old_base_tag $base_tag
+git tag -f $base_tag $new_base

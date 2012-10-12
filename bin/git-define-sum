@@ -1,0 +1,124 @@
+#! /bin/bash -ue
+
+# Manage the Sum information:
+# list ..
+# add
+# remove
+#
+
+usage()
+{
+    cat <<EOF
+Usage:
+${0##*/} [+-h]
+${0##*/} branch
+${0##*/} -c branch     prune ...
+${0##*/} branch new-merge-branch -drop-merge-branch ...
+EOF
+}
+
+# GIT_DIR=
+
+git-branch-exists()
+{
+    [ -e .git/refs/heads/$1 ]
+}
+
+# print valid/existing components of the sum
+show_prune_definition()
+{
+    if [ $# = 2 ];then
+	silent="y"
+    else
+	silent="n"
+    fi
+
+    cat $1 | \
+    while read a;do
+	if git-branch-exists $a; then
+	    echo $a
+	else
+	    if [ $silent != "y" ]; then
+		echo NON-existant $a
+	    fi
+	fi
+    done
+}
+
+
+
+
+reset="n"
+correct="n"
+
+while getopts :hrc OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	r)
+	    reset="y"
+	    ;;
+	c)
+	    correct="y"
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift $(( OPTIND - 1 ))
+OPTIND=1
+
+
+
+if [ $# -lt 1 ]; then
+    usage
+    exit -1
+fi
+
+name=$1
+shift
+
+
+# ensure-dir
+[ -d .git/mmc/ ] || mkdir .git/mmc/
+sum_file=.git/mmc/$name
+
+if [ $reset = "y" ];then
+    rm $sum_file
+fi
+
+if [ $# = 0 ]; then
+    if [ $correct = y ]; then
+	TEMP=$(mktemp)
+	show_prune_definition $sum_file "silent" > $TEMP
+	# >!
+	sort -u $TEMP > $sum_file
+    else
+	show_prune_definition $sum_file
+    fi
+else
+    for br in "$@"
+    do
+	case "$br" in
+	    -*)
+		br=$(expr substr "$br" 2 $(expr length "$br" ) )
+		cecho red $br
+		temp=${TEMP-/tmp}/git-define-sum
+		grep -v -e "^$br$" $sum_file > $temp
+		mv $temp $sum_file
+		;;
+	    +*)
+		cecho green ${br#+}
+		echo ${br#+} >> $sum_file
+		;;
+	    *)
+		cecho green $br
+		echo $br >> $sum_file
+		;;
+	esac
+    done
+    cat $sum_file
+fi

@@ -1,0 +1,44 @@
+#! /usr/bin/zsh -feu
+
+
+GIT_DIR=$(git rev-parse --show-toplevel)
+
+usage()
+{
+    print "usage: ${0##*/} [--] ARGS..."
+}
+
+while getopts :h OPT; do
+    case $OPT in
+	h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    print "usage: ${0##*/} [--] ARGS..."
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
+branch=$1
+
+start="start/$branch"
+base="base/$branch"
+# base=
+# base/mmc-atkbd
+
+
+# This might fail. in that case:
+# 1/ save the state, to reinvoke later:
+if git rebase --onto $base $start $branch;
+then
+   # wrong?
+    newstart=$(git show-ref --hash $base)
+
+    echo $newstart >! $GIT_DIR/.git/refs/start/$branch
+    # echo $(git rev-ref $base) > .git/refs/start/$br
+fi
+

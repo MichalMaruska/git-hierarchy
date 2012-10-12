@@ -1,0 +1,12 @@
+Source: git-hierarchy
+Section: misc
+Priority: extra
+Maintainer: Michal Maruska <mmaruska@gmail.com>
+Build-Depends: cdbs, debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: git-hierarchy
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, git, zsh
+Conflicts: mmc-shell (<=2.13)
+Description: Tools to maintain extensions for upstream, in git

@@ -1,0 +1,47 @@
+#! /usr/bin/zsh -fue
+
+from=$1
+new=$2
+
+GIT_DIR=.git
+
+
+# quoted_regexp.
+
+# replace....
+
+# sum
+if [ -e $GIT_DIR/mmc/$from ]; then
+    mv $GIT_DIR/mmc/$from $GIT_DIR/mmc/$new
+fi
+
+# dependencies of other sums.
+foreach sum ($GIT_DIR/mmc/*)
+{
+    if grep $sum; then
+	sed -i -e 's/$from/$new/' $sum
+    fi
+}
+
+
+# segment base/start refs.
+
+# rename segment:
+if [ -e $GIT_DIR/refs/base/$from ]; then
+    mv $GIT_DIR/refs/base/$from $GIT_DIR/refs/base/$new
+    mv $GIT_DIR/refs/start/$from $GIT_DIR/refs/start/$new
+fi
+
+
+# fixme: not remotes!
+QUOTED_REGEXP=$from
+# other bases pointing at this branch.
+
+setopt extendedglob
+foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
+{
+    sed -i -e "s|ref: refs/heads/$QUOTED_REGEXP|ref: refs/heads/$new|g" $ref
+}
+
+
+git branch -m $from $new

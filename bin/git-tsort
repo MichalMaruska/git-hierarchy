@@ -1,0 +1,43 @@
+#! /usr/bin/zsh -feu
+
+# Generate list of my known branches (sums & segments)
+# and output them in topological order.
+
+
+# Get a temp file:
+# generate
+GRAPH=$(mktemp --tempdir=${TEMP-/run/tmp/}  graph.XXX)
+
+segment_base()
+{
+#    $1
+    cat $1 | sed -e 's|ref: refs/heads/||'
+#    basename $segment
+}
+
+
+GIT_DIR=$(git rev-parse --show-toplevel)
+# segments ... look at bases.
+foreach segment ($GIT_DIR/.git/refs/base/*);
+{
+    echo -n $(basename $segment) " "
+    segment_base $segment
+}   > $GRAPH
+
+# sums
+foreach sum ($GIT_DIR/.git/mmc/*(.))
+{
+    name=$(basename $sum)
+    (while read a; do
+	echo $name $a
+    done ) < $sum;
+} >> $GRAPH
+
+
+# sort.
+
+
+# tsort
+tsort $GRAPH | tac
+rm -f $GRAPH
+

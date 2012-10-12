@@ -1,0 +1,23 @@
+#! /usr/bin/zsh -feu
+
+GIT_DIR=$(git rev-parse --show-toplevel)
+
+# rebasing this ref, upon its base.
+# The base is somehow defined ...
+name=$1
+
+
+cmd=
+# cmd=echo
+
+if [ -e $GIT_DIR/.git/mmc/$name ];
+then
+    # sum? ->
+    $cmd git-sum-branches -r $name
+elif [ -e $GIT_DIR/.git/refs/base/$name ];
+then
+# segment ->
+    $cmd git-rebase-segment $name
+else
+    echo "unknown -- leaving unchanged $name"
+fi

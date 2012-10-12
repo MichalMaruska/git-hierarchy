@@ -1,0 +1,71 @@
+#! /usr/bin/zsh -feux
+
+# re-make a "sum" branch:
+
+# by default make a `clean' merge. This means
+reset=y
+dry=n
+
+while getopts :rd OPT; do
+    case $OPT in
+	d)
+	    dry=y;;
+	r)
+	    # reset:
+	    reset=y
+	    ;;
+	+r)
+	    reset=n
+	    ;;
+	*)
+	    print "usage: ${0##*/} [+-r} [--] ARGS..."
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [ $dry = "y" ]; then
+    cmd="cecho red"
+else
+    cmd=""
+fi
+
+sum_br=$1
+
+dir=$(git rev-parse --show-toplevel)
+
+# how to
+typeset -a branches
+_tmp=$(grep -v '^#' $dir/.git/mmc/$sum_br)
+branches=(${(f)_tmp})
+
+echo $branches
+
+git-branch-exists()
+{
+    [ -e .git/refs/heads/$1 ]
+}
+
+
+git-branch-exists $sum_br || git br $sum_br
+
+
+# if exists such branch/tag ->abort
+first=$branches[1]
+
+others=($branches[2,-1])
+
+if [ $reset = "y" ]; then
+    eval $cmd git co $sum_br
+    eval $cmd git reset --hard $first
+else
+    eval $cmd git co $sum_br
+    eval $cmd git merge $first;
+fi
+# git co -b $sum_br $first
+
+foreach next ($others)
+{
+    eval $cmd git merge --rerere-autoupdate $next;
+}
