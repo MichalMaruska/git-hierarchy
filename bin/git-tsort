@@ -3,6 +3,20 @@
 # Generate list of my known branches (sums & segments)
 # and output them in topological order.
 
+keep_graph="n"
+
+while getopts :k OPT; do
+    case $OPT in
+	k|+k)
+	    keep_graph=y
+	    ;;
+	*)
+	    print "usage: ${0##*/} [+-k} [--] ARGS..."
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 # Get a temp file:
 # generate
@@ -39,5 +53,7 @@ foreach sum ($GIT_DIR/.git/mmc/*(.))
 
 # tsort
 tsort $GRAPH | tac
-rm -f $GRAPH
+if [ $keep_graph != y ]; then
+    rm -f $GRAPH
+fi
 
