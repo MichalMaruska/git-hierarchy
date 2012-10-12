@@ -6,7 +6,7 @@
 
 # Get a temp file:
 # generate
-GRAPH=$(mktemp --tempdir=${TEMP-/run/tmp/}  graph.XXX)
+GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 
 segment_base()
 {
