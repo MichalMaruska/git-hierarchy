@@ -25,7 +25,8 @@ GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 segment_base()
 {
 #    $1
-    cat $1 | sed -e 's|ref: refs/heads/||'
+#
+    cat $1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
 #    basename $segment
 }
 
