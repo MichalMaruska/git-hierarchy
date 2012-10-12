@@ -1,0 +1,7 @@
+#! /usr/bin/zsh -feu
+
+foreach ref ($(git-tsort))
+{
+    git-rebase-ref $ref
+}
+
