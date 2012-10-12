@@ -53,7 +53,7 @@ else
     # git show $start
 
     # branch_exists $name
-    [ -e .git/refs/heads/$name ] || git git br $name
+    [ -e .git/refs/heads/$name ] || git git branch $name
 
     mkdir -p $(dirname $basefile) $(dirname $startfile)
 # canonize:
