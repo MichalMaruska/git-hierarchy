@@ -1,3 +1,14 @@
+git-hierarchy (1.1) release; urgency=low
+
+  * fix debian Conflict
+  * don't use (git) abbrevs
+  * New, top level (rebasing) tool
+  * Fix once again  mktemp --tmpdir
+  * optionally keep Graph temp file
+  * allow basing on remote heads
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 14 Oct 2012 02:44:23 +0200
+
 git-hierarchy (1.0) release; urgency=low
 
   * Initial import (from mmc-shell)
