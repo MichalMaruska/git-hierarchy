@@ -1,4 +1,4 @@
-#! /bin/bash -ue
+#! /usr/bin/zsh -feu
 
 # Manage the Sum information:
 # list ..
@@ -46,6 +46,16 @@ show_prune_definition()
     done
 }
 
+list_sums()
+{
+    foreach sum ($GIT_DIR/mmc/*(:t)) {echo $sum}
+}
+
+
+if [ $# = 0 ];then
+    list_sums
+    exit 0;
+fi
 
 
 
