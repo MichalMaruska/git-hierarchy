@@ -1,3 +1,11 @@
+git-hierarchy (1.2) release; urgency=low
+
+  * fix  (create the Branch for segment)
+  * Common functions in $prefix/share/git-hierarchy/functions.sh
+  * Option to show all segments.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 15 Oct 2012 22:13:46 +0200
+
 git-hierarchy (1.1) release; urgency=low
 
   * fix debian Conflict
