@@ -23,6 +23,16 @@ done
 shift OPTIND-1
 OPTIND=1
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+if [ $# = 0 ]; then
+    # list all segments:
+    foreach segment ($GIT_DIR/refs/base/*(:t)) {echo $segment}
+    exit 0;
+fi
+
+
 name=$1
 basefile=.git/refs/base/$name
 startfile=.git/refs/start/$name
