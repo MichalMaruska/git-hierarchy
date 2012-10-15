@@ -2,7 +2,8 @@
 
 victim=$1
 
-GIT_DIR=.git
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 ### detect that nothing depends on it.
 
 

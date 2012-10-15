@@ -31,7 +31,8 @@ segment_base()
 }
 
 
-GIT_DIR=$(git rev-parse --show-toplevel)
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 # segments ... look at bases.
 foreach segment ($GIT_DIR/.git/refs/base/*);
 {

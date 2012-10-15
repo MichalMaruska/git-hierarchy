@@ -17,7 +17,8 @@ ${0##*/} branch new-merge-branch -drop-merge-branch ...
 EOF
 }
 
-# GIT_DIR=
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 
 git-branch-exists()
 {

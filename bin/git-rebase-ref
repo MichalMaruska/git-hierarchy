@@ -1,6 +1,7 @@
 #! /usr/bin/zsh -feu
 
-GIT_DIR=$(git rev-parse --show-toplevel)
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 
 # rebasing this ref, upon its base.
 # The base is somehow defined ...

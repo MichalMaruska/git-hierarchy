@@ -3,7 +3,8 @@
 from=$1
 new=$2
 
-GIT_DIR=.git
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 
 
 # quoted_regexp.
