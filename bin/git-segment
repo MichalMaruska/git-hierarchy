@@ -63,7 +63,7 @@ else
     # git show $start
 
     # branch_exists $name
-    [ -e .git/refs/heads/$name ] || git branch $name
+    [ -e .git/refs/heads/$name ] || git branch $name $start
 
     mkdir -p $(dirname $basefile) $(dirname $startfile)
 # canonize:
