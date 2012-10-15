@@ -11,11 +11,11 @@ name=$1
 cmd=
 # cmd=echo
 
-if [ -e $GIT_DIR/.git/mmc/$name ];
+if [ -e $GIT_DIR/mmc/$name ];
 then
     # sum? ->
     $cmd git-sum-branches -r $name
-elif [ -e $GIT_DIR/.git/refs/base/$name ];
+elif [ -e $GIT_DIR/refs/base/$name ];
 then
 # segment ->
     $cmd git-rebase-segment $name

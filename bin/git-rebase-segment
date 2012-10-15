@@ -1,7 +1,8 @@
 #! /usr/bin/zsh -feu
 
 
-GIT_DIR=$(git rev-parse --show-toplevel)
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)/
 
 usage()
 {
@@ -38,7 +39,7 @@ then
    # wrong?
     newstart=$(git show-ref --hash $base)
 
-    echo $newstart >! $GIT_DIR/.git/refs/start/$branch
+    echo $newstart >! $GIT_DIR/refs/start/$branch
     # echo $(git rev-ref $base) > .git/refs/start/$br
 fi
 

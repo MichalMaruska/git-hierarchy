@@ -34,14 +34,14 @@ segment_base()
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 # segments ... look at bases.
-foreach segment ($GIT_DIR/.git/refs/base/*);
+foreach segment ($GIT_DIR/refs/base/*);
 {
     echo -n $(basename $segment) " "
     segment_base $segment
 }   > $GRAPH
 
 # sums
-foreach sum ($GIT_DIR/.git/mmc/*(.))
+foreach sum ($GIT_DIR/mmc/*(.))
 {
     name=$(basename $sum)
     (while read a; do

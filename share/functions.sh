@@ -3,7 +3,7 @@
 
 git_dir()
 {
-    git rev-parse --show-toplevel
+    echo $(git rev-parse --show-toplevel)/.git
 }
 
 
