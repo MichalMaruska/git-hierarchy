@@ -2,6 +2,8 @@
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
+
 
 # rebasing this ref, upon its base.
 # The base is somehow defined ...
@@ -11,7 +13,7 @@ name=$1
 cmd=
 # cmd=echo
 
-if [ -e $GIT_DIR/mmc/$name ];
+if [ -e $SUM_DIR/$name ];
 then
     # sum? ->
     $cmd git-sum-branches -r $name

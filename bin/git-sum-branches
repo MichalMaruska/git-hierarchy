@@ -1,6 +1,10 @@
 #! /usr/bin/zsh -feux
 
 # re-make a "sum" branch:
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
+
 
 # by default make a `clean' merge. This means
 reset=y
@@ -33,11 +37,10 @@ fi
 
 sum_br=$1
 
-dir=$(git rev-parse --show-toplevel)
 
 # how to
 typeset -a branches
-_tmp=$(grep -v '^#' $dir/.git/mmc/$sum_br)
+_tmp=$(grep -v '^#' $SUM_DIR/$sum_br)
 branches=(${(f)_tmp})
 
 echo $branches

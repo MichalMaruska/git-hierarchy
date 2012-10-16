@@ -4,11 +4,12 @@ victim=$1
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
 ### detect that nothing depends on it.
 
 
 ## Sums
-foreach sum ($GIT_DIR/mmc/*)
+foreach sum ($SUM_DIR/*)
 {
     if grep $victim $sum; then
 	cecho red "Sum $sum depends on it"
@@ -27,9 +28,8 @@ foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
 }
 
 
-
 # is it a sum itself?
-if [ -e $GIT_DIR/mmc/$victim ]; then
+if [ -e $SUM_DIR/$victim ]; then
     cecho yellow "it's a sum"
 fi
 

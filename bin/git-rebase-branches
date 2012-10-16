@@ -1,7 +1,9 @@
 #! /usr/bin/zsh -fuex
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
 
-GITDIR=.git
 usage()
 {
     echo "$0 [-b {branchesfile}] [new-base]"
@@ -9,12 +11,12 @@ usage()
     cat <<EOF
 Rebase branches out of git tag  '$base_tag', over new base at [new-base]
 Default:
-branchesfile ...  .git/mmc/$BRANCHES_FILE
+branchesfile ...  $SUM_DIR/$BRANCHES_FILE
 new-base   ...    $new_base
 
 EOF
 
-cat $GITDIR/mmc/$BRANCHES_FILE
+cat $SUM_DIR/$BRANCHES_FILE
 }
 
 
@@ -49,13 +51,13 @@ fi
 # fixme: I have this implemented, somewhere
 tag_exists()
 {
-    test -f $GITDIR/refs/tags/$1;
+    test -f $GIT_DIR/refs/tags/$1;
 }
 
 
 tag_exists $old_base_tag && git tag -d $old_base_tag
 
-foreach branch ($(cat $GITDIR/mmc/$BRANCHES_FILE))
+foreach branch ($(cat $SUM_DIR/$BRANCHES_FILE))
 {
     git-rebase-branch $branch $base_tag $new_base
 }

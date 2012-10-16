@@ -5,19 +5,19 @@ new=$2
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-
+SUM_DIR=$GIT_DIR/mmc
 
 # quoted_regexp.
 
 # replace....
 
 # sum
-if [ -e $GIT_DIR/mmc/$from ]; then
-    mv $GIT_DIR/mmc/$from $GIT_DIR/mmc/$new
+if [ -e $SUM_DIR/$from ]; then
+    mv $SUM_DIR/$from $SUM_DIR/$new
 fi
 
 # dependencies of other sums.
-foreach sum ($GIT_DIR/mmc/*)
+foreach sum ($SUM_DIR/*)
 {
     if grep $sum; then
 	sed -i -e 's/$from/$new/' $sum

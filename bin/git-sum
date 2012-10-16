@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -feu
+#! /usr/bin/zsh -feux
 
 # Manage the Sum information:
 # list ..
@@ -19,10 +19,11 @@ EOF
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
 
 git-branch-exists()
 {
-    [ -e .git/refs/heads/$1 ]
+    [ -e $GIT_DIR/refs/heads/$1 ]
 }
 
 # print valid/existing components of the sum
@@ -48,7 +49,7 @@ show_prune_definition()
 
 list_sums()
 {
-    foreach sum ($GIT_DIR/mmc/*(:t)) {echo $sum}
+    foreach sum ($SUM_DIR/*(:t)) {echo $sum}
 }
 
 
@@ -94,8 +95,8 @@ shift
 
 
 # ensure-dir
-[ -d .git/mmc/ ] || mkdir .git/mmc/
-sum_file=.git/mmc/$name
+[ -d $SUM_DIR ] || mkdir $SUM_DIR
+sum_file=$SUM_DIR/$name
 
 if [ $reset = "y" ];then
     rm $sum_file
