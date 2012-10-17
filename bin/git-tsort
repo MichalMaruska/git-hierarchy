@@ -7,12 +7,17 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
 
-keep_graph="n"
 
-while getopts :k OPT; do
+keep_graph="n"
+just_graph=n
+
+while getopts :kg OPT; do
     case $OPT in
 	k|+k)
 	    keep_graph=y
+	    ;;
+	g)
+	    just_graph=y
 	    ;;
 	*)
 	    print "usage: ${0##*/} [+-k} [--] ARGS..."
@@ -39,7 +44,7 @@ segment_base()
 # segments ... look at bases.
 foreach segment ($GIT_DIR/refs/base/*);
 {
-    echo -n $(basename $segment) " "
+    echo -n $(basename $segment) "\t"
     segment_base $segment
 }   > $GRAPH
 
@@ -48,7 +53,7 @@ foreach sum ($SUM_DIR/*(.))
 {
     name=$(basename $sum)
     (while read a; do
-	echo $name $a
+	echo $name "\t" $a
     done ) < $sum;
 } >> $GRAPH
 
@@ -56,8 +61,19 @@ foreach sum ($SUM_DIR/*(.))
 # sort.
 
 
-# tsort
-tsort $GRAPH | tac
+
+if [ $just_graph = y ]; then
+    # while read
+    for  a in $(tsort $GRAPH)
+    do
+	cecho green $a
+	grep -e "^$a" $GRAPH || true
+    done
+else
+    tsort $GRAPH | tac
+fi
+
+
 if [ $keep_graph != y ]; then
     rm -f $GRAPH
 fi
