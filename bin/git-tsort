@@ -3,6 +3,10 @@
 # Generate list of my known branches (sums & segments)
 # and output them in topological order.
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
+
 keep_graph="n"
 
 while getopts :k OPT; do
@@ -31,8 +35,7 @@ segment_base()
 }
 
 
-source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
+
 # segments ... look at bases.
 foreach segment ($GIT_DIR/refs/base/*);
 {
@@ -41,7 +44,7 @@ foreach segment ($GIT_DIR/refs/base/*);
 }   > $GRAPH
 
 # sums
-foreach sum ($GIT_DIR/mmc/*(.))
+foreach sum ($SUM_DIR/*(.))
 {
     name=$(basename $sum)
     (while read a; do
