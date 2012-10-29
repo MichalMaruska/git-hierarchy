@@ -2,6 +2,14 @@
 
 foreach ref ($(git-tsort))
 {
-    git-rebase-ref $ref
+    # todo: create a tag, so that if `git-rebase' fails
+    # at least I see the segment (in gitk).
+    #
+    if ! git-rebase-ref $ref;
+    then
+	problem=$?
+	cecho red "Failure on $ref"
+	exit $problem
+    fi
 }
 
