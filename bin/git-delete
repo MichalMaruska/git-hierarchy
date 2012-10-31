@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -fuex
+#! /usr/bin/zsh -fue
 
 victim=$1
 

@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -feux
+#! /usr/bin/zsh -feu
 
 # re-make a "sum" branch:
 source /usr/share/git-hierarchy/functions.sh

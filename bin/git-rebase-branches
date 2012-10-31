@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -fuex
+#! /usr/bin/zsh -fue
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)

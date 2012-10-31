@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -feux
+#! /usr/bin/zsh -feu
 
 # Manage the Sum information:
 # list ..
