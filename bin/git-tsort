@@ -42,21 +42,38 @@ segment_base()
 
 
 # segments ... look at bases.
-foreach segment ($GIT_DIR/refs/base/*);
-{
-    echo -n $(basename $segment) "\t"
-    segment_base $segment
-}   > $GRAPH
+setopt NULL_GLOB
+
+typeset -a segments
+segments=($GIT_DIR/refs/base/*)
+
+if [ 0 =  ${#segments} ]; then
+    echo "no segments."
+else
+    foreach segment ($segments);
+    {
+	echo -n $(basename $segment) "\t"
+	segment_base $segment
+    }   > $GRAPH
+fi
+
+
 
 # sums
-foreach sum ($SUM_DIR/*(.))
-{
-    name=$(basename $sum)
-    (while read a; do
-	echo $name "\t" $a
-    done ) < $sum;
-} >> $GRAPH
+typeset -a sums
+sums=($SUM_DIR/*(.))
 
+if [ 0 = ${#sums} ]; then
+    echo "no segments."
+else
+    foreach sum ($sums)
+    {
+	name=$(basename $sum)
+	(while read a; do
+	    echo $name "\t" $a
+	    done ) < $sum;
+    } >> $GRAPH
+fi
 
 # sort.
 
@@ -77,4 +94,3 @@ fi
 if [ $keep_graph != y ]; then
     rm -f $GRAPH
 fi
-
