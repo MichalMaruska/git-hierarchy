@@ -1,3 +1,12 @@
+git-hierarchy (1.4) release; urgency=low
+
+  * stop tracing the scripts.
+  * Fix git-segment (to not force creating the segment branch).
+  * comments & style
+  * Bugfix: Zsh can somehow break out of if then ..... fi.  Prevent that.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 01 Nov 2012 11:37:34 +0100
+
 git-hierarchy (1.3) release; urgency=low
 
   * When creating the segment branch, start @ the start!
