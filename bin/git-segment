@@ -12,6 +12,9 @@ EOF
 }
 
 
+
+
+
 while getopts :h OPT; do
     case $OPT in
 	h|+h)
@@ -29,8 +32,8 @@ OPTIND=1
 
 
 
+## `list' all segments:
 if [ $# = 0 ]; then
-    # list all segments:
     foreach segment ($GIT_DIR/refs/base/*(:t)) {echo $segment}
     exit 0;
 fi
@@ -41,6 +44,7 @@ basefile=$GIT_DIR/refs/base/$name
 startfile=$GIT_DIR/refs/start/$name
 
 if [ $# = 1 ]; then
+    ## `Describe' the (given) segment
     # cat $basefile
     # could be hash
     # or ref - tag or head.
@@ -48,6 +52,8 @@ if [ $# = 1 ]; then
     cecho green $base
     cat $startfile
 else
+
+    # `update/setup' the segment definition
     from=$2
 
     base=$(git show-ref $from|head -n 1|cut -f 2 -d ' ')
