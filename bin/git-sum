@@ -97,6 +97,9 @@ fi
 name=$1
 shift
 
+# create the branch:
+[ -e $GIT_DIR/refs/heads/$name ] || git branch $name
+
 
 # ensure-dir
 [ -d $SUM_DIR ] || mkdir $SUM_DIR
