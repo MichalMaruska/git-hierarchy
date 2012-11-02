@@ -56,14 +56,19 @@ else
     # `update/setup' the segment definition
     from=$2
 
+    # User specified -> official:
     base=$(git show-ref $from|head -n 1|cut -f 2 -d ' ')
     cecho yellow "so the base is $base"
-
 
     if [ $# -ge 3 ]; then
 	# fixme: this is a pattern.
 	#refs/heads/master
-	start=$(git show-ref --hash $3)
+	if git show $3 > /dev/null;
+	then
+	    start=$3
+	else
+	    start=$(git show-ref --hash $3)
+	fi
     else
 	start=$(git show-ref --hash $from)
 	#if [ ${start} -gt 1 ]; then error;fi
