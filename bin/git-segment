@@ -6,8 +6,15 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h} [--] branch symbolic-base [current-base]
-
+usage:
+${0##*/} [+-h]
+  List the segments
+${0##*/} [--] branch
+  Show the definition
+${0##*/} [-dC] branch
+  Delete the definition, and even the branch itself.
+${0##*/} [--] branch symbolic-base [current-base]
+  Define
 EOF
 }
 
