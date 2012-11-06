@@ -63,11 +63,18 @@ name=$1
 baseref=refs/base/$name
 startref=refs/start/$name
 
+
 describe_segment()
 {
-    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
+    # fixme: how to avoid dereferencing?
+    # git show-ref $startref
+    #git symbolic-ref
+    base=$(cat $GIT_DIR/$baseref|\
+           sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
     cecho green $base
-    cat $startfile
+
+
+    git show-ref --hash  refs/start/p4
 }
 
 
