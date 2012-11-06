@@ -12,16 +12,23 @@ EOF
 }
 
 
+delete=n
+delete_branch=n
 
 
-
-while getopts :h OPT; do
+while getopts :hdD OPT; do
     case $OPT in
 	h|+h)
 	    usage
 	    exit 0
 	    ;;
-	# d)  delete
+	d)
+	    delete=y
+	    ;;
+	D)
+	    delete=y
+	    delete_branch=y
+	    ;;
 	*)
 	    print "usage: ${0##*/} [+-h} [--] ARGS..."
 	    exit 2
@@ -43,14 +50,30 @@ name=$1
 basefile=$GIT_DIR/refs/base/$name
 startfile=$GIT_DIR/refs/start/$name
 
+describe_segment()
+{
+    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
+    cecho green $base
+    cat $startfile
+}
+
+
 if [ $# = 1 ]; then
+    if [ $delete = y ]; then
+
+	describe_segment || true
+	rm -vf $startfile || rm -vf $basefile || true
+	## necessary?
+	if [ $delete_branch = y ];then
+	    git branch -d $name
+	fi
+    else
     ## `Describe' the (given) segment
     # cat $basefile
     # could be hash
     # or ref - tag or head.
-    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
-    cecho green $base
-    cat $startfile
+	describe_segment
+    fi
 else
 
     # `update/setup' the segment definition
