@@ -11,9 +11,15 @@ usage()
     cat <<EOF
 Usage:
 ${0##*/} [+-h]
-${0##*/} branch
-${0##*/} -c branch     prune ...
-${0##*/} branch new-merge-branch -drop-merge-branch ...
+  list all Sums
+${0##*/} [-c] branch
+  show the Sum definition, possibly pruning non-existings summands
+
+${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
+  modify the definition.  -r Resets/empties
+
+${0##*/} [-d] branch
+  drop the definition.
 EOF
 }
 
