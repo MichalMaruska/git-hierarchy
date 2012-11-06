@@ -2,7 +2,6 @@
 
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)/
 
 usage()
 {
@@ -25,21 +24,18 @@ OPTIND=1
 
 
 branch=$1
-
 start="start/$branch"
 base="base/$branch"
-# base=
-# base/mmc-atkbd
-
 
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
 then
-   # wrong?
+    # wrong?
     newstart=$(git show-ref --hash $base)
 
-    echo $newstart >! $GIT_DIR/refs/start/$branch
-    # echo $(git rev-ref $base) > .git/refs/start/$br
+    # update
+    # git symbolic-ref refs/test base/aaa
+    git update-ref refs/$start $newstart
 fi
 
