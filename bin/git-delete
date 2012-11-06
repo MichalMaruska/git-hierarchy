@@ -1,13 +1,34 @@
 #! /usr/bin/zsh -fue
 
-victim=$1
+usage()
+{
+    cat <<EOF
+Usage: ${0##*/} [+-h] [--] ARGS...
+
+Delete a branch, and any mention of it  -- symbolic references.
+EOF
+}
 
 source /usr/share/git-hierarchy/functions.sh
+
+victim=$1
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
 ### detect that nothing depends on it.
-
-
 ## Sums
 foreach sum ($SUM_DIR/*)
 {
@@ -56,6 +77,8 @@ if [ -e $GIT_DIR/refs/base/$victim ]; then
     git update-ref -d refs/base/$victim
     git update-ref -d refs/start/$victim
 fi
+
+
 
 
 git br -d $victim
