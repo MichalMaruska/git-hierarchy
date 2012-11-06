@@ -69,7 +69,9 @@ if [ $# = 1 ]; then
     if [ $delete = y ]; then
 
 	describe_segment || true
-	rm -vf $startfile || rm -vf $basefile || true
+
+
+	git update-ref -d $startref || git update-ref -d $baseref || true
 	## necessary?
 	if [ $delete_branch = y ];then
 	    git branch -d $name

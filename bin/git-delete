@@ -36,8 +36,10 @@ fi
 # a segment?
 if [ -e $GIT_DIR/refs/base/$victim ]; then
     cecho yellow "it's a Segment"
-    rm -f $GIT_DIR/refs/base/$victim
-    rm -f $GIT_DIR/refs/start/$victim
+
+    # fixme:
+    git update-ref -d refs/base/$victim
+    git update-ref -d refs/start/$victim
 fi
 
 
