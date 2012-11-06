@@ -1,3 +1,25 @@
+git-hierarchy (1.5) release; urgency=low
+
+  * tsort: handle 0 sums/segments in a friendly way.
+  * improve Usage info of git-sum.
+  * git-sum: create the branche immediately
+  * Accept the sha hash as segment "start".
+  * fix usage string.
+  * git-segment:  implement dropping
+  * git-segment  document all the possible Usages.
+  * git-sum: document all Usages
+
+  [ Handling symbolic references correctly ]
+  * Testing existence
+  * git-segment:  don't hurry to files
+  * Correctly removing the Symbolic references
+  * Use for-each-ref  to check ALL (even packed) references.
+  * describe: try to use -- incomplete!
+  * after rebasing, update the Symbolic refs correctly.
+  * Usage/help for  git-delete
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 06 Nov 2012 15:58:53 +0100
+
 git-hierarchy (1.4) release; urgency=low
 
   * stop tracing the scripts.
