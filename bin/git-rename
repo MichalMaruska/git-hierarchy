@@ -28,7 +28,8 @@ foreach sum ($SUM_DIR/*)
 # segment base/start refs.
 
 # rename segment:
-if [ -e $GIT_DIR/refs/base/$from ]; then
+if git show-ref refs/base/$from >/dev/null; then
+    # fixme:
     mv $GIT_DIR/refs/base/$from $GIT_DIR/refs/base/$new
     mv $GIT_DIR/refs/start/$from $GIT_DIR/refs/start/$new
 fi

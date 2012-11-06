@@ -17,7 +17,7 @@ if [ -e $SUM_DIR/$name ];
 then
     # sum? ->
     $cmd git-sum-branches -r $name
-elif [ -e $GIT_DIR/refs/base/$name ];
+elif git show-ref refs/base/$name >/dev/null;
 then
 # segment ->
     $cmd git-rebase-segment $name

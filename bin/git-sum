@@ -29,7 +29,7 @@ SUM_DIR=$GIT_DIR/mmc
 
 git-branch-exists()
 {
-    [ -e $GIT_DIR/refs/heads/$1 ]
+    git show-ref refs/heads/$1 > /dev/null
 }
 
 # print valid/existing components of the sum

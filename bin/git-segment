@@ -48,20 +48,33 @@ OPTIND=1
 
 ## `list' all segments:
 if [ $# = 0 ]; then
-    foreach segment ($GIT_DIR/refs/base/*(:t)) {echo $segment}
+    git for-each-ref 'refs/base/' --format "%(refname)" |\
+        sed -e 's|^refs/base/||'
+
+    echo
+    git for-each-ref 'refs/start/' --format "%(refname)" |\
+        sed -e 's|^refs/start/||'
+    # foreach segment ($GIT_DIR/refs/base/*(:t)) {echo $segment}
     exit 0;
 fi
 
 
 name=$1
-basefile=$GIT_DIR/refs/base/$name
-startfile=$GIT_DIR/refs/start/$name
+baseref=refs/base/$name
+startref=refs/start/$name
+
 
 describe_segment()
 {
-    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
+    # fixme: how to avoid dereferencing?
+    # git show-ref $startref
+    #git symbolic-ref
+    base=$(cat $GIT_DIR/$baseref|\
+           sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
     cecho green $base
-    cat $startfile
+
+
+    git show-ref --hash  refs/start/p4
 }
 
 
@@ -69,7 +82,9 @@ if [ $# = 1 ]; then
     if [ $delete = y ]; then
 
 	describe_segment || true
-	rm -vf $startfile || rm -vf $basefile || true
+
+
+	git update-ref -d $startref || git update-ref -d $baseref || true
 	## necessary?
 	if [ $delete_branch = y ];then
 	    git branch -d $name

@@ -1,13 +1,34 @@
 #! /usr/bin/zsh -fue
 
-victim=$1
+usage()
+{
+    cat <<EOF
+Usage: ${0##*/} [+-h] [--] ARGS...
+
+Delete a branch, and any mention of it  -- symbolic references.
+EOF
+}
 
 source /usr/share/git-hierarchy/functions.sh
+
+victim=$1
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
 ### detect that nothing depends on it.
-
-
 ## Sums
 foreach sum ($SUM_DIR/*)
 {
@@ -16,17 +37,32 @@ foreach sum ($SUM_DIR/*)
 	exit -1
     fi
 }
+
+
+
 ## segment bases & other refs.
 setopt extendedglob
-foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
+# fixme:
+# git for-each-ref
+foreach ref ($(git for-each-ref --format="%(refname)" \
+     'refs/heads/*' 'refs/base/*' 'refs/start/*'))
 {
-    #$GIT_DIR/refs/bases/
-    if grep "ref: refs/heads/$victim" $ref; then
-	cecho red "it's a base for $ref"
-	exit -1
+    # ($GIT_DIR/refs/^remotes/**/*(.))
+
+    # do we grep for "refs/heads/$victim" ??
+    if [ -e $GIT_DIR/$ref ]; then
+	if grep "ref: refs/heads/$victim" $GIT_DIR/$ref; then
+	    cecho red "it's a base for $ref"
+	    exit -1
+	fi
+    else
+    # bug: cannot check intermediatery "symlinks"
+	if git symbolic-ref $ref |grep $victim; then
+	    cecho red "it's a base for $ref"
+	    exit -1
+	fi
     fi
 }
-
 
 # is it a sum itself?
 if [ -e $SUM_DIR/$victim ]; then
@@ -36,9 +72,13 @@ fi
 # a segment?
 if [ -e $GIT_DIR/refs/base/$victim ]; then
     cecho yellow "it's a Segment"
-    rm -f $GIT_DIR/refs/base/$victim
-    rm -f $GIT_DIR/refs/start/$victim
+
+    # fixme:
+    git update-ref -d refs/base/$victim
+    git update-ref -d refs/start/$victim
 fi
+
+
 
 
 git br -d $victim
