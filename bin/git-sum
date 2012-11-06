@@ -6,6 +6,23 @@
 # remove
 #
 
+usage()
+{
+    cat <<EOF
+Usage:
+${0##*/} [+-h]
+  list all Sums
+${0##*/} [-c] branch
+  show the Sum definition, possibly pruning non-existings summands
+
+${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
+  modify the definition.  -r Resets/empties
+
+${0##*/} [-d] branch
+  drop the definition.
+EOF
+}
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc

@@ -22,7 +22,7 @@ while getopts :rd OPT; do
 	    reset=n
 	    ;;
 	*)
-	    print "usage: ${0##*/} [+-r} [--] ARGS..."
+	    print "usage: ${0##*/} [+-r] [--] ARGS..."
 	    exit 2
     esac
 done

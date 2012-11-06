@@ -6,22 +6,36 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h} [--] branch symbolic-base [current-base]
-
+usage:
+${0##*/} [+-h]
+  List the segments
+${0##*/} [--] branch
+  Show the definition
+${0##*/} [-dC] branch
+  Delete the definition, and even the branch itself.
+${0##*/} [--] branch symbolic-base [current-base]
+  Define
 EOF
 }
 
 
+delete=n
+delete_branch=n
 
 
-
-while getopts :h OPT; do
+while getopts :hdD OPT; do
     case $OPT in
 	h|+h)
 	    usage
 	    exit 0
 	    ;;
-	# d)  delete
+	d)
+	    delete=y
+	    ;;
+	D)
+	    delete=y
+	    delete_branch=y
+	    ;;
 	*)
 	    print "usage: ${0##*/} [+-h} [--] ARGS..."
 	    exit 2
@@ -43,27 +57,48 @@ name=$1
 basefile=$GIT_DIR/refs/base/$name
 startfile=$GIT_DIR/refs/start/$name
 
+describe_segment()
+{
+    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
+    cecho green $base
+    cat $startfile
+}
+
+
 if [ $# = 1 ]; then
+    if [ $delete = y ]; then
+
+	describe_segment || true
+	rm -vf $startfile || rm -vf $basefile || true
+	## necessary?
+	if [ $delete_branch = y ];then
+	    git branch -d $name
+	fi
+    else
     ## `Describe' the (given) segment
     # cat $basefile
     # could be hash
     # or ref - tag or head.
-    base=$(cat $basefile| sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
-    cecho green $base
-    cat $startfile
+	describe_segment
+    fi
 else
 
     # `update/setup' the segment definition
     from=$2
 
+    # User specified -> official:
     base=$(git show-ref $from|head -n 1|cut -f 2 -d ' ')
     cecho yellow "so the base is $base"
-
 
     if [ $# -ge 3 ]; then
 	# fixme: this is a pattern.
 	#refs/heads/master
-	start=$(git show-ref --hash $3)
+	if git show $3 > /dev/null;
+	then
+	    start=$3
+	else
+	    start=$(git show-ref --hash $3)
+	fi
     else
 	start=$(git show-ref --hash $from)
 	#if [ ${start} -gt 1 ]; then error;fi
