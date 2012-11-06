@@ -54,8 +54,8 @@ fi
 
 
 name=$1
-basefile=$GIT_DIR/refs/base/$name
-startfile=$GIT_DIR/refs/start/$name
+baseref=refs/base/$name
+startref=refs/start/$name
 
 describe_segment()
 {
