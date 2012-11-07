@@ -5,6 +5,8 @@ foreach ref ($(git-tsort))
     # todo: create a tag, so that if `git-rebase' fails
     # at least I see the segment (in gitk).
     #
+    cecho green "rebasing $ref"
+
     if ! git-rebase-ref $ref;
     then
 	problem=$?
