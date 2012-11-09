@@ -110,22 +110,26 @@ else
 	#refs/heads/master
 	if git show $3 > /dev/null;
 	then
-	    start=$3
+	    start_hash=$3
 	else
-	    start=$(git show-ref --hash $3)
+	    start_hash=$(git show-ref --hash $3)
 	fi
     else
-	start=$(git show-ref --hash $from)
+	start_hash=$(git show-ref --hash $from)
 	#if [ ${start} -gt 1 ]; then error;fi
     fi
-    cecho yellow "so the start is $start"
-    # git show $start
+    cecho yellow "so the start is $start_hash"
+    # git show $start_hash
 
     # branch_exists $name
-    [ -e $GIT_DIR/refs/heads/$name ] || git branch $name $start
+    git show-ref refs/heads/$name >/dev/null || git branch $name $start_hash
 
-    mkdir -p $(dirname $basefile) $(dirname $startfile)
+
+    #mkdir -p $(dirname $basefile) $(dirname $startfile)
 # canonize:
-    echo "ref: $base" > $basefile
-    echo $start > $startfile
+    #echo $start_hash > $startfile
+    git update-ref $startref $start_hash
+
+    #echo "ref: $base" > $basefile
+    git symbolic-ref $baseref $base
 fi
