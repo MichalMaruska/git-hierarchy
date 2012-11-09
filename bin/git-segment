@@ -106,14 +106,8 @@ else
     cecho yellow "so the base is $base"
 
     if [ $# -ge 3 ]; then
-	# fixme: this is a pattern.
-	#refs/heads/master
-	if git show $3 > /dev/null;
-	then
-	    start_hash=$3
-	else
-	    start_hash=$(git show-ref --hash $3)
-	fi
+	# fixme: check that it's an ancestor.
+	start_hash=$(git log $3 --max-count=1 --format="%H")
     else
 	start_hash=$(git show-ref --hash $from)
 	#if [ ${start} -gt 1 ]; then error;fi
