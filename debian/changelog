@@ -1,3 +1,10 @@
+git-hierarchy (1.6) release; urgency=low
+
+  * show progress during poset rebasing.
+  * git-segment:  symbolic references: test & create them correctly.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 09 Nov 2012 09:57:14 +0100
+
 git-hierarchy (1.5) release; urgency=low
 
   * tsort: handle 0 sums/segments in a friendly way.
