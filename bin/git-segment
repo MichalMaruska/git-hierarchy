@@ -50,11 +50,11 @@ OPTIND=1
 if [ $# = 0 ]; then
     git for-each-ref 'refs/base/' --format "%(refname)" |\
         sed -e 's|^refs/base/||'
-
-    echo
-    git for-each-ref 'refs/start/' --format "%(refname)" |\
-        sed -e 's|^refs/start/||'
-    # foreach segment ($GIT_DIR/refs/base/*(:t)) {echo $segment}
+    if false; then
+	echo
+	git for-each-ref 'refs/start/' --format "%(refname)" |\
+            sed -e 's|^refs/start/||'
+    fi
     exit 0;
 fi
 
