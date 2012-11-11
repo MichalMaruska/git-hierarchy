@@ -37,5 +37,8 @@ then
     # update
     # git symbolic-ref refs/test base/aaa
     git update-ref refs/$start $newstart
+else
+    cecho red "rebase failed"
+    exit 1
 fi
 
