@@ -7,3 +7,7 @@ git_dir()
 }
 
 
+git-branch-exists()
+{
+    git show-ref refs/heads/$1 >/dev/null;
+}

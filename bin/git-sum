@@ -27,10 +27,6 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
 
-git-branch-exists()
-{
-    git show-ref refs/heads/$1 > /dev/null
-}
 
 # print valid/existing components of the sum
 show_prune_definition()

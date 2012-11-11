@@ -45,13 +45,7 @@ branches=(${(f)_tmp})
 
 echo $branches
 
-git-branch-exists()
-{
-    [ -e .git/refs/heads/$1 ]
-}
-
-
-git-branch-exists $sum_br || git br $sum_br
+git-branch-exists $sum_br || git branch $sum_br
 
 
 # if exists such branch/tag ->abort

@@ -116,7 +116,7 @@ else
     # git show $start_hash
 
     # branch_exists $name
-    git show-ref refs/heads/$name >/dev/null || git branch $name $start_hash
+    git-branch-exists $name || git branch $name $start_hash
 
 
     #mkdir -p $(dirname $basefile) $(dirname $startfile)
