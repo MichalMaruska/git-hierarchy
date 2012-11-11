@@ -81,4 +81,4 @@ fi
 
 
 
-git br -d $victim
+git branch -d $victim

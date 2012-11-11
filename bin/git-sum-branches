@@ -54,13 +54,13 @@ first=$branches[1]
 others=($branches[2,-1])
 
 if [ $reset = "y" ]; then
-    eval $cmd git co $sum_br
+    eval $cmd git checkout $sum_br
     eval $cmd git reset --hard $first
 else
-    eval $cmd git co $sum_br
+    eval $cmd git checkout $sum_br
     eval $cmd git merge $first;
 fi
-# git co -b $sum_br $first
+# git checkout -b $sum_br $first
 
 foreach next ($others)
 {
