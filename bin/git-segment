@@ -83,9 +83,13 @@ if [ $# = 1 ]; then
 
 	describe_segment || true
 
+#  git update-ref -d  refs/base/test "refs/heads/master"
+# removes master!
 
-	git update-ref -d $startref || true
-	git update-ref -d $baseref || true
+	rm -f $GIT_DIR/$baseref || true
+	rm -f $GIT_DIR/$startref || true
+	#git update-ref -d $startref || true
+	#git update-ref -d $baseref || true
 
 	## necessary?
 	if [ $delete_branch = y ];then
