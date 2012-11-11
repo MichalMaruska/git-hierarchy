@@ -1,0 +1,56 @@
+#! /bin/bash -xe
+
+SRC_DIR=/home/git/my/repo/git-hierarchy/bin/
+GIT_SEGMENT=$SRC_DIR/git-segment
+
+# create new git repo:
+dir=$(mktemp --directory ${TMPDIR-/tmp}/git-tests-XXX)
+
+delete_directory()
+{
+    if [ -n "$dir" ];then
+	rm -rf $dir
+    fi
+}
+
+trap "delete_directory"  ERR
+
+cd $dir
+git init
+
+
+
+echo init > file
+git add file
+git commit -m init
+
+#git branch master
+#git checkout -b master HEAD
+
+git branch
+
+# create new segment
+$GIT_SEGMENT test heads/master
+
+$GIT_SEGMENT
+git branch
+# commit
+
+# create a sum:
+
+
+# rebase ...
+
+
+
+# drop it:
+$GIT_SEGMENT -D test
+
+# git branch -d test
+$GIT_SEGMENT
+
+git branch
+find .git/refs
+
+cd -
+rm -rf $dir
