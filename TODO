@@ -1,0 +1,29 @@
+
+Symbolic references:
+ ref: refs/heads/xxxx
+
+* How to dump this ref?
+
+It seems that I can only resolve FULLY (i.e. the hash of head of xxxx).
+I want the string "ref: refs/heads/xxxx".
+
+For now I rely on the file.
+
+# git show-ref $startref
+# git symbolic-ref
+
+* How to `delete' them?
+
+git update-ref -d $baseref || true
+ ... this deletes the referenced  Branch !!
+git update-ref -d $startref || true
+
+
+
+
+* Default to heads.
+git-segment test master  should firts try:
+git-segment test heads/master
+
+
+
