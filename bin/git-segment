@@ -19,7 +19,7 @@ EOF
 }
 
 
-delete=n
+delete_segment=n
 delete_branch=n
 
 
@@ -30,10 +30,10 @@ while getopts :hdD OPT; do
 	    exit 0
 	    ;;
 	d)
-	    delete=y
+	    delete_segment=y
 	    ;;
 	D)
-	    delete=y
+	    delete_segment=y
 	    delete_branch=y
 	    ;;
 	*)
@@ -79,12 +79,14 @@ describe_segment()
 
 
 if [ $# = 1 ]; then
-    if [ $delete = y ]; then
+    if [ $delete_segment = y ]; then
 
 	describe_segment || true
 
 
-	git update-ref -d $startref || git update-ref -d $baseref || true
+	git update-ref -d $startref || true
+	git update-ref -d $baseref || true
+
 	## necessary?
 	if [ $delete_branch = y ];then
 	    git branch -d $name
