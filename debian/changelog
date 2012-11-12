@@ -1,3 +1,17 @@
+git-hierarchy (1.8) release; urgency=low
+
+  * git-branch-exists: new global function
+  * stop using my (git) abbrevs.
+  * drop the (git) tools non-related to "hierarchy"
+  * Start some documentation.
+  * Delete segments correctly -- Broken
+  * Removing Symbolic refs by removing files.
+  * Don't list both the bases & starts of segments.
+  * Make a test tool.
+  * Fix: don't ignore the failure of "git rebase"!
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 12 Nov 2012 02:07:58 +0100
+
 git-hierarchy (1.7) release; urgency=low
 
   * Segment: finally a way to produce the commit HASH (of Start).
