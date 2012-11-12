@@ -75,6 +75,11 @@ describe_segment()
     cecho green $base
 
     git show-ref --hash  $startref
+
+    # how many commits there?
+    count=$(git log --oneline $startref..heads/$name |wc --lines)
+    echo $count commits:
+    git log --oneline $startref..heads/$name
 }
 
 
