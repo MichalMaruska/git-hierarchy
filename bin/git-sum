@@ -69,6 +69,7 @@ usage()
 Usage:
 ${0##*/} [+-h]
 ${0##*/} branch
+${0##*/} -d branch
 ${0##*/} -c branch     prune ...
   -c correct: check that summands exist, forget about them if not.
 
@@ -79,8 +80,9 @@ EOF
 
 reset="n"
 correct="n"
+delete=n
 
-while getopts :hrc OPT; do
+while getopts :hrcd OPT; do
     case $OPT in
 	h|+h)
 	    usage
@@ -91,6 +93,9 @@ while getopts :hrc OPT; do
 	    ;;
 	c)
 	    correct="y"
+	    ;;
+	d)
+	    delete="y"
 	    ;;
 	*)
 	    usage
@@ -109,6 +114,13 @@ fi
 
 name=$1
 shift
+
+if [ $delete = y ]; then
+    rm -v $SUM_DIR/$name
+    git branch -d $name
+    exit 0
+fi
+
 
 # create the branch:
 [ -e $GIT_DIR/refs/heads/$name ] || git branch $name
