@@ -43,7 +43,7 @@ segments=$(git for-each-ref 'refs/base/' --format "%(refname)" |\
             sed -e 's|^refs/base/||')
 
 if [ 0 =  ${#segments} ]; then
-    echo "no segments."
+    echo "no segments." >&2
 else
   foreach segment ($segments);
   {
@@ -58,7 +58,7 @@ typeset -a sums
 sums=($SUM_DIR/*(.))
 
 if [ 0 = ${#sums} ]; then
-    echo "no segments."
+    echo "no sums." >&2
 else
     foreach sum ($sums)
     {
