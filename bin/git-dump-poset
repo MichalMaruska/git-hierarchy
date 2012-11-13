@@ -1,0 +1,37 @@
+#! /usr/bin/zsh -feu
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+SUM_DIR=$GIT_DIR/mmc
+
+
+# recursively dump the poset:
+dump_poset()
+{
+    base=$1
+    typeset nodes
+    nodes=($base)
+
+    while [[ ${#nodes} -gt 0 ]]
+    do
+	# take one: sum -> summands
+	# segment -> base.
+	# limit base -> stop.
+
+	first=$nodes[1];
+	cecho green $first
+	nodes[1]=();
+	if is_segment $first; then
+	    nodes+=($(segment_base $first))
+	elif is_sum $first; then
+	    nodes+=($(cat $SUM_DIR/$first))
+	else
+	    break
+	fi
+    done
+}
+
+
+
+
+dump_poset $1
