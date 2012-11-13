@@ -88,4 +88,6 @@ fi
 
 if [ $keep_graph != y ]; then
     rm -f $GRAPH
+else
+    echo "graph left in: $GRAPH" >&2
 fi
