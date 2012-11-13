@@ -39,8 +39,9 @@ typeset -a segments
 # fixme:
 #segments=($GIT_DIR/refs/base/*)
 
-segments=$(git for-each-ref 'refs/base/' --format "%(refname)" |\
-            sed -e 's|^refs/base/||')
+# this list_segments is also in `git-segment'
+segments=($(git for-each-ref 'refs/base/' --format "%(refname)" |\
+            sed -e 's|^refs/base/||'))
 
 if [ 0 =  ${#segments} ]; then
     echo "no segments." >&2
