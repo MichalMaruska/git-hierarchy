@@ -11,3 +11,8 @@ git-branch-exists()
 {
     git show-ref refs/heads/$1 >/dev/null;
 }
+is_sum()
+{
+    [ -e $SUM_DIR/$1 ]
+}
+

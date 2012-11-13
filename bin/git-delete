@@ -65,7 +65,7 @@ foreach ref ($(git for-each-ref --format="%(refname)" \
 }
 
 # is it a sum itself?
-if [ -e $SUM_DIR/$victim ]; then
+if is_sum $victim ; then
     cecho yellow "it's a sum"
 fi
 

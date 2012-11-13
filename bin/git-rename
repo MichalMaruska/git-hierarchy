@@ -12,7 +12,7 @@ SUM_DIR=$GIT_DIR/mmc
 # replace....
 
 # sum
-if [ -e $SUM_DIR/$from ]; then
+if is_sum $from; then
     mv $SUM_DIR/$from $SUM_DIR/$new
 fi
 

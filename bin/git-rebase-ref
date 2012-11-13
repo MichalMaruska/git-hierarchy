@@ -13,7 +13,7 @@ name=$1
 cmd=
 # cmd=echo
 
-if [ -e $SUM_DIR/$name ];
+if is_sum $name
 then
     # sum? ->
     $cmd git-sum-branches -r $name
