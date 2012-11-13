@@ -16,3 +16,20 @@ is_sum()
     [ -e $SUM_DIR/$1 ]
 }
 
+is_segment()
+{
+    git show-ref refs/base/$1 >/dev/null;
+}
+
+segment_base()
+{
+    cat $GIT_DIR/refs/base/$1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
+}
+
+# segment_base()
+# {
+#     cat $1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
+# }
+
+
+
