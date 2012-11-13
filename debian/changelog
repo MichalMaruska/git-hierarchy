@@ -1,3 +1,16 @@
+git-hierarchy (1.9) release; urgency=low
+
+  * When describing segment, show the commits too.
+  * Implement deleting a Sum.
+  * is_sum function
+  * is_segment function
+  * segment_base function
+  * list segments by Git call (not filename globbing).
+  * new: git-dump-poset to dump a partial graph.
+  * git-tsort: don't mix the output with log messages
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 13 Nov 2012 08:56:03 +0100
+
 git-hierarchy (1.8) release; urgency=low
 
   * git-branch-exists: new global function
