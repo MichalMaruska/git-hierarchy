@@ -31,15 +31,6 @@ OPTIND=1
 # generate
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 
-segment_base()
-{
-#    $1
-#
-    cat $1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
-#    basename $segment
-}
-
-
 
 # segments ... look at bases.
 setopt NULL_GLOB
