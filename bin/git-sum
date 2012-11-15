@@ -23,9 +23,10 @@ ${0##*/} [-d] branch
 EOF
 }
 
+
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-SUM_DIR=$GIT_DIR/mmc
 
 
 # print valid/existing components of the sum
@@ -114,8 +115,21 @@ fi
 name=$1
 shift
 
+delete_sum_definition()
+{
+    # delete all of them:
+    name=$1
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    (while read ref;
+	do
+	git update-ref --no-deref  -d $ref
+	done
+    )
+}
+
+
 if [ $delete = y ]; then
-    rm -v $SUM_DIR/$name
+    delete_sum_definition $name
     git branch -d $name
     exit 0
 fi
@@ -126,15 +140,8 @@ fi
 
 
 if [ $reset = "y" ];then
-    # delete all of them:
-    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
-    ( while read ref;
-	do
-	git update-ref --no-deref  -d $ref
-	done
-    )
+    delete_sum_definition $name
 fi
-
 
 
 find_new_index(){
