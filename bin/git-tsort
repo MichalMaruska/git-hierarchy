@@ -38,15 +38,13 @@ typeset -a segments
 #segments=($GIT_DIR/refs/base/*)
 
 # this list_segments is also in `git-segment'
-segments=($(git for-each-ref 'refs/base/' --format "%(refname)" |\
-            sed -e 's|^refs/base/||'))
-
+segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
 if [ 0 =  ${#segments} ]; then
     echo "no segments." >&2
 else
   foreach segment ($segments);
   {
-	echo -n $(basename $segment) "\t"; segment_base $segment
+	echo -n refs/heads/${segment#refs/base/} "\t"; segment_base ${segment#refs/base/}
   }   > $GRAPH
 fi
 
@@ -61,10 +59,10 @@ if [ 0 = ${#sums} ]; then
 else
     foreach sum ($sums)
     {
-	name=$(basename $sum)
+	git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
 	(while read a; do
-	    echo $name "\t" $a
-	    done ) < $sum;
+	    echo -n $sum "\t"; dump_ref $a|grep -s 's/^ref:\s//'
+	    done )
     } >> $GRAPH
 fi
 
