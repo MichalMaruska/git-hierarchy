@@ -26,10 +26,12 @@ dump_poset()
 	first=$nodes[1];
 	cecho green $first
 	nodes[1]=();
-	if is_segment $first; then
-	    nodes+=($(segment_base $first))
-	elif is_sum $first; then
-	    nodes+=($(cat $SUM_DIR/$first))
+
+	name=${first#refs/heads/}
+	if is_segment $name; then
+	    nodes+=($(segment_base $name))
+	elif is_sum $name; then
+	    nodes+=($(summands_of $name))
 	else
 	    break
 	fi
