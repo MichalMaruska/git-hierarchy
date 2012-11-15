@@ -11,6 +11,13 @@ git-branch-exists()
 {
     git show-ref refs/heads/$1 >/dev/null;
 }
+
+list_sums()
+{
+    git for-each-ref 'refs/sums/' --format "%(refname)" |\
+        sed -e 's|^refs/sums/\([^/]*\)/[^/]*$|\1|' | sort -u
+}
+
 is_sum()
 {
     [ -e $SUM_DIR/$1 ]

@@ -49,10 +49,6 @@ show_prune_definition()
     done
 }
 
-list_sums()
-{
-    foreach sum ($SUM_DIR/*(:t)) {echo $sum}
-}
 
 if [ $# = 0 ];
 then
