@@ -18,6 +18,15 @@ list_sums()
         sed -e 's|^refs/sums/\([^/]*\)/[^/]*$|\1|' | sort -u
 }
 
+summands_of()
+{
+    # the sum is just the name!
+    sum=$1
+    # print
+    git for-each-ref "refs/sums/$sum/" --format "%(refname)"
+}
+
+# expand by just 1 level:
 dump_ref(){
     cat $GIT_DIR/$1
 }
