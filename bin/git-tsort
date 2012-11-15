@@ -5,8 +5,6 @@
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-SUM_DIR=$GIT_DIR/mmc
-
 
 keep_graph="n"
 just_graph=n
