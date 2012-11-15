@@ -35,10 +35,12 @@ dump_ref(){
 }
 
 
-
+# is_nontrivial_sum
 is_sum()
 {
-    [ -e $SUM_DIR/$1 ]
+    sum=$1
+    summands=$(summands_of $sum)
+    [ -n $summands ]
 }
 
 is_segment()
