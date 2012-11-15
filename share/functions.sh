@@ -23,7 +23,10 @@ summands_of()
     # the sum is just the name!
     sum=$1
     # print
-    git for-each-ref "refs/sums/$sum/" --format "%(refname)"
+    git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
+    ( while read summand; do
+	    dump_ref $summand |sed -e 's/^ref:\s//';
+	    done)
 }
 
 # expand by just 1 level:
