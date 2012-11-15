@@ -56,7 +56,7 @@ fi
 
 # sums
 typeset -a sums
-sums=($SUM_DIR/*(.))
+sums=$(list_sums )
 
 if [ 0 = ${#sums} ]; then
     echo "no sums." >&2
