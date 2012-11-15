@@ -54,10 +54,3 @@ segment_base()
     dump_ref /refs/base/$1 | sed -e 's^ref:\srefs/\(heads\|remotes\)/^^'
 }
 
-# segment_base()
-# {
-#     cat $1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
-# }
-
-
-
