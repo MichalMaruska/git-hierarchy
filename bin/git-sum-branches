@@ -3,7 +3,6 @@
 # re-make a "sum" branch:
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-SUM_DIR=$GIT_DIR/mmc
 
 
 # by default make a `clean' merge. This means
@@ -40,8 +39,11 @@ sum_br=$1
 
 # how to
 typeset -a branches
-_tmp=$(grep -v '^#' $SUM_DIR/$sum_br)
-branches=(${(f)_tmp})
+
+# get the list of summands:
+
+branches=($(git for-each-ref "refs/sums/$sum_br/" --format "%(refname)"))
+#(${(f)_tmp})
 
 echo $branches
 
