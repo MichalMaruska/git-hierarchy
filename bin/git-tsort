@@ -66,10 +66,8 @@ else
     } >> $GRAPH
 fi
 
-# sort.
 
-
-
+# sort:
 if [ $just_graph = y ]; then
     # while read
     for  a in $(tsort $GRAPH)
