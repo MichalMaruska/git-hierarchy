@@ -1,5 +1,10 @@
 #! /usr/bin/zsh -feu
 
+# outputs duplicates.
+
+# usage $0 <reference>
+#   reference is either sum or segment.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
@@ -34,4 +39,4 @@ dump_poset()
 
 
 
-dump_poset $1
+dump_poset $(git-expand-ref $1)
