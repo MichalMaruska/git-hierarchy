@@ -7,9 +7,20 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
 
+# this renames only branches!
+
+full_from=$(git-expand-ref $from)
+full_new=$(git-expand-ref $new)
+
+from=${full_from#refs/heads/}
+new=${full_new#refs/heads/}
+
+# fixme: verify that it's a branch name.
+
 # quoted_regexp.
 
 # replace....
+echo renaming $from to $new
 
 # sum
 if is_sum $from; then
