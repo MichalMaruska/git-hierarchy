@@ -22,7 +22,9 @@ new=${full_new#refs/heads/}
 # replace....
 echo renaming $from to $new
 
-# sum
+git branch -m $from $new
+
+
 if is_sum $from; then
     mv $SUM_DIR/$from $SUM_DIR/$new
 fi
@@ -57,4 +59,3 @@ foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
 }
 
 
-git branch -m $from $new
