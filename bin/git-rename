@@ -5,7 +5,6 @@ new=$2
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-SUM_DIR=$GIT_DIR/mmc
 
 # this renames only branches!
 
@@ -39,9 +38,19 @@ rename_symbolic_reference()
     git update-ref --no-deref  -d $ref
 }
 
+
+
+# rename sum:
 if is_sum $from; then
-    mv $SUM_DIR/$from $SUM_DIR/$new
+    # rename ALL refs
+    git for-each-ref "refs/sums/$from/" --format "%(refname)"|\
+    while read summand; do
+	index=${summand##*/}
+	rename_symbolic_reference $summand "refs/sums/$new/$index"
+    done
 fi
+
+
 
 # dependencies of other sums.
 foreach sum ($SUM_DIR/*)
