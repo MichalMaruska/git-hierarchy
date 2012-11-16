@@ -18,6 +18,12 @@ list_sums()
         sed -e 's|^refs/sums/\([^/]*\)/[^/]*$|\1|' | sort -u
 }
 
+dump_ref(){
+    cat $GIT_DIR/$1
+}
+
+
+
 is_sum()
 {
     [ -e $SUM_DIR/$1 ]
@@ -30,7 +36,8 @@ is_segment()
 
 segment_base()
 {
-    cat $GIT_DIR/refs/base/$1 | sed -e 's^ref: refs/\(heads\|remotes\)/^^'
+    # fixme:  dump_ref $1 ... so full ref is needed!
+    dump_ref /refs/base/$1 | sed -e 's^ref:\srefs/\(heads\|remotes\)/^^'
 }
 
 # segment_base()

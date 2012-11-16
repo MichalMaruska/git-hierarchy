@@ -136,10 +136,6 @@ if [ $reset = "y" ];then
 fi
 
 
-dump_ref(){
-    cat $GIT_DIR/$1
-}
-
 
 find_new_index(){
     name=$1
