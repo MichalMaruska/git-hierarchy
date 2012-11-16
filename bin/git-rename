@@ -22,6 +22,7 @@ new=${full_new#refs/heads/}
 echo renaming $from to $new
 
 git branch -m $from $new
+# todo: trap
 
 
 
