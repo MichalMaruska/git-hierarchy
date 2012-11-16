@@ -56,9 +56,8 @@ foreach sum ($SUM_DIR/*)
 
 # rename segment:
 if is_segment $from; then
-    # fixme:
-    mv $GIT_DIR/refs/base/$from $GIT_DIR/refs/base/$new
-    mv $GIT_DIR/refs/start/$from $GIT_DIR/refs/start/$new
+    rename_symbolic_reference refs/base/$from refs/base/$new
+    rename_symbolic_reference refs/start/$from refs/start/$new
 fi
 
 
