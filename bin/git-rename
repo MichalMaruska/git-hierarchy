@@ -25,19 +25,6 @@ git branch -m $from $new
 # todo: trap
 
 
-set_symbolic_reference()
-{
-    name=$1
-    content=$2
-
-    if expr match $content "^ref:" ; then
-	git symbolic-ref $name ${content#ref: }
-    else
-	git update-ref $name $content
-    fi
-}
-
-
 rename_symbolic_reference()
 {
     ref=$1

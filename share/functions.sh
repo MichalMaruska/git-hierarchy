@@ -55,3 +55,15 @@ segment_base()
     dump_ref /refs/base/$1 | sed -e 's^ref:\srefs/\(heads\|remotes\)/^^'
 }
 
+
+set_symbolic_reference()
+{
+    name=$1
+    content=$2
+
+    if expr match $content "^ref:" ; then
+	git symbolic-ref $name ${content#ref: }
+    else
+	git update-ref $name $content
+    fi
+}
