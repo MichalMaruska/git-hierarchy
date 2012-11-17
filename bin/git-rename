@@ -25,6 +25,19 @@ git branch -m $from $new
 # todo: trap
 
 
+set_symbolic_reference()
+{
+    name=$1
+    content=$2
+
+    # mmc: seems to contradict EOF git-segment!
+    if expr match $content "^ref:" ; then
+	git update-ref $name $content
+    else
+	git symbolic-ref $name ${content#ref: }
+    fi
+}
+
 
 rename_symbolic_reference()
 {
@@ -35,7 +48,8 @@ rename_symbolic_reference()
     # rename: create & drop?
     content=$(dump_ref $ref)
     # fixme: if hash don't prepend "ref:" !!!
-    git symbolic-ref $new_name $content
+
+    set_symbolic_reference $new_name $content
     git update-ref --no-deref  -d $ref
 }
 
