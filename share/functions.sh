@@ -31,6 +31,7 @@ summands_of()
 
 # expand by just 1 level:
 dump_ref(){
+    # git symbolic-ref $ref
     cat $GIT_DIR/$1
 }
 
