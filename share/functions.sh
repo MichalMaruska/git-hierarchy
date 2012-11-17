@@ -21,7 +21,8 @@ list_sums()
 summands_of()
 {
     # the sum is just the name!
-    sum=$1
+    local sum=$1
+    local summand
     # print
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
     ( while read summand; do
@@ -39,8 +40,8 @@ dump_ref(){
 # is_nontrivial_sum
 is_sum()
 {
-    sum=$1
-    summands=$(summands_of $sum)
+    local sum=$1
+    local summands=$(summands_of $sum)
     [ -n $summands ]
 }
 
@@ -58,8 +59,8 @@ segment_base()
 
 set_symbolic_reference()
 {
-    name=$1
-    content=$2
+    local name=$1
+    local content=$2
 
     if expr match $content "^ref:" ; then
 	git symbolic-ref $name ${content#ref: }
