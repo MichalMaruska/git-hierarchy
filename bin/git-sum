@@ -175,11 +175,9 @@ add_to_sum()
     sum=$1
     addend=$2
     index=$3
+    ref=refs/sums/$sum/$index
 
-    ref=refs/sums/$name/$index
-
-    git symbolic-ref $ref \
-	$(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
+    set_symbolic_reference $ref  "ref: $addend"
     #echo $br >> $sum_file
 }
 
