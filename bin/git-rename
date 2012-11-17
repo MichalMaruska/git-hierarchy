@@ -51,14 +51,15 @@ if is_sum $from; then
 fi
 
 
-
-# dependencies of other sums.
-foreach sum ($SUM_DIR/*)
-{
-    if grep $sum; then
-	sed -i -e 's/$from/$new/' $sum
+# as an addend:
+git for-each-ref "refs/sums/" --format "%(refname)"|\
+while read summand; do
+    if dump_ref $summand|grep --line-regexp --fixed-strings "ref: $full_from"
+    then
+	git symbolic-ref  $summand $full_new
+	# git update-ref --no-deref  -d $summand $full_new
     fi
-}
+done
 
 
 # segment base/start refs.
