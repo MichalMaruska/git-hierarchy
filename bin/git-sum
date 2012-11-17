@@ -37,13 +37,16 @@ show_prune_definition()
 	silent="n"
     fi
 
-    cat $1 | \
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" | \
     while read a;do
-	if git-branch-exists $a; then
-	    echo $a
+	# git-branch-exists
+	ref=$(git symbolic-ref $a)
+
+	if hash=$(git show-ref  $a); then
+	   echo $ref
 	else
 	    if [ $silent != "y" ]; then
-		echo NON-existant $a
+		echo NON-existant $ref = $a
 	    fi
 	fi
     done
@@ -122,43 +125,101 @@ fi
 [ -e $GIT_DIR/refs/heads/$name ] || git branch $name
 
 
-# ensure-dir
-[ -d $SUM_DIR ] || mkdir $SUM_DIR
-sum_file=$SUM_DIR/$name
-
 if [ $reset = "y" ];then
-    rm $sum_file
+    # delete all of them:
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    ( while read ref;
+	do
+	git update-ref --no-deref  -d $ref
+	done
+    )
 fi
+
+
+dump_ref(){
+    cat $GIT_DIR/$1
+}
+
+
+find_new_index(){
+    name=$1
+    i=1
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+     ( while read ref; do
+	if [ ${ref##*/} -gt $i ]; then
+	    ((i=i+1))
+	fi
+	done)
+    echo $i
+}
+
+remove_from_sum(){
+    sum=$1
+    summand=$2
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    ( while read ref;
+	do
+	if dump_ref $ref |grep -F "ref: $summand";
+	then
+	    #remove it:
+	    git update-ref --no-deref  -d $ref
+	fi
+	done)
+}
+
+add_to_sum()
+{
+    sum=$1
+    addend=$2
+    index=$3
+
+    ref=refs/sums/$name/$index
+
+    git symbolic-ref $ref \
+	$(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
+    #echo $br >> $sum_file
+}
+
+
 
 if [ $# = 0 ]; then
     if [ $correct = y ]; then
 	TEMP=$(mktemp)
-	show_prune_definition $sum_file "silent" > $TEMP
-	# >!
-	sort -u $TEMP > $sum_file
+	show_prune_definition $name "silent" > $TEMP
+	# todo!
+	# delete those that don't exist.
     else
-	show_prune_definition $sum_file
+	show_prune_definition $name
     fi
 else
+
+    # now creation:
+    # find minimal number:
+    index=$(find_new_index $name)
     for br in "$@"
     do
 	case "$br" in
 	    -*)
-		br=$(expr substr "$br" 2 $(expr length "$br" ) )
+		br=${br#-}
+		# I need to `expand' to `Full' ref!
+		br=$(git-expand-ref $br)
+
+		# remove:
+		# find its index!
 		cecho red $br
-		temp=${TEMP-/tmp}/git-define-sum
-		grep -v -e "^$br$" $sum_file > $temp
-		mv $temp $sum_file
+		remove_from_sum $name $br
 		;;
 	    +*)
-		cecho green ${br#+}
-		echo ${br#+} >> $sum_file
+		br=${br#+}
+		cecho green $br
+		# add:
+		br=$(git-expand-ref $br)
+		add_to_sum $name $br $index
+		((index=$index+1))
 		;;
 	    *)
 		cecho green $br
-		echo $br >> $sum_file
 		;;
 	esac
     done
-    cat $sum_file
 fi
