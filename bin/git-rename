@@ -85,6 +85,7 @@ if is_segment $from; then
 fi
 
 
+exit
 # fixme: not remotes!
 QUOTED_REGEXP=$from
 # other bases pointing at this branch.
