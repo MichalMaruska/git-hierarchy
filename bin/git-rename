@@ -25,6 +25,20 @@ echo renaming $from to $new
 git branch -m $from $new
 
 
+
+rename_symbolic_reference()
+{
+    ref=$1
+    new_name=$2
+    # git symbolic-ref -m "renaming Sum"
+
+    # rename: create & drop?
+    content=$(dump_ref $ref)
+    # fixme: if hash don't prepend "ref:" !!!
+    git symbolic-ref $new_name $content
+    git update-ref --no-deref  -d $ref
+}
+
 if is_sum $from; then
     mv $SUM_DIR/$from $SUM_DIR/$new
 fi
