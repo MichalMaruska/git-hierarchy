@@ -30,11 +30,10 @@ set_symbolic_reference()
     name=$1
     content=$2
 
-    # mmc: seems to contradict EOF git-segment!
     if expr match $content "^ref:" ; then
-	git update-ref $name $content
-    else
 	git symbolic-ref $name ${content#ref: }
+    else
+	git update-ref $name $content
     fi
 }
 
