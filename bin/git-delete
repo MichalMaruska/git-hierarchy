@@ -13,6 +13,7 @@ source /usr/share/git-hierarchy/functions.sh
 
 victim=$1
 victim_full=$(git-expand-ref $victim)
+victim=${victim#/ref/heads/}
 GIT_DIR=$(git_dir)
 
 while getopts :h OPT; do
@@ -40,39 +41,27 @@ foreach ref ($(git for-each-ref "refs/sums/$sum/" --format "%(refname)"))
 
 
 
-## segment bases & other refs.
-setopt extendedglob
-# fixme:
-# git for-each-ref
+## Check dependency: segment bases & other refs.
 foreach ref ($(git for-each-ref --format="%(refname)" \
      'refs/heads/*' 'refs/base/*' 'refs/start/*'))
 {
-    # ($GIT_DIR/refs/^remotes/**/*(.))
-
-    # do we grep for "refs/heads/$victim" ??
-    if [ -e $GIT_DIR/$ref ]; then
-	if grep "ref: refs/heads/$victim" $GIT_DIR/$ref; then
-	    cecho red "it's a base for $ref"
-	    exit -1
-	fi
-    else
-    # bug: cannot check intermediatery "symlinks"
-	if git symbolic-ref $ref |grep $victim; then
-	    cecho red "it's a base for $ref"
-	    exit -1
-	fi
+    if dump_ref $ref|grep --line-regexp --fixed-strings "ref: $victim_full";
+    then
+	cecho red "it's a base for $ref"
+	exit -1
     fi
 }
+
 
 # is it a sum itself?
 if is_sum $victim ; then
     cecho yellow "it's a sum"
 fi
 
-# a segment?
-if [ -e $GIT_DIR/refs/base/$victim ]; then
-    cecho yellow "it's a Segment"
 
+# A segment?
+if is_segment $victim; then
+    cecho yellow "it's a Segment"
     # fixme:
     git update-ref -d refs/base/$victim
     git update-ref -d refs/start/$victim
