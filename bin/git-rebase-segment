@@ -24,8 +24,8 @@ OPTIND=1
 
 
 branch=$1
-start="start/$branch"
-base="base/$branch"
+start="ref/start/$branch"
+base="ref/base/$branch"
 
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
@@ -36,7 +36,7 @@ then
 
     # update
     # git symbolic-ref refs/test base/aaa
-    git update-ref refs/$start $newstart
+    git update-ref $start $newstart
 else
     cecho red "rebase failed"
     exit 1
