@@ -216,7 +216,7 @@ else
 		# add:
 		br=$(git-expand-ref $br)
 		add_to_sum $name $br $index
-		((index=$index+1))
+		((index=index+1))
 		;;
 	    *)
 		cecho green $br
