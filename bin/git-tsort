@@ -52,7 +52,7 @@ fi
 
 # sums
 typeset -a sums
-sums=$(list_sums )
+sums=($(list_sums))
 
 if [ 0 = ${#sums} ]; then
     echo "no sums." >&2
