@@ -55,7 +55,8 @@ fi
 # as an addend:
 git for-each-ref "refs/sums/" --format "%(refname)"|\
 while read summand; do
-    if dump_ref $summand|grep --line-regexp --fixed-strings "ref: $full_from"
+    if dump_ref $summand|\
+       grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
     then
 	git symbolic-ref  $summand $full_new
 	# git update-ref --no-deref  -d $summand $full_new
