@@ -1,56 +1,163 @@
-#! /bin/bash -xe
+#! /bin/bash -eu
 
 SRC_DIR=/home/git/my/repo/git-hierarchy/bin/
+
 GIT_SEGMENT=$SRC_DIR/git-segment
+GIT_SUM=$SRC_DIR/git-sum
+
+
+dont_clean=n
+while getopts :k OPT; do
+    case $OPT in
+	k|+k)
+	    dont_clean=y
+	    ;;
+	*)
+	    echo "usage: ${0##*/} [+-k] [--] ARGS..."
+	    exit 2
+    esac
+done
+shift $(( OPTIND - 1 ))
+OPTIND=1
+
+
+#setopt shwordsplit
+#SHUNIT_PARENT=$0
+. shunit2
+
 
 # create new git repo:
 dir=$(mktemp --directory ${TMPDIR-/tmp}/git-tests-XXX)
+orig_dir=$(pwd)
 
 delete_directory()
 {
-    if [ -n "$dir" ];then
-	rm -rf $dir
+    cd $orig_dir
+    if [ $dont_clean != y ]; then
+	if [ -n "$dir" ];then
+	    rm -rf $dir
+	fi
     fi
 }
-
 trap "delete_directory"  ERR
 
+
+
 cd $dir
+
 git init
 
-
-
+# First commit:
 echo init > file
 git add file
 git commit -m init
 
-#git branch master
-#git checkout -b master HEAD
 
-git branch
+cecho blue Initial commit done.
+assertEquals $(git branch --no-color) "master"
+
+
+start_test ()
+{
+    cecho blue "starting test: $1"
+}
+
+
+start_test "create segment"
 
 # create new segment
 $GIT_SEGMENT test heads/master
 
-$GIT_SEGMENT
-git branch
+assertEquals $($GIT_SEGMENT) "test"
+
+#assertEquals $($GIT_SEGMENT test) "test"
+assertEquals \
+    "$(git for-each-ref refs/heads --format '%(refname)')" \
+    "refs/heads/master
+refs/heads/test"
+
+echo "$(git branch --no-color)" "master test"
+
+git checkout test
+
+echo init > file.test
+git add file.test
+git commit -m "test feature"
+
 # commit
 
+# make another one
+$GIT_SEGMENT test2 heads/master
+git checkout test2
+
+echo init > file.test2
+git add file.test2
+git commit -m "test2 feature"
+
+
+
+
+
 # create a sum:
+start_test "create sum"
+set -x
+$GIT_SUM
+$GIT_SUM all +test +test2
+
+$GIT_SUM
+$GIT_SUM all
+
+git-dump-poset all
+git-rebase-poset
+
+
+start_test "create segment atop sum"
+$GIT_SEGMENT testX all
+# now try to add to on
+git checkout testX
+echo init > file.testX
+git add file.testX
+git commit -m "testX feature"
+
+
+start_test "modify dependent & rebase"
+# add to dependency:
+git checkout test
+# now try to add to on
+echo init2 > file.test
+git add file.test
+git commit -m "test extended"
+
+git-rebase-poset
+
+exit
 
 
 # rebase ...
 
-
+git log --graph --oneline --all
 
 # drop it:
+start_test "Drop segment"
 $GIT_SEGMENT -D test
 
-# git branch -d test
-$GIT_SEGMENT
+assertEquals \
+    "$(git for-each-ref refs/heads --format '%(refname)')" \
+    "refs/heads/master"
+#assertEquals $(git branch --no-color) "master"
 
-git branch
+# git branch -d test
+assertEquals "$($GIT_SEGMENT)"  ""
+
+
+echo find:
+
 find .git/refs
 
-cd -
-rm -rf $dir
+if [ $dont_clean != y ]; then
+    delete_directory
+else
+    echo "leaving $dir"
+#cd -
+#rm -rf $dir
+fi
