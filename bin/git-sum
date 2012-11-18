@@ -32,19 +32,21 @@ GIT_DIR=$(git_dir)
 # print valid/existing components of the sum
 show_prune_definition()
 {
+    local silent
     if [ $# = 2 ];then
 	silent="y"
     else
 	silent="n"
     fi
+    local a
 
     git for-each-ref "refs/sums/$name/" --format "%(refname)" | \
     while read a;do
 	# git-branch-exists
-	ref=$(git symbolic-ref $a)
-
-	if hash=$(git show-ref  $a); then
-	   echo $ref
+	local ref="$(git symbolic-ref $a)"
+	local hash="$(git show-ref $a)"
+	if [ -n "$hash" ]; then
+	   echo "$ref"
 	else
 	    if [ $silent != "y" ]; then
 		echo NON-existant $ref = $a
@@ -118,7 +120,7 @@ shift
 delete_sum_definition()
 {
     # delete all of them:
-    name=$1
+    local name=$1
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     (while read ref;
 	do
@@ -145,8 +147,8 @@ fi
 
 
 find_new_index(){
-    name=$1
-    i=1
+    local name=$1
+    local i=1
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
      ( while read ref; do
 	if [ ${ref##*/} -gt $i ]; then
@@ -157,8 +159,8 @@ find_new_index(){
 }
 
 remove_from_sum(){
-    sum=$1
-    summand=$2
+    local sum=$1
+    local summand=$2
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     ( while read ref;
 	do
@@ -172,10 +174,11 @@ remove_from_sum(){
 
 add_to_sum()
 {
-    sum=$1
-    addend=$2
-    index=$3
-    ref=refs/sums/$sum/$index
+    local sum=$1
+    local addend=$2
+    local index=$3
+
+    local ref=refs/sums/$sum/$index
 
     set_symbolic_reference $ref  "ref: $addend"
     #echo $br >> $sum_file
