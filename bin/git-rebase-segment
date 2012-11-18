@@ -24,8 +24,10 @@ OPTIND=1
 
 
 branch=$1
-start="ref/start/$branch"
-base="ref/base/$branch"
+
+# not needed "ref/
+start="refs/start/$branch"
+base="refs/base/$branch"
 
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
