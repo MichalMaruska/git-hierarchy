@@ -13,9 +13,9 @@ SUM_DIR=$GIT_DIR/mmc
 # recursively dump the poset:
 dump_poset()
 {
-    base=$1
+    local base=$1
     typeset nodes
-    nodes=($base)
+    local nodes=($base)
 
     while [[ ${#nodes} -gt 0 ]]
     do
@@ -23,14 +23,16 @@ dump_poset()
 	# segment -> base.
 	# limit base -> stop.
 
-	first=$nodes[1];
+	local first=$nodes[1];
 	cecho green $first
 	nodes[1]=();
 
 	name=${first#refs/heads/}
 	if is_segment $name; then
+	    # one could filter those already in.
 	    nodes+=($(segment_base $name))
 	elif is_sum $name; then
+	    # one could filter those already in.
 	    nodes+=($(summands_of $name))
 	else
 	    break
