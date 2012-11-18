@@ -14,8 +14,9 @@ SUM_DIR=$GIT_DIR/mmc
 dump_poset()
 {
     local base=$1
-    typeset nodes
-    local nodes=($base)
+    local nodes
+    typeset -a nodes
+    nodes=( $base )
 
     while [[ ${#nodes} -gt 0 ]]
     do
