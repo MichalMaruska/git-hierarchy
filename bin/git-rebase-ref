@@ -4,22 +4,25 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
 
+# fixme: not a ref. a BRANCH!
+
 # rebasing this ref, upon its base.
 # The base is somehow defined ...
-name=$1
-
+ref=$1
+branch=${ref#refs/heads/}
 
 cmd=
 # cmd=echo
 
-if is_sum $name
+if is_sum $branch
 then
     # sum? ->
-    $cmd git-sum-branches -r $name
-elif is_segment $name;
+    # shouldn't it be  EVALed?
+    $cmd git-sum-branches -r $branch
+elif is_segment $branch;
 then
 # segment ->
-    $cmd git-rebase-segment $name
+    $cmd git-rebase-segment $branch
 else
-    echo "unknown -- leaving unchanged $name"
+    echo "unknown -- leaving unchanged $ref"
 fi
