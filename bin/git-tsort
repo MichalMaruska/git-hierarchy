@@ -6,13 +6,13 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
-keep_graph="n"
+keep_graph_file="n"
 just_graph=n
 
 while getopts :kg OPT; do
     case $OPT in
 	k|+k)
-	    keep_graph=y
+	    keep_graph_file=y
 	    ;;
 	g)
 	    just_graph=y
@@ -80,7 +80,7 @@ else
 fi
 
 
-if [ $keep_graph != y ]; then
+if [ $keep_graph_file != y ]; then
     rm -f $GRAPH
 else
     echo "graph left in: $GRAPH" >&2
