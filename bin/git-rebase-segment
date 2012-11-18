@@ -1,4 +1,4 @@
-#! /usr/bin/zsh -feu
+#! /usr/bin/zsh -feux
 
 
 source /usr/share/git-hierarchy/functions.sh
@@ -23,6 +23,7 @@ shift OPTIND-1
 OPTIND=1
 
 
+# maybe canonize?
 branch=$1
 
 # not needed "ref/

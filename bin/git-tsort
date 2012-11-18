@@ -44,10 +44,11 @@ if [ 0 =  ${#segments} ]; then
 else
   foreach segment ($segments);
   {
-	echo -n refs/heads/${segment#refs/base/} "\t"; segment_base ${segment#refs/base/}
+      # mmc: why not output the full base ref?
+      echo -n refs/heads/${segment#refs/base/} "\t";
+      segment_base ${segment#refs/base/}
   }   > $GRAPH
 fi
-
 
 
 # sums

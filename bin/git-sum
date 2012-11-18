@@ -178,9 +178,13 @@ add_to_sum()
     local addend=$2
     local index=$3
 
+    set -x
+    cecho yellow "adding to sum $sum: $addend, as $index"
     local ref=refs/sums/$sum/$index
 
     set_symbolic_reference $ref  "ref: $addend"
+    # git symbolic-ref $ref  "ref: $addend"
+    # $(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
     #echo $br >> $sum_file
 }
 
@@ -199,6 +203,7 @@ else
 
     # now creation:
     # find minimal number:
+    set -x
     index=$(find_new_index $name)
     for br in "$@"
     do
@@ -215,7 +220,7 @@ else
 		;;
 	    +*)
 		br=${br#+}
-		cecho green $br
+		cecho green "addend $br"
 		# add:
 		br=$(git-expand-ref $br)
 		add_to_sum $name $br $index

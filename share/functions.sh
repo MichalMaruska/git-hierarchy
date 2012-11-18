@@ -1,5 +1,6 @@
 #! /usr/bin/zsh -feu
 
+# todo: enforce ZSH!
 
 git_dir()
 {
@@ -25,9 +26,11 @@ summands_of()
     local summand
     # print
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
-    ( while read summand; do
-	    dump_ref $summand |sed -e 's/^ref:\s//';
-	    done)
+    ( while read summand;
+	do
+	# echo $summand >&2
+	dump_ref $summand |sed -e 's/^ref:\s//';
+	done)
 }
 
 # expand by just 1 level:

@@ -31,10 +31,10 @@ dump_poset()
 	name=${first#refs/heads/}
 	if is_segment $name; then
 	    # one could filter those already in.
-	    nodes+=($(segment_base $name))
+	    nodes+=( "$(segment_base $name)" )
 	elif is_sum $name; then
 	    # one could filter those already in.
-	    nodes+=($(summands_of $name))
+	    nodes+=( $(summands_of $name) )
 	else
 	    break
 	fi
