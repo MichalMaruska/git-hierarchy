@@ -53,7 +53,8 @@ is_segment()
 segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
-    dump_ref /refs/base/$1 | sed -e 's^ref:\srefs/\(heads\|remotes\)/^^'
+    # refs/\(heads\|remotes\)
+    dump_ref /refs/base/$1 | sed -e 's^ref:\s/^^'
 }
 
 
