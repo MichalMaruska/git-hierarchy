@@ -51,29 +51,29 @@ if is_sum $from; then
     done
 fi
 
-
-# as an addend:
-git for-each-ref "refs/sums/" --format "%(refname)"|\
-while read summand; do
-    if dump_ref $summand|\
-       grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
-    then
-	git symbolic-ref  $summand $full_new
-	# git update-ref --no-deref  -d $summand $full_new
-    fi
-done
-
-
-# segment base/start refs.
-
 # rename segment:
+# segment base/start refs.
 if is_segment $from; then
     rename_symbolic_reference refs/base/$from refs/base/$new
     rename_symbolic_reference refs/start/$from refs/start/$new
 fi
 
 
+
+
+# as the destination of a symref.
+git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
+while read symref; do
+    if dump_ref $symref|\
+       grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
+    then
+	set_symbolic_reference $symref $full_new
+    fi
+done
+
+
 exit
+
 # fixme: not remotes!
 QUOTED_REGEXP=$from
 # other bases pointing at this branch.
