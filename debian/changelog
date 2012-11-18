@@ -1,3 +1,63 @@
+git-hierarchy (2.0) release; urgency=low
+
+  * When assigning cmd output to a zsh array parameter, braces are neede.
+  * inform about the Graph filename (when left over).
+
+  [ Using symbolic refs for all -- sums ]
+  * list_sums: new approach
+  * new: git-expand-ref
+  * List, dump, reset, delete, add reimplmented.
+  * Graph vs new sums: generate the sum-nodes
+  * dump_ref function: to expand indirect refs, by just 1 level.
+  * Delete sum or its definition.
+  * When deleting a ref, check all summands in the new format.
+  * git-sum-branches: get the summands the new way.
+  * function summands_of to list the (full) components of a sum (simple name).
+  * summands_of: dereference the Numbers.
+  * is_sum  adapted.
+  * obsolete segment_base
+  * dump_poset: doc/usage & expand the argument.
+  * dump-poset: work with expanded rerfs. But the segments/sums have simple names.
+  * drop SUM_DIR
+  * adapt git-tsort (to new Sums implementation).
+  * format
+  * when renaming ... normalize the name.
+  * rename the branch itself soon.
+  * rename_symbolic_reference
+  * rename segment (branch)
+  * rename_symbolic_reference: used for sums
+  * renaming an addend (of a sum)
+  * todo
+  * git-delete:  check properly using the new  dump_ref.
+  * comment
+  * use full ref name (to avoid ambiguity).
+  * Hide the complications in   set_symbolic_reference
+  * in fact set_symbolic_reference reverse
+  * when renaming.. don't bother checking other refs, for now.
+  * set_symbolic_reference is common function
+  * add_to_sum: fix bug & use the set_symbolic_reference f.
+  * fix shell arithmetics
+  * fix: local variables in Functions
+  * local variables 1
+  * segment_base: full ref
+  * rename var keep_graph_file
+  * fix array assignment
+  * fix: grep vs sed
+  * fix my understanding of Variables
+  * fix in segment_base (stripping /)
+  * shell -- necessary?
+  * function Local variables!
+  * rebase-ref: extract & use the branch name
+  * tsort: print the sum ref in full.
+  * rebase-segment: correct the full-ref expansion.
+  * comments & tracing & refomattig shell variable assignment
+  * rename addend .. silently
+  * set_symbolic_reference silent
+  * rename: point all sym-refs at the renamed branch.
+  * Test all steps
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 18 Nov 2012 15:30:52 +0100
+
 git-hierarchy (1.9) release; urgency=low
 
   * When describing segment, show the commits too.
