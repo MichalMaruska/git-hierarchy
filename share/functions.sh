@@ -41,8 +41,8 @@ dump_ref(){
 is_sum()
 {
     local sum=$1
-    local summands=$(summands_of $sum)
-    [ -n $summands ]
+    local summands="$(summands_of $sum)"
+    [ -n "$summands" ]
 }
 
 is_segment()
