@@ -66,7 +66,7 @@ set_symbolic_reference()
     local name=$1
     local content=$2
 
-    if expr match $content "^ref:" ; then
+    if expr match $content "^ref:" >/dev/null ; then
 	git symbolic-ref $name ${content#ref: }
     else
 	git update-ref $name $content
