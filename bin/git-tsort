@@ -61,7 +61,7 @@ else
     {
 	git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
 	(while read a; do
-	    echo -n $sum "\t"; dump_ref $a|sed -e 's/^ref:\s//'
+	    echo -n "refs/heads/$sum" "\t"; dump_ref $a|sed -e 's/^ref:\s//'
 	    done )
     } >> $GRAPH
 fi
