@@ -1,3 +1,10 @@
+git-hierarchy (2.1) release; urgency=low
+
+  * New git-set-start:  & use it.
+  * Fix: find correctly the next available Index for sums.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 19 Nov 2012 10:35:47 +0100
+
 git-hierarchy (2.0) release; urgency=low
 
   * When assigning cmd output to a zsh array parameter, braces are neede.
