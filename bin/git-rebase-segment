@@ -34,14 +34,12 @@ base="refs/base/$branch"
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
 then
-    # wrong?
-    newstart=$(git show-ref --hash $base)
-
-    # update
-    # git symbolic-ref refs/test base/aaa
-    git update-ref $start $newstart
+    git-set-ref $start $base
 else
-    cecho red "rebase failed"
+    cecho red "** ERROR: Rebase failed."
+    echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
+    echo "then run:   git-set-ref $start $base"
+
     exit 1
 fi
 
