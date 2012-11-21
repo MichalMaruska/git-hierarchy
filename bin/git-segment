@@ -133,7 +133,7 @@ else
     #mkdir -p $(dirname $basefile) $(dirname $startfile)
 # canonize:
     #echo $start_hash > $startfile
-    git-set-ref $startref $start_hash
+    git-set-start $startref $start_hash
 
     #echo "ref: $base" > $basefile
     git symbolic-ref $baseref $base
