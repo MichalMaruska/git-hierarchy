@@ -6,7 +6,8 @@ ref=$1
 commit=$2
 
 # wrong?
-sha=$(git show-ref --hash $commit)
+sha=$(git rev-list  --max-count=1 $commit)
+# sha=$(git show-ref --hash $commit)
 
 # update
 # git symbolic-ref refs/test base/aaa
