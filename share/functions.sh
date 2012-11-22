@@ -35,7 +35,12 @@ summands_of()
 
 # expand by just 1 level:
 dump_ref(){
-    # git symbolic-ref $ref
+    # does not work:
+    # x -> y &  y ->z & z->sha1; then `git symbolic-ref x' will return z.
+    #git symbolic-ref $1
+
+    # note: symbolic refs (i.e. those pointing at other refs ,not direct SHA1), are not included in pack-refs.
+    # when that changes, I have to update this tool
     cat $GIT_DIR/$1
 }
 

@@ -69,8 +69,7 @@ describe_segment()
     # fixme: how to avoid dereferencing?
     # git show-ref $startref
 
-    #git symbolic-ref
-    base=$(cat $GIT_DIR/$baseref|\
+    base=$(dump_ref $baseref |\
            sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
     cecho green $base
 
