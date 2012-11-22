@@ -1,0 +1,21 @@
+#!/usr/bin/zsh -feu
+
+while read line;
+do
+    name=${line%%	*}
+    ref_link=${line#*	}
+
+    if false; then
+	echo $name
+	echo $ref_link
+    fi
+
+    if ! git symbolic-ref $name &>/dev/null ;
+    then
+	echo "neet to create $name"
+	# remove "ref: "
+	git symbolic-ref $name "${ref_link#ref: *}"
+    fi
+
+
+done

@@ -1,0 +1,27 @@
+#!/usr/bin/zsh -feu
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+# used as:
+# git tag "hierarchy-refs" -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
+# git notes add -f -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
+
+## git cat-file tag hierarchy-refs |skip-header | git-recover-symbolic-refs
+## git cat-file tag hierarchy-refs |tail -n +6 |  git-recover-symbolic-refs
+
+## skip-header  tail -f5
+
+##
+##
+
+
+
+git for-each-ref "refs/sums"  "refs/base" "refs/start" \
+    --format "%(refname)" |\
+while read ref; do
+    link=$(dump_ref $ref)
+    echo -n "$ref\t" ; dump_ref $ref
+done
+
+
