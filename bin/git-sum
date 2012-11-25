@@ -137,14 +137,6 @@ if [ $delete = y ]; then
 fi
 
 
-# create the branch:
-[ -e $GIT_DIR/refs/heads/$name ] || git branch $name
-
-
-if [ $reset = "y" ];then
-    delete_sum_definition $name
-fi
-
 
 find_new_index(){
     local name=$1
@@ -189,6 +181,10 @@ add_to_sum()
 }
 
 
+if [ $reset = "y" ];then
+    delete_sum_definition $name
+fi
+
 
 if [ $# = 0 ]; then
     if [ $correct = y ]; then
@@ -200,6 +196,9 @@ if [ $# = 0 ]; then
 	show_prune_definition $name
     fi
 else
+
+    # create the branch:
+    [ -e $GIT_DIR/refs/heads/$name ] || git branch $name
 
     # now creation:
     # find minimal number:
