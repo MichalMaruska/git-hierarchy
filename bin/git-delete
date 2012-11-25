@@ -31,7 +31,7 @@ OPTIND=1
 
 ### detect that nothing depends on it.
 ## Sums
-foreach ref ($(git for-each-ref "refs/sums/$sum/" --format "%(refname)"))
+foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
 {
     if dump_ref $ref| grep -xF "ref: $victim_full"; then
 	cecho red "Sum ${ref%refs/sums#/*} depends on it"
