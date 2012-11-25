@@ -1,5 +1,7 @@
 #!/usr/bin/zsh -feu
 
+# read from stdin.
+
 while read line;
 do
     name=${line%%	*}
@@ -10,12 +12,21 @@ do
 	echo $ref_link
     fi
 
-    if ! git symbolic-ref $name &>/dev/null ;
+    if true;
+	# ! git symbolic-ref $name &>/dev/null ;
     then
-	echo "neet to create $name"
 	# remove "ref: "
-	git symbolic-ref $name "${ref_link#ref: *}"
-    fi
+	ref=${ref_link#ref: *}
 
+	cecho yellow "need to create $name"
+	git symbolic-ref $name "$ref"
+
+	if [[ $ref =~ "^refs/heads/" ]]; then
+	    if ! git symbolic-ref $ref &> /dev/null;
+		then
+		cecho red "possibly need to localize the branch $ref"
+	    fi
+	fi
+    fi
 
 done
