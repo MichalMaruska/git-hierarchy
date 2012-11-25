@@ -1,3 +1,18 @@
+git-hierarchy (2.2) release; urgency=low
+
+  * recreate-sums to upgrade/turn old sums file into symbolic refs
+  * Fix: map to SHA via git rev-list, not git show-ref.
+  * Fix: spell correctly git-set-start
+  * Use dump_ref as the only place to cat(1) the symref file.
+  * git-tsort: usage, options, new: invoke draw-tsort-graph when requested.
+  * new: git-dump-refs & git-recover-symbolic-refs.
+  * fix: use the correct variable
+  * when recovering symrefs, maybe clone a remote branch to local one.
+  * git-sum: create branch only if modifying definition.
+  * git-recover-symbolic-refs:
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 26 Nov 2012 00:37:57 +0100
+
 git-hierarchy (2.1) release; urgency=low
 
   * New git-set-start:  & use it.
