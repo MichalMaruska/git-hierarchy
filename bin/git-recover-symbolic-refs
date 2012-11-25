@@ -1,5 +1,22 @@
 #!/usr/bin/zsh -feu
 
+# get this from cmdline:
+REMOTE=origin
+
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+
+typeset -a remote_heads
+remote_heads=($(git for-each-ref --format="%(refname)" refs/remotes/$REMOTE/))
+
+typeset -A remote_branches
+remote_prefix=refs/remotes/$REMOTE/
+foreach rem ($remote_heads) {
+    remote_branches[${rem#$remote_prefix}]=1
+}
+
 # read from stdin.
 
 while read line;
@@ -18,15 +35,41 @@ do
 	# remove "ref: "
 	ref=${ref_link#ref: *}
 
-	cecho yellow "need to create $name"
-	git symbolic-ref $name "$ref"
+	# todo: check if it's already
+	# symbolic-ref
+	if git show-ref "$name" > /dev/null; then
+	    our=$(dump_ref $name);
+	    if [ "$our" = "$ref_link" ]
+	    then
+		echo "we already have the same $name"
+	    else
+		cecho red "we already have a DIFFERENT $name:"
+		echo " $ref vs $our"
+	    fi
+	else
+	    cecho yellow "need to create $name"
 
-	if [[ $ref =~ "^refs/heads/" ]]; then
-	    if ! git symbolic-ref $ref &> /dev/null;
+	    # dump_ref
+	    if [[ $ref =~ "^refs/heads/" ]]; then
+		# why does not work:    git symbolic-ref
+		if ! git show-ref $ref &> /dev/null;
 		then
-		cecho red "possibly need to localize the branch $ref"
+		    branch=${ref#refs/heads/}
+		    cecho yellow "need to setup branch		$branch"
+		    if
+			# git symbolic-ref refs/remotes/$REMOTE/$branch &> /dev/null
+			if [ $remote_branches[$branch] ];
+			then
+			    cecho red "possibly need to localize the branch $branch from " \
+				"${remote_prefix}$branch"
+			    #git branch -f $branch "${remote_prefix}$branch"
+			else
+			    cecho red "cannot see that name in remote branches"
+			fi
+		    fi
+		else
+		    echo "not a branch $ref"
+		fi
 	    fi
 	fi
-    fi
-
 done
