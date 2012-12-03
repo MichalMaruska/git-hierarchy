@@ -3,9 +3,10 @@
 usage()
 {
     cat <<EOF
-Usage: ${0##*/} [+-h] [--] ARGS...
+Usage: ${0##*/} [+-h] [-s] [--] ARGS...
 
 Delete a branch, and any mention of it  -- symbolic references.
+-s  ... drop from sums automatically.
 EOF
 }
 
@@ -15,12 +16,16 @@ victim=$1
 victim_full=$(git-expand-ref $victim)
 victim=${victim#/ref/heads/}
 GIT_DIR=$(git_dir)
+delete_from_sum=no
 
-while getopts :h OPT; do
+while getopts :hs OPT; do
     case $OPT in
 	h|+h)
 	    usage
 	    exit 0
+	    ;;
+	s)
+	    delete_from_sum=yes
 	    ;;
 	*)
 	    exit 2
@@ -34,8 +39,14 @@ OPTIND=1
 foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
 {
     if dump_ref $ref| grep -xF "ref: $victim_full"; then
-	cecho red "Sum ${ref%refs/sums#/*} depends on it"
-	exit -1
+	sum=${ref%refs/sums#/*}
+	cecho red "Sum $sum depends on it"
+	if [ $delete_from_sum = yes ];then
+	    echo "hence removing automatically from it."
+	    git-sum $sum -$victim
+	else
+	    exit -1
+	fi
     fi
 }
 
