@@ -2,6 +2,8 @@
 
 
 source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
 
 usage()
 {
@@ -36,6 +38,7 @@ if git rebase --onto $base $start $branch;
 then
     git-set-start $start $base
 else
+    echo "$branch" > $GIT_DIR/.rebasing-segment
     cecho red "** ERROR: Rebase failed."
     echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
     echo "then run:   git-set-start $start $base"

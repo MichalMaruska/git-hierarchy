@@ -1,5 +1,15 @@
 #! /usr/bin/zsh -feu
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+if [ -e $GIT_DIR/.rebasing-segment ]; then
+    cecho red "Must first finish rebasing segment " \
+	"$(cat $GIT_DIR/.rebasing-segment)"
+    exit -1
+fi
+
+
 foreach ref ($(git-tsort))
 {
     # todo: create a tag, so that if `git-rebase' fails
@@ -14,4 +24,3 @@ foreach ref ($(git-tsort))
 	exit $problem
     fi
 }
-
