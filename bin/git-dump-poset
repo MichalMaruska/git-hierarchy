@@ -4,6 +4,13 @@
 
 # usage $0 <reference>
 #   reference is either sum or segment.
+usage()
+{
+    cat<<EOF
+usage: ${0##*/} [+-h} [--] ARGS...
+EOF
+}
+
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
@@ -43,5 +50,17 @@ dump_poset()
 
 
 
-
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 dump_poset $(git-expand-ref $1)
