@@ -41,7 +41,7 @@ else
     echo "$branch" > $GIT_DIR/.rebasing-segment
     cecho red "** ERROR: Rebase failed."
     echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
-    echo "then run:   git-set-start $start $base"
+    cecho green "then run:   git-reset-segment $branch"
 
     exit 1
 fi

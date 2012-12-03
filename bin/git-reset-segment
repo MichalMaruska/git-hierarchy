@@ -1,0 +1,21 @@
+#! /bin/bash
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+mark=$GIT_DIR/.rebasing-segment
+
+# maybe canonize?
+branch=$1
+
+# not needed "ref/
+start="refs/start/$branch"
+base="refs/base/$branch"
+
+git-set-start $start $base
+
+if [ -e $mark -a \
+     $branch = $(cat $mark) ]; then
+
+    rm -v $mark
+fi
