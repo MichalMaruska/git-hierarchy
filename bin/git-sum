@@ -202,7 +202,6 @@ else
 
     # now creation:
     # find minimal number:
-    set -x
     index=$(find_new_index $name)
     for br in "$@"
     do
