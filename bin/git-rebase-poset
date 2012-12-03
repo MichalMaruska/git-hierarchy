@@ -3,11 +3,36 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h] [--] ARGS...
+EOF
+}
+
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
 if [ -e $GIT_DIR/.rebasing-segment ]; then
     cecho red "Must first finish rebasing segment " \
 	"$(cat $GIT_DIR/.rebasing-segment)"
     exit -1
 fi
+
 
 
 foreach ref ($(git-tsort))
