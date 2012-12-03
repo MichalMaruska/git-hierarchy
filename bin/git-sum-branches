@@ -66,5 +66,5 @@ fi
 
 foreach next ($others)
 {
-    eval $cmd git merge --rerere-autoupdate $next;
+    eval $cmd git merge -m "'Sum: $next into $sum_br'" --rerere-autoupdate $next;
 }
