@@ -1,3 +1,10 @@
+git-hierarchy (2.4) release; urgency=low
+
+  * help/usage for git-rebase-poset
+  * help for git-dump-poset
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 05 Dec 2012 01:05:27 +0100
+
 git-hierarchy (2.3) release; urgency=low
 
   * Provide automatic commit message for Sum merges
