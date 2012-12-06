@@ -119,7 +119,7 @@ else
 	# fixme: check that it's an ancestor.
 	start_hash=$(git log $3 --max-count=1 --format="%H")
     else
-	start_hash=$(git show-ref --hash $from)
+	start_hash=$(git show-ref --hash $(git-expand-ref $from))
 	#if [ ${start} -gt 1 ]; then error;fi
     fi
     cecho yellow "so the start is $start_hash"
