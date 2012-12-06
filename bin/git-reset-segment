@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/bash -eu
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
