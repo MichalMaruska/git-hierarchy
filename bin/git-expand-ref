@@ -1,5 +1,8 @@
 #!/usr/bin/zsh -feu
 
+# This is about S.Ref `resolution':
+# turning the input from user into fully-qualified S.Ref name.
+
 
 expand_ref()
 {
