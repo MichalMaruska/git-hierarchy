@@ -7,6 +7,7 @@ Usage: ${0##*/} [+-h] [-s] [--] ARGS...
 
 Delete a branch, and any mention of it  -- symbolic references.
 -s  ... drop from sums automatically.
+-D  ... option to delete the branch. (git branch -D vs -d)
 EOF
 }
 
@@ -18,7 +19,9 @@ victim=${victim#/ref/heads/}
 GIT_DIR=$(git_dir)
 delete_from_sum=no
 
-while getopts :hs OPT; do
+git_branch_delete_option="-d"
+
+while getopts :hsD OPT; do
     case $OPT in
 	h|+h)
 	    usage
@@ -27,6 +30,8 @@ while getopts :hs OPT; do
 	s)
 	    delete_from_sum=yes
 	    ;;
+	D)
+	    git_branch_delete_option="-D"
 	*)
 	    exit 2
     esac
@@ -82,6 +87,4 @@ if is_segment $victim; then
 fi
 
 
-
-
-git branch -d $victim
+git branch $git_branch_delete_option $victim
