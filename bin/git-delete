@@ -13,9 +13,6 @@ EOF
 
 source /usr/share/git-hierarchy/functions.sh
 
-victim=$1
-victim_full=$(git-expand-ref $victim)
-victim=${victim#/ref/heads/}
 GIT_DIR=$(git_dir)
 delete_from_sum=no
 
@@ -39,6 +36,11 @@ while getopts :hsD OPT; do
 done
 shift OPTIND-1
 OPTIND=1
+
+victim=$1
+victim_full=$(git-expand-ref $victim)
+victim=${victim#/ref/heads/}
+
 
 ### detect that nothing depends on it.
 ## Sums
