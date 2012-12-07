@@ -1,3 +1,13 @@
+git-hierarchy (2.5) release; urgency=low
+
+  * shell formatting
+  * Fix deleting the base sym-reference.
+  * shell safety. 1 step
+  * git-delete pass through -D to "git branch".
+  * Use git-expand-ref to expand user's name for segment _base_.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 07 Dec 2012 13:08:02 +0100
+
 git-hierarchy (2.4) release; urgency=low
 
   * help/usage for git-rebase-poset
