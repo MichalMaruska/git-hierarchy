@@ -32,6 +32,7 @@ while getopts :hsD OPT; do
 	    ;;
 	D)
 	    git_branch_delete_option="-D"
+	    ;;
 	*)
 	    exit 2
     esac
