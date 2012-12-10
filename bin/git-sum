@@ -59,7 +59,7 @@ remove_from_sum(){
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     ( while read ref;
 	do
-	if dump_ref $ref |grep -F "ref: $summand";
+	if [ "$(dump_ref_without_ref $ref)" = "$summand" ];
 	then
 	    #remove it:
 	    drop_symbolic_ref $ref

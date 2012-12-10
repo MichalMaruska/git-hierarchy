@@ -46,8 +46,9 @@ victim=${victim#/ref/heads/}
 ## Sums
 foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
 {
-    if dump_ref $ref| grep -xF "ref: $victim_full"; then
-	sum=${ref%refs/sums#/*}
+    if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
+	sum=${ref#refs/sums/}
+	sum=${sum%/*}
 	cecho red "Sum $sum depends on it"
 	if [ $delete_from_sum = yes ];then
 	    echo "hence removing automatically from it."
@@ -66,8 +67,7 @@ foreach ref ($(git for-each-ref --format="%(refname)" \
 {
     # 'refs/heads/*'
     # this is wrong: heads cannot reference it:
-    if dump_ref $ref|grep --line-regexp --fixed-strings "ref: $victim_full";
-    then
+    if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
 	cecho red "it's a base for $ref"
 	exit -1
     fi
