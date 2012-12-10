@@ -49,7 +49,11 @@ OPTIND=1
 ## `list' all segments:
 if [ $# = 0 ]; then
     git for-each-ref 'refs/base/' --format "%(refname)" |\
-        sed -e 's|^refs/base/||'
+        sed -e 's|^refs/base/||' |\
+    while read segment;
+    do
+	echo -e -n $segment "\t\t"; echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+    done
     if false; then
 	echo
 	git for-each-ref 'refs/start/' --format "%(refname)" |\
