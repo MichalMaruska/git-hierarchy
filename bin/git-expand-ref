@@ -19,11 +19,14 @@ expand_ref()
 	tags/*)
 	    name=refs/$name
 	    ;;
-	*/*)
-	    name=refs/$name
-	    ;;
+	#*/*)
+	    # name=refs/$name
+	    # ;;
 	*)
-	    name=refs/heads/$name
+	    name=$(git show-ref heads/$name|head -n 1|cut -f 2 '-d ') || \
+	    name=$(git show-ref remotes/$name|head -n 1|cut -f 2 '-d ') || \
+	    name=$(git show-ref $name|head -n 1|cut -f 2 '-d ')
+	    # name=refs/heads/$name
 	    # prepend refs/
     esac
 
