@@ -219,16 +219,13 @@ else
 		cecho red $br
 		remove_from_sum $name $br
 		;;
-	    +*)
+	    +* | *)
 		br=${br#+}
 		cecho green "addend $br"
 		# add:
 		br=$(git-expand-ref $br)
 		add_to_sum $name $br $index
 		((index=index+1))
-		;;
-	    *)
-		cecho green $br
 		;;
 	esac
     done
