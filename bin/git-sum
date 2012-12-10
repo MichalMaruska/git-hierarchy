@@ -36,7 +36,7 @@ delete_sum_definition()
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     (while read ref;
 	do
-	git update-ref --no-deref  -d $ref
+	drop_symbolic_ref $ref
 	done
     )
 }
@@ -62,7 +62,7 @@ remove_from_sum(){
 	if dump_ref $ref |grep -F "ref: $summand";
 	then
 	    #remove it:
-	    git update-ref --no-deref  -d $ref
+	    drop_symbolic_ref $ref
 	fi
 	done)
 }
