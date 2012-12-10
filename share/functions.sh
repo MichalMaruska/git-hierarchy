@@ -82,7 +82,8 @@ drop_symbolic_ref()
 {
     ref=$1
     # fixme:
-    git update-ref -d $ref --no-deref \
-	${$(dump_ref $ref)#ref: }
+    git update-ref -d $ref --no-deref
+    # ${$(dump_ref $ref)#ref: }
+    # With this it was recreating .git/refs/heads/refs/sums/all/10
 }
 
