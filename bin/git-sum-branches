@@ -76,7 +76,16 @@ else
 fi
 # git checkout -b $sum_br $first
 
-foreach next ($others)
-{
-    eval $cmd git merge -m "'Sum: $next into $sum_br'" --rerere-autoupdate $next;
-}
+# octopus is default (for >2 children) & refuses any conflict.
+#
+git merge -m "Sum: $sum_br = $others + $first" \
+    --rerere-autoupdate \
+    -s octopus \
+    -s recursive -X patience -X ignore-space-change $others
+
+
+# foreach next ($others)
+# {
+#     eval $cmd git merge -m "'Sum: $next into $sum_br'" --rerere-autoupdate $next;
+# }
+
