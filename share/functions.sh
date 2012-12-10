@@ -77,3 +77,12 @@ set_symbolic_reference()
 	git update-ref $name $content
     fi
 }
+
+drop_symbolic_ref()
+{
+    ref=$1
+    # fixme:
+    git update-ref -d $ref --no-deref \
+	${$(dump_ref $ref)#ref: }
+}
+
