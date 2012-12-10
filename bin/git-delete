@@ -59,14 +59,10 @@ foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
     fi
 }
 
-
-
-## Check dependency: segment bases & other refs.
+## Check dependency: segment bases & other refs?
 foreach ref ($(git for-each-ref --format="%(refname)" \
-     'refs/base/*' 'refs/start/*'))
+     'refs/base/*'))
 {
-    # 'refs/heads/*'
-    # this is wrong: heads cannot reference it:
     if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
 	cecho red "it's a base for $ref"
 	exit -1
