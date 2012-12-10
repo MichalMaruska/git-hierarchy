@@ -52,7 +52,7 @@ foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
 	cecho red "Sum $sum depends on it"
 	if [ $delete_from_sum = yes ];then
 	    echo "hence removing automatically from it."
-	    git-sum $sum -$victim
+	    git-sum $sum "-$victim"
 	else
 	    exit -1
 	fi
