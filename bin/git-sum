@@ -78,9 +78,6 @@ add_to_sum()
     local ref=refs/sums/$sum/$index
 
     set_symbolic_reference $ref  "ref: $addend"
-    # git symbolic-ref $ref  "ref: $addend"
-    # $(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
-    #echo $br >> $sum_file
 }
 
 
