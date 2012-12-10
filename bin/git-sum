@@ -29,6 +29,62 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
 
+delete_sum_definition()
+{
+    # delete all of them:
+    local name=$1
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    (while read ref;
+	do
+	git update-ref --no-deref  -d $ref
+	done
+    )
+}
+
+find_new_index(){
+    local name=$1
+    typeset -i i=1
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    while read ref; do
+	if [ ${ref##*/} -ge $i ]; then
+	    ((i=${ref##*/}+1))
+	fi
+    done
+    echo $i
+}
+
+remove_from_sum(){
+    local sum=$1
+    local summand=$2
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    ( while read ref;
+	do
+	if dump_ref $ref |grep -F "ref: $summand";
+	then
+	    #remove it:
+	    git update-ref --no-deref  -d $ref
+	fi
+	done)
+}
+
+add_to_sum()
+{
+    local sum=$1
+    local addend=$2
+    local index=$3
+
+    set -x
+    cecho yellow "adding to sum $sum: $addend, as $index"
+    local ref=refs/sums/$sum/$index
+
+    set_symbolic_reference $ref  "ref: $addend"
+    # git symbolic-ref $ref  "ref: $addend"
+    # $(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
+    #echo $br >> $sum_file
+}
+
+
+
 # print valid/existing components of the sum
 show_prune_definition()
 {
@@ -117,17 +173,6 @@ fi
 name=$1
 shift
 
-delete_sum_definition()
-{
-    # delete all of them:
-    local name=$1
-    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
-    (while read ref;
-	do
-	git update-ref --no-deref  -d $ref
-	done
-    )
-}
 
 
 if [ $delete = y ]; then
@@ -137,48 +182,6 @@ if [ $delete = y ]; then
 fi
 
 
-
-find_new_index(){
-    local name=$1
-    typeset -i i=1
-    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
-    while read ref; do
-	if [ ${ref##*/} -ge $i ]; then
-	    ((i=${ref##*/}+1))
-	fi
-    done
-    echo $i
-}
-
-remove_from_sum(){
-    local sum=$1
-    local summand=$2
-    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
-    ( while read ref;
-	do
-	if dump_ref $ref |grep -F "ref: $summand";
-	then
-	    #remove it:
-	    git update-ref --no-deref  -d $ref
-	fi
-	done)
-}
-
-add_to_sum()
-{
-    local sum=$1
-    local addend=$2
-    local index=$3
-
-    set -x
-    cecho yellow "adding to sum $sum: $addend, as $index"
-    local ref=refs/sums/$sum/$index
-
-    set_symbolic_reference $ref  "ref: $addend"
-    # git symbolic-ref $ref  "ref: $addend"
-    # $(git show-ref $addend | head -n 1| cut -f 2 -d ' ')
-    #echo $br >> $sum_file
-}
 
 
 if [ $reset = "y" ];then
