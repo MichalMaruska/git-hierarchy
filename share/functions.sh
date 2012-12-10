@@ -44,6 +44,14 @@ dump_ref(){
     cat $GIT_DIR/$1
 }
 
+dump_ref_without_ref()
+{
+    a=$(dump_ref $1)
+    a=${a#ref:}
+    a=${a# }
+    a=${a#	}
+    echo $a
+}
 
 # is_nontrivial_sum
 is_sum()
