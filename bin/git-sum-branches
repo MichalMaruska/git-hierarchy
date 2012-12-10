@@ -51,7 +51,16 @@ typeset -a real_branches
 real_branches=()
 
 #foreach br ($branches) {real_branches+=$(dump_ref $br)}
-foreach br ($branches) {real_branches+=$(dump_ref $br) }
+foreach br ($branches) {
+    # local
+    name=${$(dump_ref $br)#ref:}
+    # simplify
+    name=${name# }
+    # tab:
+    name=${name#	}
+    name=${name#refs/heads/}
+    real_branches+=$name
+    }
 echo $real_branches
 
 git-branch-exists $sum_br || git branch $sum_br
