@@ -1,3 +1,23 @@
+git-hierarchy (2.8) release; urgency=low
+
+  * extract drop_symbolic_ref
+  * reformat (moving function upwards)
+  * Fix drop_symbolic_ref ?
+  * use drop_symbolic_ref for   git-sum -
+  * expand-ref ... in right order
+  * dump_ref_without_ref ... read the symbolic ref, and strip off the "ref: "
+  * git-sum-branches: merge the real branches -- solve one level of the sum sym-refs.
+  * merge using git-merge strategies, not shell loop.
+  * list segments with bases
+  * Fix:  use the fixed git-expand-ref.
+  * sum: add the arguments (even without leading +)
+  * Compare (variable value) rather than grep.
+  * Drop commented-out code.
+  * shell
+  * delete: don't search refs which are surely not symbolic.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 10 Dec 2012 23:29:24 +0100
+
 git-hierarchy (2.7) release; urgency=low
 
   * shell formatting
