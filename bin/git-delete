@@ -79,13 +79,11 @@ if is_sum $victim ; then
     cecho yellow "it's a sum"
 fi
 
-
 # A segment?
 if is_segment $victim; then
     cecho yellow "$victim is a segment -> dropping segment references"
-    # fixme:
-    git update-ref -d refs/base/$victim --no-deref
-    #	${$(dump_ref refs/base/$victim)#ref: }
+
+    drop_symbolic_ref refs/base/$victim
     git update-ref -d refs/start/$victim
 fi
 
