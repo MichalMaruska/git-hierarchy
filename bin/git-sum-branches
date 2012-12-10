@@ -44,16 +44,23 @@ typeset -a branches
 
 branches=($(git for-each-ref "refs/sums/$sum_br/" --format "%(refname)"))
 #(${(f)_tmp})
-
 echo $branches
+
+# try to resolve them ourselves:
+typeset -a real_branches
+real_branches=()
+
+#foreach br ($branches) {real_branches+=$(dump_ref $br)}
+foreach br ($branches) {real_branches+=$(dump_ref $br) }
+echo $real_branches
 
 git-branch-exists $sum_br || git branch $sum_br
 
 
 # if exists such branch/tag ->abort
-first=$branches[1]
+first=$real_branches[1]
 
-others=($branches[2,-1])
+others=($real_branches[2,-1])
 
 if [ $reset = "y" ]; then
     eval $cmd git checkout $sum_br
