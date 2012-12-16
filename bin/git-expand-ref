@@ -4,6 +4,14 @@
 # turning the input from user into fully-qualified S.Ref name.
 
 
+try_to_expand()
+{
+    {git show-ref heads/$name || \
+	git show-ref remotes/$name || \
+	git show-ref $name } |\
+       head -n 1|cut -f 2 '-d '
+}
+
 expand_ref()
 {
     name=$1
@@ -19,13 +27,12 @@ expand_ref()
 	tags/*)
 	    name=refs/$name
 	    ;;
-	#*/*)
-	    # name=refs/$name
-	    # ;;
 	*)
-	    name=$(git show-ref heads/$name|head -n 1|cut -f 2 '-d ') || \
-	    name=$(git show-ref remotes/$name|head -n 1|cut -f 2 '-d ') || \
-	    name=$(git show-ref $name|head -n 1|cut -f 2 '-d ')
+	    if false; then
+		name=$(try_to_expand $name)
+	    else
+		name=$(git rev-parse --symbolic-full-name $name)
+	    fi
 	    # name=refs/heads/$name
 	    # prepend refs/
     esac
