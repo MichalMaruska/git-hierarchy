@@ -89,11 +89,17 @@ describe_segment()
 if [ $# = 1 ]; then
     if [ $delete_segment = y ]; then
 
+	echo "use git-delete(1)"
+	exit 1
+
 	describe_segment || true
 
-#  git update-ref -d  refs/base/test "refs/heads/master"
-# removes master!
+        # git update-ref -d  refs/base/test "refs/heads/master"
+        # removes master!
 
+	# funny: bug!
+	drop_symbolic_ref
+	git update-ref -d refs/start/$victim
 	rm -f $GIT_DIR/$baseref || true
 	rm -f $GIT_DIR/$startref || true
 	#git update-ref -d $startref || true
@@ -101,7 +107,7 @@ if [ $# = 1 ]; then
 
 	## necessary?
 	if [ $delete_branch = y ];then
-	    git branch -d $name
+	    git-delete $name
 	fi
     else
     ## `Describe' the (given) segment
