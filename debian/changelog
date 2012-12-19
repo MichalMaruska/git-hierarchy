@@ -1,3 +1,11 @@
+git-hierarchy (2.9) release; urgency=low
+
+  * disable Delete functionality of git-sergment. Use git-delete.
+  * Use the official tool to git-expand-ref. Anyway fix my hack (shell pipeline).
+  * comments & clean
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 19 Dec 2012 22:55:54 +0100
+
 git-hierarchy (2.8) release; urgency=low
 
   * extract drop_symbolic_ref
