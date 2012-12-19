@@ -15,6 +15,7 @@ ${0##*/} [-dC] branch
   Delete the definition, and even the branch itself.
 ${0##*/} [--] branch symbolic-base [current-base]
   Define
+  DWIM: If already exists, change the base. or even current-base.
 EOF
 }
 
@@ -52,7 +53,8 @@ if [ $# = 0 ]; then
         sed -e 's|^refs/base/||' |\
     while read segment;
     do
-	echo -e -n $segment "\t\t"; echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	echo -e -n $segment "\t\t";
+	echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
     done
     if false; then
 	echo
