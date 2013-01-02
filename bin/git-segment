@@ -122,9 +122,21 @@ else
 
     # `update/setup' the segment definition
     from=$2
-
-    # User specified -> official:
     base=$(git-expand-ref $from)
+
+    ##
+    if git-branch-exists $name; then
+	if is_segment $name; then
+	    if [ $# = 2 ]; then
+		cecho yellow "Changing the base to $base"
+		git symbolic-ref $baseref $base
+		exit
+	    fi
+	fi
+    fi
+    #   just move the base !
+    # fi
+    # User specified -> official:
     cecho yellow "so the base is $base"
 
     if [ $# -ge 3 ]; then
