@@ -79,8 +79,7 @@ fi
 if is_segment $victim; then
     cecho yellow "$victim is a segment -> dropping segment references"
 
-    drop_symbolic_ref refs/base/$victim
-    git update-ref -d refs/start/$victim
+    drop_segment $victim
 fi
 
 

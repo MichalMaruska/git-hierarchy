@@ -100,12 +100,7 @@ if [ $# = 1 ]; then
         # removes master!
 
 	# funny: bug!
-	drop_symbolic_ref
-	git update-ref -d refs/start/$victim
-	rm -f $GIT_DIR/$baseref || true
-	rm -f $GIT_DIR/$startref || true
-	#git update-ref -d $startref || true
-	#git update-ref -d $baseref || true
+	drop_segment $victim
 
 	## necessary?
 	if [ $delete_branch = y ];then

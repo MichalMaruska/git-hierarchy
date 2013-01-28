@@ -66,6 +66,17 @@ is_segment()
     git show-ref refs/base/$1 >/dev/null;
 }
 
+drop_segment()
+{
+    drop_symbolic_ref refs/base/$victim
+    git update-ref -d refs/start/$victim
+
+    #rm -f $GIT_DIR/$baseref || true
+    #rm -f $GIT_DIR/$startref || true
+    #git update-ref -d $startref || true
+    #git update-ref -d $baseref || true
+}
+
 segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
