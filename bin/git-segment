@@ -3,17 +3,19 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+PROGRAM=${0##*/}
+
 usage()
 {
     cat <<EOF
 usage:
-${0##*/} [+-h]
+$PROGRAM [+-h]
   List the segments
-${0##*/} [--] branch
+$PROGRAM [--] branch
   Show the definition
-${0##*/} [-dC] branch
+$PROGRAM [-dC] branch
   Delete the definition, and even the branch itself.
-${0##*/} [--] branch symbolic-base [current-base]
+$PROGRAM [--] branch symbolic-base [current-base]
   Define
   DWIM: If already exists, change the base. or even current-base.
 EOF
