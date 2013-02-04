@@ -77,6 +77,18 @@ drop_segment()
     #git update-ref -d $baseref || true
 }
 
+delete_sum_definition()
+{
+    # delete all of them:
+    local name=$1
+    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
+    (while read ref;
+	do
+	drop_symbolic_ref $ref
+	done
+    )
+}
+
 segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!

@@ -73,12 +73,12 @@ foreach ref ($(git for-each-ref --format="%(refname)" \
 # is it a sum itself?
 if is_sum $victim ; then
     cecho yellow "it's a sum"
+    drop_sum $victim
 fi
 
 # A segment?
 if is_segment $victim; then
     cecho yellow "$victim is a segment -> dropping segment references"
-
     drop_segment $victim
 fi
 

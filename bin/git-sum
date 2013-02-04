@@ -29,18 +29,6 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
 
-delete_sum_definition()
-{
-    # delete all of them:
-    local name=$1
-    git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
-    (while read ref;
-	do
-	drop_symbolic_ref $ref
-	done
-    )
-}
-
 find_new_index(){
     local name=$1
     typeset -i i=1
