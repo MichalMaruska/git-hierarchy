@@ -1,3 +1,11 @@
+git-hierarchy (2.10) release; urgency=low
+
+  * Move segment base.
+  * drop_segment function
+  * separate delete sum & integrate into git-delete
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 04 Feb 2013 10:21:01 +0100
+
 git-hierarchy (2.9) release; urgency=low
 
   * disable Delete functionality of git-sergment. Use git-delete.
