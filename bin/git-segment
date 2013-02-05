@@ -9,8 +9,8 @@ usage()
 {
     cat <<EOF
 usage:
-$PROGRAM [+-h]
-  List the segments
+$PROGRAM [+-s]
+  List the segments, short-format
 $PROGRAM [--] branch
   Show the definition
 $PROGRAM [-dC] branch
@@ -24,13 +24,16 @@ EOF
 
 delete_segment=n
 delete_branch=n
+short_list=n
 
-
-while getopts :hdD OPT; do
+while getopts :hsdD OPT; do
     case $OPT in
 	h|+h)
 	    usage
 	    exit 0
+	    ;;
+	s)
+	    short_list=y
 	    ;;
 	d)
 	    delete_segment=y
@@ -55,8 +58,13 @@ if [ $# = 0 ]; then
         sed -e 's|^refs/base/||' |\
     while read segment;
     do
-	echo -e -n $segment "\t\t";
-	echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	echo -e -n $segment
+	if [ $short_list = n ]; then
+	    echo -en "\t\t";
+	    echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	else
+	    echo
+	fi
     done
     if false; then
 	echo
