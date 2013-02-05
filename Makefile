@@ -8,7 +8,7 @@ ZSH_COMPLETION_DIR=/usr/share/zsh/site-functions/Completion/
 
 BINFILES=$(wildcard bin/*)
 
-COMPLETION_FILES=$(wildcard zsh/{_git-segment,_git-sum})
+COMPLETION_FILES= zsh/_git-segment zsh/_git-sum
 
 all:
 	@echo "No compilation"
@@ -30,7 +30,7 @@ install: install-zsh all
 install-zsh:
 	$(INSTALL) -v -D --directory $(DESTDIR)$(ZSH_COMPLETION_DIR)
 	for p in $(COMPLETION_FILES); do \
-	  $(INSTALL) -v -m 555 $$p $(DESTDIR)$(ZSH_COMPLETION_DIR) ; \
+	  $(INSTALL) -v -m 444 $$p $(DESTDIR)$(ZSH_COMPLETION_DIR) ; \
 	done
 
 
