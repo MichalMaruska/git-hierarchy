@@ -1,0 +1,52 @@
+#compdef git-sum
+
+# :completion::complete:git-segment:argument-1:git-branches
+_segment_name()
+{
+    typeset -a available
+    # todo: must be silent if not in a git dir.
+    available=( $(git-segment -s) )
+    compadd -- ${(k)available} && ret=0
+    # _arguments "1:Segments:($available)"
+}
+
+
+
+
+# _arguments "1: :(World)"
+
+_sum_name()
+{
+    typeset -a available
+    # todo: must be silent if not in a git dir.
+    available=( $(git-sum) )
+    compadd -- ${(k)available} && ret=0
+    # _arguments "1:Segments:($available)"
+}
+
+
+
+_sum() {
+    # fixme: necessara?
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	'-h[help]'  \
+	'-d[Sum to drop]:sum:_sum' \
+	'1: :->sum' \
+	'*: :->segment_name' && return 0
+
+    case $state in
+	sum)
+	    _sum_name
+	    ;;
+	segment_name)
+	    _segment_name
+	    # _arguments "1:Segments:($available)"
+	    ;;
+    esac
+}
+
+
+_sum "$@"

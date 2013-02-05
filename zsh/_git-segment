@@ -1,0 +1,52 @@
+#compdef git-segment
+
+# :completion::complete:git-segment:argument-1:git-branches
+
+
+# _arguments "1: :(World)"
+
+_segment()
+{
+    typeset -a available
+    # todo: must be silent if not in a git dir.
+    available=( $(git-segment -s) )
+    compadd -- ${(k)available} && ret=0
+    # _arguments "1:Segments:($available)"
+}
+
+_hello() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	'-h[help]'  \
+	'-s[short]'  \
+	'-d[Segment to drop]:segment:_segment' \
+	'*: :->segment_name' && return 0
+
+    case $state in
+	segment_name)
+	    _segment
+	    # _arguments "1:Segments:($available)"
+	    ;;
+	*)
+	    # as a start ... ?
+	    # as a base ... any branch -- segments & sums prefered.
+	    case $words[2] in
+		France)
+		    compadd "$@" Paris Lyon Marseille
+		    ;;
+		Germany)
+		    compadd "$@" Berlin Munich Dresden
+		    ;;
+		Italy)
+		    compadd "$@" Rome Napoli Palermo
+		    ;;
+		*)
+		    _files
+	    esac
+    esac
+}
+
+
+_hello "$@"
