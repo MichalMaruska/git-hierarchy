@@ -1,34 +1,5 @@
 #compdef git-sum
 
-# :completion::complete:git-segment:argument-1:git-branches
-_segment_name()
-{
-    typeset -a AVAILABLE
-    # todo: must be silent if not in a git dir.
-    AVAILABLE=( $(git-segment -s) )
-    compadd -a AVAILABLE && ret=0
-
-    # ${(k) ... keys of associative array.
-    # compadd -- ${(k)available} && ret=0
-    # _arguments "1:Segments:($available)"
-}
-
-
-
-
-# _arguments "1: :(World)"
-
-_sum_name()
-{
-    typeset -a available
-    # todo: must be silent if not in a git dir.
-    available=( $(git-sum) )
-    compadd -- ${(k)available} && ret=0
-    # _arguments "1:Segments:($available)"
-}
-
-
-
 _sum() {
     # fixme: necessara?
     local curcontext="$curcontext" state line
@@ -36,16 +7,16 @@ _sum() {
 
     _arguments : \
 	'-h[help]'  \
-	'-d[Sum to drop]:sum:_sum' \
+	'-d[Sum to drop]:sum:_git-sum-name' \
 	'1: :->sum' \
-	'*: :->segment_name' && return 0
+	'*: :->git_segment_name' && return 0
 
     case $state in
 	sum)
-	    _sum_name
+	    _git-sum-name
 	    ;;
-	segment_name)
-	    _segment_name
+	git_segment_name)
+	    _git-segment-name
 	    # _arguments "1:Segments:($available)"
 	    ;;
     esac

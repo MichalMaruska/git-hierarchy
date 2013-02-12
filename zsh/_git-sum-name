@@ -1,11 +1,8 @@
 #autoload
 
-#_sum_name()
-#{
 typeset -a available
     # todo: must be silent if not in a git dir.
 available=( $(git-sum) )
 compadd -- ${(k)available} && ret=0
     # _arguments "1:Segments:($available)"
-#}
 
