@@ -8,7 +8,7 @@ ZSH_COMPLETION_DIR=/usr/share/zsh/site-functions/Completion/
 
 BINFILES=$(wildcard bin/*)
 
-COMPLETION_FILES= zsh/_git-segment zsh/_git-sum zsh/_git-delete
+COMPLETION_FILES= zsh/_git-segment zsh/_git-sum zsh/_git-delete zsh/_git-segment-name
 
 all:
 	@echo "No compilation"
