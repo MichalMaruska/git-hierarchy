@@ -36,7 +36,8 @@ base="refs/base/$branch"
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
 then
-    git-set-start $start $base
+    # todo: git-segment $branch $base
+    git-set-start $branch $base
 else
     echo "$branch" > $GIT_DIR/.rebasing-segment
     cecho red "** ERROR: Rebase failed."

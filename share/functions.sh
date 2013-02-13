@@ -96,6 +96,20 @@ segment_base()
     dump_ref /refs/base/$1 | sed -e 's/ref:\s//'
 }
 
+# name commit
+git-set-start()
+{
+    local segment=$1
+    local start="refs/start/$segment"
+# set the reference to the SHA of the Commit.
+# sort of git-tag, but...
+
+    local commit=$2
+    local sha=$(git rev-list  --max-count=1 $commit)
+
+    git update-ref $start $sha
+}
+
 
 set_symbolic_reference()
 {

@@ -9,10 +9,10 @@ mark=$GIT_DIR/.rebasing-segment
 branch=$1
 
 # not needed "ref/
-start="refs/start/$branch"
 base="refs/base/$branch"
 
-git-set-start $start $base
+# todo: use git-segment....
+git-set-start $branch $base
 
 if [ -e $mark -a \
      $branch = $(cat $mark) ]; then
