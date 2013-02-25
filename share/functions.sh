@@ -2,6 +2,13 @@
 
 # todo: enforce ZSH!
 
+die()
+{
+    echo $@ >&2
+    exit -1;
+}
+
+
 git_dir()
 {
     echo $(git rev-parse --show-toplevel)/.git

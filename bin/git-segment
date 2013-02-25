@@ -5,19 +5,24 @@ GIT_DIR=$(git_dir)
 
 PROGRAM=${0##*/}
 
+
 usage()
 {
     cat <<EOF
 usage:
 $PROGRAM [+-s]
-  List the segments, short-format
-$PROGRAM [--] branch
-  Show the definition
-$PROGRAM [-dC] branch
+  List the segments, (-s short-format)
+$PROGRAM [--] name
+  Show the definition & dump the commits/history
+$PROGRAM [-d] name
   Delete the definition, and even the branch itself.
-$PROGRAM [--] branch symbolic-base [current-base]
-  Define
-  DWIM: If already exists, change the base. or even current-base.
+
+$PROGRAM [-u] branch symbolic-base current-base
+  update or define
+$PROGRAM [--] branch symbolic-base
+  (If already exists,) change the base.
+$PROGRAM -r branch commit
+  set the start to commit.
 EOF
 }
 
@@ -48,7 +53,9 @@ delete_segment=n
 delete_branch=n
 short_list=n
 
-while getopts :hsdD OPT; do
+update=n
+restart=n
+while getopts :hsdDur OPT; do
     case $OPT in
 	h|+h)
 	    usage
@@ -64,8 +71,15 @@ while getopts :hsdD OPT; do
 	    delete_segment=y
 	    delete_branch=y
 	    ;;
+	u)
+	    update=y
+	    ;;
+	r)
+	    restart=y
+	    # new_start=$OPTARG
+	    ;;
 	*)
-	    print "usage: ${0##*/} [+-h} [--] ARGS..."
+	    usage
 	    exit 2
     esac
 done
@@ -130,44 +144,76 @@ if [ $# = 1 ]; then
 	describe_segment $name
     fi
 else
+    # 4 options
+    # 1/ defining (not updating)
+    # 2/    possibly start=base
 
-    # `update/setup' the segment definition
-    from=$2
-    base=$(git-expand-ref $from)
+    # 3/ update  start
+    # 4/         base  or both!
 
-    ##
-    if git-branch-exists $name; then
-	if is_segment $name; then
-	    if [ $# = 2 ]; then
-		cecho yellow "Changing the base to $base"
-		git symbolic-ref $baseref $base
-		exit
+    # we have: new_start, new_base
+
+    if [ $# = 2 ]; then
+    # moving the `base'
+	if [ $restart = y ]; then
+	    new_start=$2
+	    start_hash=$(git log $new_start --max-count=1 --format="%H")
+	else
+	    new_base=$2
+
+	    if [ $update = n ]; then
+		# default:
+		start_hash=$(git log $new_base --max-count=1 --format="%H")
 	    fi
 	fi
-    fi
-    #   just move the base !
-    # fi
-    # User specified -> official:
-    cecho yellow "so the base is $base"
-
-    if [ $# -ge 3 ]; then
-	# fixme: check that it's an ancestor.
-	start_hash=$(git log $3 --max-count=1 --format="%H")
     else
-	start_hash=$(git show-ref --hash $base)
+	new_base=$2
+	# only in this case, there is this variable:
+	start=$3
+        # fixme: check that it's an ancestor (of segment's head)
+	start_hash=$(git log $start --max-count=1 --format="%H")
     fi
-    cecho yellow "so the start is $start_hash"
-    # git show $start_hash
 
-    # branch_exists $name
-    git-branch-exists $name || git branch $name $start_hash
+    # note: that $start_hash is always defined, unless:   update & not restart
+    # so the use of $start_hash below is correct:
+
+    # Ensure it exists:
+    if [ $update = y ]; then
+	# check it exists
+	if ! is_segment $name; then
+	    die "unknown segment $name"
+	fi
+    else
+	git-branch-exists $name || git branch $name $start_hash
+
+	if is_segment $name; then
+	    die "segment already exists: $name"
+	fi
+    fi
+
+
+    echo "new: base: ${new_base-} start: ${new_start-}"
+
+    # `update/setup' the segment definition
+    # fixme: remove ""
+    if [ -n "${new_base-}" ]; then
+	new_base=$(git-expand-ref $new_base)
+	cecho yellow "so the base is ${new_base-}"
+
+	cecho yellow "Changing the base to $new_base"
+	git symbolic-ref $baseref $new_base
+	exit
+    fi
+
+
+    # User specified -> official:
+    if [ -n "${start_hash-}" ]; then
+	cecho yellow "so the start is $start_hash"
+	git-set-start $startref $start_hash
+    fi
 
 
     #mkdir -p $(dirname $basefile) $(dirname $startfile)
-# canonize:
+    # canonize:
     #echo $start_hash > $startfile
-    git-set-start $startref $start_hash
-
-    #echo "ref: $base" > $basefile
-    git symbolic-ref $baseref $base
 fi
