@@ -1,3 +1,9 @@
+git-hierarchy (2.11.1) release; urgency=low
+
+  * [FIX] drop now useless exit()
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 25 Feb 2013 17:54:42 +0100
+
 git-hierarchy (2.11) release; urgency=low
 
   * expand $0 before calling usage() function. Strange
