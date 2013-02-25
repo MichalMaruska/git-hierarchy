@@ -67,7 +67,7 @@ while read symref; do
     if dump_ref $symref|\
        grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
     then
-	set_symbolic_reference $symref $full_new
+       set_symbolic_reference $symref "ref: $full_new"
     fi
 done
 
