@@ -21,6 +21,28 @@ $PROGRAM [--] branch symbolic-base [current-base]
 EOF
 }
 
+describe_segment()
+{
+    local name=$1
+    local baseref=refs/base/$name
+    local startref=refs/start/$name
+    #$baseref
+
+    # fixme: how to avoid dereferencing?
+    # git show-ref $startref
+
+    local base=$(dump_ref $baseref |\
+           sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
+    cecho green $base
+
+    git show-ref --hash $startref
+
+    # how many commits there?
+    local count=$(git log --oneline $startref..heads/$name |wc --lines)
+    echo $count commits:
+    git log --oneline $startref..heads/$name
+}
+
 
 delete_segment=n
 delete_branch=n
@@ -80,27 +102,6 @@ baseref=refs/base/$name
 startref=refs/start/$name
 
 
-describe_segment()
-{
-    local name=$1
-    local baseref=refs/base/$name
-    local startref=refs/start/$name
-    #$baseref
-
-    # fixme: how to avoid dereferencing?
-    # git show-ref $startref
-
-    local base=$(dump_ref $baseref |\
-           sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
-    cecho green $base
-
-    git show-ref --hash $startref
-
-    # how many commits there?
-    local count=$(git log --oneline $startref..heads/$name |wc --lines)
-    echo $count commits:
-    git log --oneline $startref..heads/$name
-}
 
 
 if [ $# = 1 ]; then
@@ -109,7 +110,7 @@ if [ $# = 1 ]; then
 	echo "use git-delete(1)"
 	exit 1
 
-	describe_segment || true
+	describe_segment $name|| true
 
         # git update-ref -d  refs/base/test "refs/heads/master"
         # removes master!
@@ -126,7 +127,7 @@ if [ $# = 1 ]; then
     # cat $basefile
     # could be hash
     # or ref - tag or head.
-	describe_segment
+	describe_segment $name
     fi
 else
 
