@@ -202,7 +202,6 @@ else
 
 	cecho yellow "Changing the base to $new_base"
 	git symbolic-ref $baseref $new_base
-	exit
     fi
 
 
