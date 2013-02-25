@@ -9,7 +9,12 @@ GIT_DIR=$(git_dir)
 # this renames only branches!
 
 full_from=$(git-expand-ref $from)
+# fixme!
+# or refs/heads/$from
+
+# fixme! it might not exist yet!
 full_new=$(git-expand-ref $new)
+# $new
 
 from=${full_from#refs/heads/}
 new=${full_new#refs/heads/}
@@ -21,7 +26,7 @@ new=${full_new#refs/heads/}
 # replace....
 echo renaming $from to $new
 
-git branch -m $from $new
+git branch -m $from $new || true
 # todo: trap
 
 
@@ -62,6 +67,8 @@ fi
 
 
 # as the destination of a symref.
+full_new=$(git-expand-ref $new)
+
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
 while read symref; do
     if dump_ref $symref|\
