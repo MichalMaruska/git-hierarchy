@@ -1,3 +1,13 @@
+git-hierarchy (2.12) release; urgency=low
+
+  * Zsh completion for git-reset-segment & Install _all_ the zsh files
+  * provide DOC (description) for the zsh completion files
+  * Debian: install Zsh files under vendor (not site-)
+  * (git-)Delete from sum automatically by default.
+  * comments
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 08 Mar 2013 00:11:12 +0100
+
 git-hierarchy (2.11.1) release; urgency=low
 
   * [FIX] drop now useless exit()
