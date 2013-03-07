@@ -1,4 +1,5 @@
 #compdef git-segment
+#description manage Segments of a git-hierarchy
 # :completion::complete:git-segment:argument-1:git-branches
 
 

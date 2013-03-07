@@ -1,4 +1,5 @@
 #compdef git-delete
+#description delete from a git-hierarchy
 
 # I need this as I invoke other _functions:
 local curcontext="$curcontext" state line

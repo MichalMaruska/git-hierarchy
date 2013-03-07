@@ -1,4 +1,5 @@
 #compdef git-sum
+#description manage Sums of a git-hierarchy
 
 _sum() {
     # fixme: necessara?
