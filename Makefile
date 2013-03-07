@@ -4,7 +4,7 @@ INSTALL=install
 BIN_INSTALL_DIR = /usr/bin
 SHARED_INSTALL_DIR = /usr/share/git-hierarchy/
 
-ZSH_COMPLETION_DIR=/usr/share/zsh/site-functions/Completion/
+ZSH_COMPLETION_DIR=/usr/share/zsh/vendor-completions/
 
 BINFILES=$(wildcard bin/*)
 
