@@ -1,0 +1,6 @@
+#compdef git-reset-segment
+#description reset git-rebase state & reset the start to base (of a Segment)
+
+
+_git-segment-name
+
