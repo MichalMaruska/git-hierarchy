@@ -6,7 +6,7 @@ usage()
 Usage: ${0##*/} [+-h] [-s] [--] ARGS...
 
 Delete a branch, and any mention of it  -- symbolic references.
--s  ... drop from sums automatically.
+-s  ... prevent dropping summands.
 -D  ... option to delete the branch. (git branch -D vs -d)
 EOF
 }
@@ -14,7 +14,7 @@ EOF
 source /usr/share/git-hierarchy/functions.sh
 
 GIT_DIR=$(git_dir)
-delete_from_sum=no
+delete_from_sum=yes
 
 git_branch_delete_option="-d"
 
@@ -25,7 +25,7 @@ while getopts :hsD OPT; do
 	    exit 0
 	    ;;
 	s)
-	    delete_from_sum=yes
+	    delete_from_sum=no
 	    ;;
 	D)
 	    git_branch_delete_option="-D"
