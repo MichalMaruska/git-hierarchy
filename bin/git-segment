@@ -88,7 +88,7 @@ OPTIND=1
 
 
 
-## `list' all segments:
+## `list' all segments, and the Bases.
 if [ $# = 0 ]; then
     git for-each-ref 'refs/base/' --format "%(refname)" |\
         sed -e 's|^refs/base/||' |\
@@ -102,6 +102,9 @@ if [ $# = 0 ]; then
 	    echo
 	fi
     done
+
+
+    # Dump the starts?
     if false; then
 	echo
 	git for-each-ref 'refs/start/' --format "%(refname)" |\
@@ -111,6 +114,7 @@ if [ $# = 0 ]; then
 fi
 
 
+# Otherwise a specific segment:
 name=$1
 baseref=refs/base/$name
 startref=refs/start/$name
