@@ -117,7 +117,6 @@ fi
 # Otherwise a specific segment:
 name=$1
 baseref=refs/base/$name
-startref=refs/start/$name
 
 
 
@@ -212,7 +211,7 @@ else
     # User specified -> official:
     if [ -n "${start_hash-}" ]; then
 	cecho yellow "so the start is $start_hash"
-	git-set-start $startref $start_hash
+	git-set-start $name $start_hash
     fi
 
 
