@@ -1,4 +1,23 @@
 #! /usr/bin/zsh -fue
+usage()
+{
+    # print "usage: ${0##*/} [+-h} [--] ARGS..."
+    echo ""
+}
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    usage >&2
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 from=$1
 new=$2
