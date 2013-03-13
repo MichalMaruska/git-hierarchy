@@ -32,7 +32,8 @@ full_from=$(git-expand-ref $from)
 # or refs/heads/$from
 
 # fixme! it might not exist yet!
-full_new=$(git-expand-ref $new)
+full_new=$new
+# $(git-expand-ref $new)
 # $new
 
 from=${full_from#refs/heads/}
