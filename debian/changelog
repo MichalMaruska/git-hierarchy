@@ -1,3 +1,11 @@
+git-hierarchy (2.12.1) release; urgency=low
+
+  * [fix] git-set-start takes the segment name, not the start-ref name.
+  * usage for git-rename
+  * git-rename: don't try to expand the New name.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 13 Mar 2013 09:30:38 +0100
+
 git-hierarchy (2.12) release; urgency=low
 
   * Zsh completion for git-reset-segment & Install _all_ the zsh files
