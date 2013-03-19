@@ -1,0 +1,76 @@
+#! /usr/bin/zsh -feu
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+# segment_base ${segment#refs/base/}
+
+
+# sum_bases()
+
+
+root=$(git-expand-ref $1)
+
+typeset -a nodes
+nodes=($root)
+
+GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
+
+typeset -a processed
+while [[ ${#nodes} -ge 1  ]];
+do
+
+    this=${nodes[1]}
+    processed=($this)
+    # take the first, and append the base(s)
+    # also remove "first" if it's repeated.
+    nodes=(${nodes:|processed})
+
+    cecho yellow "processing $this, remain $nodes ${#nodes}" >&2
+
+    name=${this#refs/heads/}
+    if is_sum $name; then
+	dependants=($(summands_of $name))
+    elif is_segment $name; then
+	dependants=($(segment_base $name))
+    else
+	cecho red "stopping @ $name" >&2
+	dependants=()
+    fi
+
+    # output the dependency:
+    foreach dep ($dependants)
+    {
+	echo "$this $dep"
+    } >> $GRAPH
+    nodes+=($dependants)
+
+    cecho green "iterate $nodes -- ${#nodes}" >&2
+done
+
+display=y
+
+
+
+echo $GRAPH
+cat $GRAPH
+
+if [ $display = y ]; then
+    set -x
+    sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
+	$GRAPH |\
+    draw-tsort-graph -F png | display -
+    #dot -Tpng  $GRAPH
+    #rm $GRAPH
+elif [ $just_graph = y ]; then
+    # sort:
+
+    # while read
+    for  a in $(tsort $GRAPH)
+    do
+	cecho green $a
+	grep -e "^$a" $GRAPH || true
+    done
+else
+    tsort $GRAPH | tac
+fi
