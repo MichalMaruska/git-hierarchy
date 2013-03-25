@@ -1,6 +1,6 @@
 #! /usr/bin/zsh -feu
 
-# outputs duplicates.
+# outputs duplicates. -- fixed in `git-walk-down'
 
 # usage $0 <reference>
 #   reference is either sum or segment.

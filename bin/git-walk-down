@@ -5,8 +5,42 @@ GIT_DIR=$(git_dir)
 
 # segment_base ${segment#refs/base/}
 
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-xgh} [--] ARGS...
+
+by default linear order (out of the tsort)
+-x  display the graph
+-g  dump the graph
+
+EOF
+}
 
 # sum_bases()
+display=n
+just_graph=n
+
+while getopts :xgh OPT; do
+    case $OPT in
+	x|+x)
+	    display=y
+	    ;;
+	g|+g)
+	    just_graph=y
+	    ;;
+	h|+h)
+	    usage()
+	    exit
+	    ;;
+	*)
+	    usage()
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
 
 
 root=$(git-expand-ref $1)
@@ -48,15 +82,14 @@ do
     cecho green "iterate $nodes -- ${#nodes}" >&2
 done
 
-display=y
 
 
 
-echo $GRAPH
-cat $GRAPH
+# echo $GRAPH
+# cat $GRAPH
 
 if [ $display = y ]; then
-    set -x
+    #set -x
     sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
 	$GRAPH |\
     draw-tsort-graph -F png | display -
