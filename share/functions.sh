@@ -36,7 +36,7 @@ summands_of()
     ( while read summand;
 	do
 	# echo $summand >&2
-	dump_ref $summand |sed -e 's/^ref:\s//';
+	dump_ref $summand |sed -e 's/^ref:\s\+//';
 	done)
 }
 

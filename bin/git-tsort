@@ -85,7 +85,8 @@ fi
 
 if [ $display = y ]; then
     set -x
-    sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' $GRAPH |\
+    sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
+	$GRAPH |\
     draw-tsort-graph -F png | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
