@@ -1,3 +1,13 @@
+git-hierarchy (2.13) release; urgency=low
+
+  * New tool: git-walk-down a local git-tgraph.
+  * New: git-walk-down
+  * rebase only less-than part
+  * irrelevant
+  * git-delete: handle more at a time (on cmdline)
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 28 Mar 2013 10:19:22 +0100
+
 git-hierarchy (2.12.1) release; urgency=low
 
   * [fix] git-set-start takes the segment name, not the start-ref name.
