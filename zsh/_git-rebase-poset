@@ -1,0 +1,6 @@
+#compdef git-rebase-poset
+#description rebase ....
+
+
+_git-segment-name
+
