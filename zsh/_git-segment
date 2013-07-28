@@ -21,19 +21,6 @@ _git-segment1() {
 	*)
 	    # as a start ... ?
 	    # as a base ... any branch -- segments & sums prefered.
-	    case $words[2] in
-		France)
-		    compadd "$@" Paris Lyon Marseille
-		    ;;
-		Germany)
-		    compadd "$@" Berlin Munich Dresden
-		    ;;
-		Italy)
-		    compadd "$@" Rome Napoli Palermo
-		    ;;
-		*)
-		    _files
-	    esac
     esac
 }
 
