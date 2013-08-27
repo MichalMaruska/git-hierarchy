@@ -57,6 +57,21 @@ describe_segment()
     git log --oneline $startref..heads/$name
 }
 
+list_segments(){
+    # todo short_list as parameter?
+    git for-each-ref 'refs/base/' --format "%(refname)" |\
+        sed -e 's|^refs/base/||' |\
+    while read segment;
+    do
+	echo -e -n $segment
+	if [ $short_list = n ]; then
+	    echo -en "\t\t";
+	    echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	else
+	    echo
+	fi
+    done
+}
 
 delete_segment=n
 delete_branch=n
@@ -105,19 +120,7 @@ set -- $cmd_options
 
 ## `list' all segments, and the Bases.
 if [ $# = 0 ]; then
-    git for-each-ref 'refs/base/' --format "%(refname)" |\
-        sed -e 's|^refs/base/||' |\
-    while read segment;
-    do
-	echo -e -n $segment
-	if [ $short_list = n ]; then
-	    echo -en "\t\t";
-	    echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
-	else
-	    echo
-	fi
-    done
-
+    list_segments
 
     # Dump the starts?
     if false; then
