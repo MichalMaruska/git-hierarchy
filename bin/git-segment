@@ -222,15 +222,9 @@ else
 	git symbolic-ref $baseref $new_base
     fi
 
-
     # User specified -> official:
     if [ -n "${start_hash-}" ]; then
 	cecho yellow "so the start is $start_hash"
 	git-set-start $name $start_hash
     fi
-
-
-    #mkdir -p $(dirname $basefile) $(dirname $startfile)
-    # canonize:
-    #echo $start_hash > $startfile
 fi
