@@ -135,7 +135,7 @@ fi
 # Otherwise a specific segment:
 name=$1
 baseref=refs/base/$name
-
+# echo "the segment name is $name"
 
 if [ $# = 1 ]; then
     if [ $delete_segment = y ]; then
@@ -216,13 +216,13 @@ else
 	fi
     fi
 
-    echo "new: base: ${new_base-} start: ${new_start-}"
+    # echo "new: base: ${new_base-} start: ${new_start-}"
 
     # `update/setup' the segment definition
     # fixme: remove ""
     if [ -n "${new_base-}" ]; then
 	new_base=$(git-expand-ref $new_base)
-	cecho yellow "so the base is ${new_base-}"
+	# cecho yellow "so the base is ${new_base-}"
 
 	cecho yellow "Changing the base to $new_base"
 	git symbolic-ref $baseref $new_base
@@ -230,7 +230,7 @@ else
 
     # User specified -> official:
     if [ -n "${start_hash-}" ]; then
-	cecho yellow "so the start is $start_hash"
+	cecho yellow "pushing the start to $start_hash"
 	git-set-start $name $start_hash
     fi
 fi
