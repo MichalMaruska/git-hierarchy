@@ -3,6 +3,11 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+if getopt -T; then # should test (( $? = -4 ))
+    echo "incompatible  getopt(1) installed. Abort"
+    exit -1
+fi
+
 PROGRAM=${0##*/}
 
 
@@ -55,36 +60,42 @@ short_list=n
 
 update=n
 restart=n
-while getopts :hsdDur OPT; do
-    case $OPT in
-	h|+h)
+
+typeset -a cmd_options
+cmd_options=( $(getopt --name $0 --shell bash \
+	--longoptions help,short,delete,prune,update:,restart \
+        --options     hsdDur \
+	-- "$@" )) || { usage && exit 1 }
+
+while (( ${#cmd_options} > 0 )); do
+    case $cmd_options[1] in
+	-h | --help)
 	    usage
 	    exit 0
 	    ;;
-	s)
+	-s | --short)
 	    short_list=y
 	    ;;
-	d)
+	-d | --delete)
 	    delete_segment=y
 	    ;;
-	D)
+	-D | --prune )
 	    delete_segment=y
 	    delete_branch=y
 	    ;;
-	u)
+	-u | --update)
 	    update=y
 	    ;;
-	r)
+	-r | --restart)
 	    restart=y
 	    # new_start=$OPTARG
 	    ;;
-	*)
-	    usage
-	    exit 2
     esac
+    shift cmd_options
 done
-shift OPTIND-1
-OPTIND=1
+
+# set the positional params
+set -- $cmd_options
 
 
 
