@@ -80,14 +80,14 @@ short_list=n
 update=n
 restart=n
 
-typeset -a cmd_options
-cmd_options=( $(getopt --name $0 --shell bash \
+cmd_options=$(getopt --name $0 --shell bash \
 	--longoptions help,short,delete,prune,update:,restart \
         --options     hsdDur \
-	-- "$@" )) || { usage && exit 1 }
+	-- "$@") || { usage && exit 1 }
 
-while (( ${#cmd_options} > 0 )); do
-    case $cmd_options[1] in
+eval set -- "$cmd_options"
+while (( $# > 0 )); do
+    case $1 in
 	-h | --help)
 	    usage
 	    exit 0
@@ -109,12 +109,13 @@ while (( ${#cmd_options} > 0 )); do
 	    restart=y
 	    # new_start=$OPTARG
 	    ;;
+	--)
+	    shift
+	    break
+	;;
     esac
-    shift cmd_options
+    shift
 done
-
-# set the positional params
-set -- $cmd_options
 
 
 ## `list' all segments, and the Bases.
