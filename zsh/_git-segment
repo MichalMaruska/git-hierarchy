@@ -10,8 +10,14 @@ _git-segment1() {
     _arguments : \
 	'-h[help]'  \
 	'-s[short]'  \
-	'-d[Segment to drop]:segment:git_segment_name' \
+	'-d[Segment to drop]:segment:_git-segment-name' \
+	'-u[update]:segment:_git-segment-name' \
+	'-r[restart]:segment:_git-segment-name' \
 	'*: :->git_segment_name' && return 0
+
+    # I need to complete the base or start!
+    # base ... from git branches
+    # start
 
     case $state in
 	git_segment_name)
