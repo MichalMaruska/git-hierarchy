@@ -154,25 +154,31 @@ if [ $# = 1 ]; then
 
 	exit $?
 
+        # git update-ref -d  refs/base/test "refs/heads/master"
+        # removes master!
     else
     ## `Describe' the (given) segment
     # cat $basefile
     # could be hash
     # or ref - tag or head.
 	describe_segment $name
+	exit 0
     fi
 else
-    # 4 options
-    # 1/ defining (not updating)
-    # 2/    possibly start=base
+    # 4 options:
 
-    # 3/ update  start
-    # 4/         base  or both!
+    # 1/ defining (not updating) -- so it does not exist!
+
+    # 2/          possibly start=base
+
+    # 3/ update start
+    # 4/        base  or both!
 
     # we have: new_start, new_base
 
-    if [ $# = 2 ]; then
-    # moving the `base'
+    if [ $# = 2 ];
+    then
+        # moving the `base' or `start'
 	if [ $restart = y ]; then
 	    new_start=$2
 	    start_hash=$(git log $new_start --max-count=1 --format="%H")
@@ -180,7 +186,8 @@ else
 	    new_base=$2
 
 	    if [ $update = n ]; then
-		# default:
+		# in this case ... we create ... we have to provide the
+		# start, so default is the trivial segment (base = start):
 		start_hash=$(git log $new_base --max-count=1 --format="%H")
 	    fi
 	fi
@@ -192,8 +199,9 @@ else
 	start_hash=$(git log $start --max-count=1 --format="%H")
     fi
 
-    # note: that $start_hash is always defined, unless:   update & not restart
-    # so the use of $start_hash below is correct:
+    # by now we determined the necessary base / start.
+    # iow. $start_hash is always defined, unless: _update_ & not restart
+    # and $base unless update & restart.
 
     # Ensure it exists:
     if [ $update = y ]; then
@@ -202,13 +210,13 @@ else
 	    die "unknown segment $name"
 	fi
     else
+	# no update -> start is defined:
 	git-branch-exists $name || git branch $name $start_hash
-
+	# doing in this order intentionally?
 	if is_segment $name; then
 	    die "segment already exists: $name"
 	fi
     fi
-
 
     echo "new: base: ${new_base-} start: ${new_start-}"
 
