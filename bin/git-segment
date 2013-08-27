@@ -142,21 +142,18 @@ baseref=refs/base/$name
 if [ $# = 1 ]; then
     if [ $delete_segment = y ]; then
 
-	echo "use git-delete(1)"
-	exit 1
-
-	describe_segment $name|| true
-
-        # git update-ref -d  refs/base/test "refs/heads/master"
-        # removes master!
+	# fixme:
+	describe_segment $1|| true
 
 	# funny: bug!
-	drop_segment $victim
+	drop_segment $1
 
-	## necessary?
 	if [ $delete_branch = y ];then
-	    git-delete $name
+	    git-delete $1
 	fi
+
+	exit $?
+
     else
     ## `Describe' the (given) segment
     # cat $basefile
