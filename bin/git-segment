@@ -15,19 +15,23 @@ usage()
 {
     cat <<EOF
 usage:
-$PROGRAM [+-s]
-  List the segments, (-s short-format)
-$PROGRAM [--] name
+$PROGRAM [-s| --short]
+  List the segments, -s short-format
+
+$PROGRAM {segment-name}
   Show the definition & dump the commits/history
-$PROGRAM [-d] name
+$PROGRAM [-d | --delete | -D | -prune] name
   Delete the definition, and even the branch itself.
 
-$PROGRAM [-u] branch symbolic-base current-base
-  update or define
-$PROGRAM [--] branch symbolic-base
-  (If already exists,) change the base.
-$PROGRAM -r branch commit
-  set the start to commit.
+$PROGRAM -r {segment} {start}
+  set the start
+
+$PROGRAM [-u | --update ] {segment} symbolic-base [start]
+  update
+
+$PROGRAM {segment} symbolic-base [start]
+  define
+
 EOF
 }
 
