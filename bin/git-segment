@@ -141,13 +141,13 @@ if [ $# = 1 ]; then
     if [ $delete_segment = y ]; then
 
 	# fixme:
-	describe_segment $1|| true
+	describe_segment $name|| true
 
 	# funny: bug!
-	drop_segment $1
+	drop_segment $name
 
 	if [ $delete_branch = y ];then
-	    git-delete $1
+	    git-delete $name
 	fi
 
 	exit $?

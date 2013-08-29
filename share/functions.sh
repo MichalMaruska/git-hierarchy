@@ -75,6 +75,7 @@ is_segment()
 
 drop_segment()
 {
+    victim=$1
     drop_symbolic_ref refs/base/$victim
     git update-ref -d refs/start/$victim
 
