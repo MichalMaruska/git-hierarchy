@@ -1,4 +1,4 @@
-#compdef git-rebase-poset
+#compdef git-rebase-poset git-rebase-segment
 #description rebase ....
 
 
