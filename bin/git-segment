@@ -202,7 +202,7 @@ else
     # and $base unless update & restart.
 
     # Ensure it exists:
-    if [ $update = y ]; then
+    if [ $update = y -o $restart = y ]; then
 	# check it exists
 	if ! is_segment $name; then
 	    die "unknown segment $name"
