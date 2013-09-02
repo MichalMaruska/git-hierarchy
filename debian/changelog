@@ -1,3 +1,24 @@
+git-hierarchy (2.14) release; urgency=low
+
+  * clean completion
+  * new completions
+  * git-segment migrate to getopt()
+  * document the usage
+  * isolate list_segments into a function
+  * implement git-segment deleting -d
+  * remove old code
+  * important comments
+  * lines
+  * have to call eval, and simplest is to use eval set.
+  * less verbosity
+  * fix the completion ... not clear yet.
+  * fix drop_segment & its use in git-segment
+  * trivial completion for git-rebase-poset
+  * fix restarting (without updating/rebasing)
+  * Show the lag of Start behind Base.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 02 Sep 2013 14:25:01 +0200
+
 git-hierarchy (2.13) release; urgency=low
 
   * New tool: git-walk-down a local git-tgraph.
