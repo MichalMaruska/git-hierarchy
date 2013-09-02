@@ -59,6 +59,7 @@ describe_segment()
 
 list_segments(){
     # todo short_list as parameter?
+    # todo: use describe_segment?
     git for-each-ref 'refs/base/' --format "%(refname)" |\
         sed -e 's|^refs/base/||' |\
     while read segment;
@@ -66,7 +67,14 @@ list_segments(){
 	echo -e -n $segment
 	if [ $short_list = n ]; then
 	    echo -en "\t\t";
-	    echo ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	    echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+	    count=$(git rev-list --count --left-right \
+		start/${segment}..base/${segment}| cut -f 2)
+	    if [ $count = 0 ]; then
+		echo
+	    else
+		echo "dirty: $count"
+	    fi
 	else
 	    echo
 	fi
