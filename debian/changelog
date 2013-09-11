@@ -1,3 +1,10 @@
+git-hierarchy (2.14.1) release; urgency=low
+
+  * make the suggested shell command stand out (on its own line)
+  * Improve format of "Show the lag of ..."
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 11 Sep 2013 15:46:15 +0200
+
 git-hierarchy (2.14) release; urgency=low
 
   * clean completion
