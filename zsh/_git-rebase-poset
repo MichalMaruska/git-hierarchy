@@ -1,6 +1,6 @@
 #compdef git-rebase-poset git-rebase-segment
 #description rebase ....
 
-
+# or
 _git-segment-name
-
+_git-sum-name
