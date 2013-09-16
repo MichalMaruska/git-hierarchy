@@ -5,7 +5,8 @@ GIT_DIR=$(git_dir)
 
 mark=$GIT_DIR/.rebasing-segment
 
-# maybe canonize?
+# fixme: canonize?
+# check that it's a segment!
 branch=$1
 
 # not needed "ref/

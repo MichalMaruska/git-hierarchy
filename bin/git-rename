@@ -1,4 +1,5 @@
 #! /usr/bin/zsh -fue
+
 usage()
 {
     # print "usage: ${0##*/} [+-h} [--] ARGS..."
@@ -110,5 +111,3 @@ foreach ref ($GIT_DIR/refs/^remotes/**/*(.))
 {
     sed -i -e "s|ref: refs/heads/$QUOTED_REGEXP|ref: refs/heads/$new|g" $ref
 }
-
-

@@ -1,3 +1,9 @@
+git-hierarchy (2.15) release; urgency=low
+
+  * zsh-completion: combine 2
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 16 Sep 2013 15:59:47 +0200
+
 git-hierarchy (2.14.1) release; urgency=low
 
   * make the suggested shell command stand out (on its own line)
