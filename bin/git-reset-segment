@@ -15,8 +15,8 @@ base="refs/base/$branch"
 # todo: use git-segment....
 git-set-start $branch $base
 
-if [ -e $mark -a \
-     $branch = $(cat $mark) ]; then
-
+if [ -e $mark -a x$branch = x$(cat $mark) ]; then
     rm -v $mark
+else
+    exit 1
 fi
