@@ -69,7 +69,7 @@ others=($real_branches[2,-1])
 
 if [ $reset = "y" ]; then
     eval $cmd git checkout $sum_br
-    eval $cmd git reset --hard $first
+    eval $cmd git reset --hard $first --
 else
     eval $cmd git checkout $sum_br
     eval $cmd git merge $first;
