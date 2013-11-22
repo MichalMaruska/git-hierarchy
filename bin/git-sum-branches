@@ -34,24 +34,26 @@ else
     cmd=""
 fi
 
-sum_br=$1
+sum_branch=$1
 
 
-# how to
-typeset -a branches
+
+#### Here we start:
+typeset -a summand_branches
 
 # get the list of summands:
 
-branches=($(git for-each-ref "refs/sums/$sum_br/" --format "%(refname)"))
+summand_branches=(
+    $(git for-each-ref "refs/sums/$sum_branch/" --format "%(refname)") )
 #(${(f)_tmp})
-echo $branches
+# echo $summand_branches
 
 # try to resolve them ourselves:
 typeset -a real_branches
 real_branches=()
 
-#foreach br ($branches) {real_branches+=$(dump_ref $br)}
-foreach br ($branches) {
+#foreach br ($summand_branches) {real_branches+=$(dump_ref $br)}
+foreach br ($summand_branches) {
     # local
     name=$(dump_ref_without_ref $br)
     name=${name#refs/heads/}
@@ -59,7 +61,7 @@ foreach br ($branches) {
     }
 echo $real_branches
 
-git-branch-exists $sum_br || git branch $sum_br
+git-branch-exists $sum_branch || git branch $sum_branch
 
 
 # if exists such branch/tag ->abort
@@ -68,17 +70,17 @@ first=$real_branches[1]
 others=($real_branches[2,-1])
 
 if [ $reset = "y" ]; then
-    eval $cmd git checkout $sum_br
+    eval $cmd git checkout $sum_branch
     eval $cmd git reset --hard $first --
 else
-    eval $cmd git checkout $sum_br
+    eval $cmd git checkout $sum_branch
     eval $cmd git merge $first;
 fi
-# git checkout -b $sum_br $first
+# git checkout -b $sum_branch $first
 
 # octopus is default (for >2 children) & refuses any conflict.
 #
-git merge -m "Sum: $sum_br = $others + $first" \
+git merge -m "Sum: $sum_branch = $others + $first" \
     --rerere-autoupdate \
     -s octopus \
     -s recursive -X patience -X ignore-space-change $others
@@ -86,6 +88,6 @@ git merge -m "Sum: $sum_br = $others + $first" \
 
 # foreach next ($others)
 # {
-#     eval $cmd git merge -m "'Sum: $next into $sum_br'" --rerere-autoupdate $next;
+#     eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate $next;
 # }
 
