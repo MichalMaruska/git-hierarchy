@@ -13,11 +13,11 @@ display=n
 usage()
 {
 cat <<EOF
-usage: ${0##*/} [+-k]  [-g] [-x] [--] ARGS..."
+usage: ${0##*/} [+-k]  [-g] [-x] [--] ARGS...
 -x display using  dot(1)
 -k keep the generated file (for tsort(1))
 
--g don't dump the topological order on stdout.
+-g don\'t dump the topological order on stdout.
 EOF
 }
 
