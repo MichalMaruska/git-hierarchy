@@ -40,6 +40,11 @@ summands_of()
 	done)
 }
 
+
+ref_exists(){
+    test -e $GIT_DIR/$1
+}
+
 # expand by just 1 level:
 dump_ref(){
     # does not work:
