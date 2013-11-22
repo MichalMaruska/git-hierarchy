@@ -112,6 +112,13 @@ segment_age()
 	start/${segment}..base/${segment}| cut -f 2
 }
 
+segment_length()
+{
+    local name=$1
+    local startref=refs/start/$name
+    git log --oneline $startref..heads/$name|wc --lines
+}
+
 # name commit
 git-set-start()
 {
