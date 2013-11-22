@@ -69,8 +69,8 @@ list_segments(){
 	if [ $short_list = n ]; then
 	    echo -en "\t\t";
 	    echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
-	    count=$(git rev-list --count --left-right \
-		start/${segment}..base/${segment}| cut -f 2)
+
+	    count=$(segment_age $segment)
 	    if [ $count = 0 ]; then
 		echo
 	    else

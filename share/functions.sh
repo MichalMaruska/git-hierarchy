@@ -104,6 +104,14 @@ segment_base()
     dump_ref /refs/base/$1 | sed -e 's/ref:\s//'
 }
 
+# return the distance between start & base
+segment_age()
+{
+    local segment=$1
+    git rev-list --count --left-right \
+	start/${segment}..base/${segment}| cut -f 2
+}
+
 # name commit
 git-set-start()
 {
