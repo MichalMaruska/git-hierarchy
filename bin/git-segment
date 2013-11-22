@@ -20,6 +20,8 @@ $PROGRAM [-s| --short]
 
 $PROGRAM {segment-name}
   Show the definition & dump the commits/history
+  Exit with non-zero, if the segment-name is not a segment.
+
 $PROGRAM [-d | --delete | -D | -prune] name
   Delete the definition, and even the branch itself.
 
@@ -45,16 +47,22 @@ describe_segment()
     # fixme: how to avoid dereferencing?
     # git show-ref $startref
 
-    local base=$(dump_ref $baseref |\
+    if ref_exists $baseref;
+    then
+	local base=$(dump_ref $baseref |\
            sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
-    cecho green $base
+	cecho green $base
 
-    git show-ref --hash $startref
+	git show-ref --hash $startref
 
     # how many commits there?
-    local count=$(git log --oneline $startref..heads/$name |wc --lines)
-    echo $count commits:
-    git log --oneline $startref..heads/$name
+	local count=$(git log --oneline $startref..heads/$name |wc --lines)
+	echo $count commits:
+	git log --oneline $startref..heads/$name
+    else
+	echo "is not a segment">&2
+	exit 1
+    fi
 }
 
 list_segments(){
