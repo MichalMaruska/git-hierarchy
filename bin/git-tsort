@@ -65,11 +65,12 @@ else
       name=${segment#refs/base/}
       if [ $display = y ];
       then
-	  # fixme: -_
+	  dot_name=${name//-/_}
+	  # todo:  #remote/
+	  dot_base_name=${${$(segment_base $name)#refs/heads/}//-/_}
 
-	  echo -n ${name//-/_} "->";
-	  echo ${${$(segment_base $name)#refs/heads/}//-/_}
-		  #} {sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
+	  echo "$dot_name -> $dot_base_name"
+
 	  local age=$(segment_age $name)
 	  local length=$(segment_length $name)
 	  local color
@@ -79,7 +80,7 @@ else
 	      color=orange
 	  fi
 	  cat <<EOF
-${name//-/_} [label="$name $length\n$age",color=$color,fontsize=14,
+$dot_name [label="$name $length\n$age",color=$color,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
       else
