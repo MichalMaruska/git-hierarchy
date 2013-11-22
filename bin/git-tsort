@@ -62,8 +62,30 @@ else
   foreach segment ($segments);
   {
       # mmc: why not output the full base ref?
-      echo -n refs/heads/${segment#refs/base/} "\t";
-      segment_base ${segment#refs/base/}
+      name=${segment#refs/base/}
+      if [ $display = y ];
+      then
+	  # fixme: -_
+
+	  echo -n ${name//-/_} "->";
+	  echo ${${$(segment_base $name)#refs/heads/}//-/_}
+		  #} {sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
+	  local age=$(segment_age $name)
+	  local length=$(segment_length $name)
+	  local color
+	  if [ $age = 0 ];then
+	      color=yellow
+	  else
+	      color=orange
+	  fi
+	  cat <<EOF
+${name//-/_} [label="$name $length\n$age",color=$color,fontsize=14,
+	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+      else
+	  echo -n refs/heads/$name "\t";
+	  segment_base $name
+      fi
   }   > $GRAPH
 fi
 
@@ -77,19 +99,31 @@ if [ 0 = ${#sums} ]; then
 else
     foreach sum ($sums)
     {
+
 	git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
 	(while read a; do
-	    echo -n "refs/heads/$sum" "\t"; dump_ref $a|sed -e 's/^ref:\s//'
+	    if [ $display = y ];
+	    then
+		echo -n ${sum//-/_} "->";
+		echo ${${$(dump_ref $a|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
+	    else
+		echo -n "refs/heads/$sum" "\t"; dump_ref $a|sed -e 's/^ref:\s//'
+	    fi
 	    done )
+
+	if [ $display = y ]; then
+            cat <<EOF
+${sum//-/_} [label="$sum",color=red,fontsize=14,
+	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+        fi
     } >> $GRAPH
 fi
 
 
+
 if [ $display = y ]; then
-    set -x
-    sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
-	$GRAPH |\
-    draw-tsort-graph -F png | display -
+    draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
 elif [ $just_graph = y ]; then
