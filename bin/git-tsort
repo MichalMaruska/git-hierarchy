@@ -9,6 +9,7 @@ GIT_DIR=$(git_dir)
 keep_graph_file="n"
 just_graph=n
 display=n
+typeset -a draw_options
 
 usage()
 {
@@ -25,6 +26,7 @@ while getopts :kgx OPT; do
     case $OPT in
 	k|+k)
 	    keep_graph_file=y
+	    draw_options+=(-k)
 	    ;;
 	g)
 	    just_graph=y
