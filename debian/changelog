@@ -1,3 +1,19 @@
+git-hierarchy (2.16) release; urgency=low
+
+  * Start to guarantee branch name is interpreted as such (and not as filename or other)
+  * segment_age
+  * for Emacs
+  * git-tsort: pass options to draw-tsort-graph. incomplete (skipped)!
+  * segment_lenght
+  * Enrich the Graph by colors & information of sums/segments.
+  * git-reset-* handle correctly the wrong situation
+  * Have a test for reference
+  * git-segment: exit with meaningful error msg if segment does not exist
+  * rename 2 shell variables (x_branch & summand_branches)
+  * Filter the base name better -- not finished! / still in.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sat, 23 Nov 2013 22:51:01 +0100
+
 git-hierarchy (2.15) release; urgency=low
 
   * zsh-completion: combine 2
