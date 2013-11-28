@@ -60,7 +60,7 @@ describe_segment()
 	echo $count commits:
 	git log --oneline $startref..heads/$name
     else
-	echo "is not a segment">&2
+	echo "$name is not a segment">&2
 	exit 1
     fi
 }
