@@ -32,6 +32,11 @@ branch=$1
 start="refs/start/$branch"
 base="refs/base/$branch"
 
+if ! git-segment $branch;
+then
+    exit 1
+fi
+
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
