@@ -106,7 +106,7 @@ segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
     # refs/\(heads\|remotes\)
-    dump_ref /refs/base/$1 | sed -e 's/ref:\s//'
+    dump_ref refs/base/$1 | sed -e 's/ref:\s//'
 }
 
 # return the distance between start & base
