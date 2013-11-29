@@ -150,7 +150,7 @@ fi
 
 
 # Otherwise a specific segment:
-name=$1
+name=${1#refs/heads/}
 baseref=refs/base/$name
 # echo "the segment name is $name"
 
