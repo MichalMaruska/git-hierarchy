@@ -81,6 +81,12 @@ show_prune_definition()
     fi
     local summand
 
+    if ! test -d $GIT_DIR/refs/sums/$name;
+    then
+	echo "$name is not a sum">&2
+	exit 1
+    fi
+
     git for-each-ref "refs/sums/$name/" --format "%(refname)" | \
     while read summand;do
 	# git-branch-exists
@@ -91,6 +97,7 @@ show_prune_definition()
 	else
 	    if [ $silent != "y" ]; then
 		echo NON-existant $ref = $summand
+		# exit 2
 	    fi
 	fi
     done
@@ -153,7 +160,7 @@ if [ $# -lt 1 ]; then
     exit -1
 fi
 
-name=$1
+name=${1#refs/heads/}
 shift
 
 if [ $delete = y ]; then
