@@ -79,18 +79,18 @@ show_prune_definition()
     else
 	silent="n"
     fi
-    local a
+    local summand
 
     git for-each-ref "refs/sums/$name/" --format "%(refname)" | \
-    while read a;do
+    while read summand;do
 	# git-branch-exists
-	local ref="$(git symbolic-ref $a)"
-	local hash="$(git show-ref $a)"
+	local ref="$(git symbolic-ref $summand)"
+	local hash="$(git show-ref $summand)"
 	if [ -n "$hash" ]; then
 	   echo "$ref"
 	else
 	    if [ $silent != "y" ]; then
-		echo NON-existant $ref = $a
+		echo NON-existant $ref = $summand
 	    fi
 	fi
     done
