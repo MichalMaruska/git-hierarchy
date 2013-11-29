@@ -2,7 +2,7 @@
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-
+move_only=n
 
 usage()
 {
@@ -12,8 +12,12 @@ EOF
 }
 
 
-while getopts :h OPT; do
+while getopts :m:h OPT; do
     case $OPT in
+	m)
+	    move_only=y
+	    new_base=$OPTARG
+	    ;;
 	h|+h)
 	    usage
 	    exit
@@ -27,23 +31,69 @@ shift OPTIND-1
 OPTIND=1
 
 
+# check, that no other rebase in progress
 if [ -e $GIT_DIR/.rebasing-segment ]; then
     cecho red "Must first finish rebasing segment " \
 	"$(cat $GIT_DIR/.rebasing-segment)"
     exit -1
 fi
 
-typeset -a what_to_rebase
+
+
+
+typeset -a WHAT_TO_REBASE
 
 if [ $# -gt 0 ]; then
     echo "... down from $1" >&2
-    what_to_rebase=($(git-walk-down $1))
+    WHAT_TO_REBASE=($(git-walk-down $1))
 else
-    what_to_rebase=($(git-tsort))
+    WHAT_TO_REBASE=($(git-tsort))
 fi
 
 
-foreach ref ($what_to_rebase)
+if test $move_only = y;
+then
+    # find minimums
+    minimal=()
+    foreach ref ($WHAT_TO_REBASE)
+    {
+	if git-segment $ref > /dev/null; then
+	    :
+	elif git-sum $ref > /dev/null; then
+	    :
+	else
+	    echo $ref
+	    #
+	    minimal+=($ref)
+	fi
+    }
+    echo $minimal
+
+    # exchange base new_base
+    # if git-segment  -> base
+    # git-segment -u $name $new_base
+    graph=$(git-walk-down $ref)
+    foreach min ($minimal)
+    {
+	min=${min#refs/heads/}
+	cecho red "processing $min"
+	foreach ref ($WHAT_TO_REBASE)
+	{
+	    ref=${ref#refs/heads/}
+	    cecho blue "processing $ref  $(segment_base $ref)"
+
+	    if git-segment $ref > /dev/null && \
+		test $(segment_base $ref) = refs/heads/$min;
+	    then
+		echo git-segment -u $ref $new_base
+		cecho green "should update segment $ref"
+	    else
+		# echo $(segment_base $ref)
+	    fi
+	}
+    }
+else
+foreach ref ($WHAT_TO_REBASE)
 {
     # todo: create a tag, so that if `git-rebase' fails
     # at least I see the segment (in gitk).
@@ -57,3 +107,4 @@ foreach ref ($what_to_rebase)
 	exit $problem
     fi
 }
+fi
