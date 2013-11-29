@@ -8,39 +8,47 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-xgh} [--] ARGS...
+usage: ${0##*/} [+-xgh} [--]  {ref}
 
-by default linear order (out of the tsort)
--x  display the graph
+Output or Display the order of segments & sums below REF
+-x  display the graph w/ ImageMagick
 -g  dump the graph
 
 EOF
 }
 
 # sum_bases()
-display=n
+display_gui=n
 just_graph=n
+DEBUG=n
 
-while getopts :xgh OPT; do
+while getopts :dghx OPT; do
     case $OPT in
 	x|+x)
-	    display=y
+	    display_gui=y
 	    ;;
 	g|+g)
 	    just_graph=y
 	    ;;
 	h|+h)
-	    usage()
-	    exit
+	    usage
+	    exit 0
+	    ;;
+	d)
+	    DEBUG=y
 	    ;;
 	*)
-	    usage()
+	    usage
 	    exit 2
     esac
 done
 shift OPTIND-1
 OPTIND=1
 
+if [ $# = 0 ]; then
+    usage
+    exit 1
+fi
 
 
 root=$(git-expand-ref $1)
@@ -60,7 +68,8 @@ do
     # also remove "first" if it's repeated.
     nodes=(${nodes:|processed})
 
-    cecho yellow "processing $this, remain $nodes ${#nodes}" >&2
+    test "$DEBUG" = y && \
+	cecho yellow "processing $this, remain $nodes ${#nodes}" >&2 || : ok
 
     name=${this#refs/heads/}
     if is_sum $name; then
@@ -68,7 +77,9 @@ do
     elif is_segment $name; then
 	dependants=($(segment_base $name))
     else
-	cecho red "stopping @ $name" >&2
+	if test "$DEBUG" = y; then
+	    cecho red "stopping @ $name" >&2
+	fi
 	dependants=()
     fi
 
@@ -79,7 +90,9 @@ do
     } >> $GRAPH
     nodes+=($dependants)
 
-    cecho green "iterate $nodes -- ${#nodes}" >&2
+    if test "$DEBUG" = y; then
+	cecho green "iterate $nodes -- ${#nodes}" >&2
+    fi
 done
 
 
@@ -87,8 +100,7 @@ done
 
 # echo $GRAPH
 # cat $GRAPH
-
-if [ $display = y ]; then
+if [ $display_gui = y ]; then
     #set -x
     sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
 	$GRAPH |\
@@ -101,8 +113,10 @@ elif [ $just_graph = y ]; then
     # while read
     for  a in $(tsort $GRAPH)
     do
-	cecho green $a
-	grep -e "^$a" $GRAPH || true
+	if test "$DEBUG" = y; then
+	    cecho green $a
+	fi
+	grep -e "^$a" $GRAPH || :
     done
 else
     tsort $GRAPH | tac
