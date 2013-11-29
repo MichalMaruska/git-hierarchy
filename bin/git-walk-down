@@ -95,7 +95,8 @@ do
     fi
 done
 
-
+# trap exit
+# rm $GRAPH
 
 
 # echo $GRAPH
@@ -118,6 +119,9 @@ elif [ $just_graph = y ]; then
 	fi
 	grep -e "^$a" $GRAPH || :
     done
+    rm $GRAPH
+
 else
     tsort $GRAPH | tac
+    rm $GRAPH
 fi
