@@ -66,8 +66,10 @@ else
       if [ $display = y ];
       then
 	  dot_name=${name//-/_}
-	  # todo:  #remote/
-	  dot_base_name=${${$(segment_base $name)#refs/heads/}//-/_}
+	  # todo:  #
+	  slash="/"
+	  base_name=${$(segment_base $name)#refs/heads/}
+	  dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
 
 	  echo "$dot_name -> $dot_base_name"
 
@@ -82,7 +84,12 @@ else
 	  cat <<EOF
 $dot_name [label="$name $length\n$age",color=$color,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+
+$dot_base_name [label="$base_name $length\n$age",color=$color,fontsize=14,
+	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+
 EOF
+
       else
 	  echo -n refs/heads/$name "\t";
 	  segment_base $name
