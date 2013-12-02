@@ -1,6 +1,17 @@
 #! /usr/bin/zsh -feu
 
-# re-make a "sum" branch:
+usage()
+{
+    cat <<EOF
+Remake a git sum-merge.
+
+usage: ${0##*/} [-d] [+-r] [-h] [--] ARGS...
+-d  dry
+-r  reset (before starting merge)
+-h  help
+EOF
+}
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
@@ -9,7 +20,7 @@ GIT_DIR=$(git_dir)
 reset=y
 dry=n
 
-while getopts :rd OPT; do
+while getopts :rdh OPT; do
     case $OPT in
 	d)
 	    dry=y;;
@@ -20,8 +31,12 @@ while getopts :rd OPT; do
 	+r)
 	    reset=n
 	    ;;
+	h)
+	    usage
+	    exit
+	    ;;
 	*)
-	    print "usage: ${0##*/} [+-r] [--] ARGS..."
+	    usage
 	    exit 2
     esac
 done
