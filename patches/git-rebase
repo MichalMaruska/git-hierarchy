@@ -148,6 +148,11 @@ move_to_original_branch () {
 }
 
 finish_rebase () {
+	if test -x "$GIT_DIR/hooks/post-rebase"
+	then
+		"$GIT_DIR/hooks/post-rebase" ${1+"$@"}
+	fi
+
 	if test -f "$state_dir/autostash"
 	then
 		stash_sha1=$(cat "$state_dir/autostash")
