@@ -1,3 +1,23 @@
+git-hierarchy (2.17) release; urgency=low
+
+  * sq: git-segment test: better info on stderr
+  * rebase-segment: check argument.
+  * Name better a  shell variable
+  * Test git-sum existence. And handle expanded ref name.
+  * git-segment: handle expanded ref name.
+  * git-walk-down: clean up: usage, var names, debug option
+  * fixlet -- necessary?
+  * git-rebase-poset ... rename the base(s) for minimal segments.
+  * git-walk-down: Ensure the graph file is removed on exit.
+  * represent the _remote_ branches in the X graph in some way.
+  * sum-branches:  improve getopts
+  * verbose when re-merging a sum
+  * git-rebase-poset: don't invoke git when not necessary!
+  * Carry patched files from git-core
+  * [git-core] Invoke hook on rebase finished.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 04 Dec 2013 13:41:59 +0100
+
 git-hierarchy (2.16) release; urgency=low
 
   * Start to guarantee branch name is interpreted as such (and not as filename or other)
