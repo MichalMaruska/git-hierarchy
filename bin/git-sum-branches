@@ -15,6 +15,12 @@ EOF
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+# fixme:
+set +u
+. /usr/lib/git-core/git-sh-setup
+set -u
+# require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
+
 
 # by default make a `clean' merge. This means
 reset=y
@@ -85,8 +91,11 @@ first=$real_branches[1]
 others=($real_branches[2,-1])
 
 if [ $reset = "y" ]; then
+    #eval $cmd git checkout $sum_branch
+    eval $cmd git checkout $first
+    eval $cmd git branch -f $sum_branch $first
     eval $cmd git checkout $sum_branch
-    eval $cmd git reset --hard $first --
+    # eval $cmd git reset --hard $first --
 else
     eval $cmd git checkout $sum_branch
     eval $cmd git merge $first;
