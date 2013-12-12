@@ -6,7 +6,7 @@ ORIGINS := $(foreach x,$(SOURCES),$(GIT_CORE_DIR)$(x))
 
 
 diff:
-	cdiff -r . $(GIT_CORE_DIR)
+	@foreach file ($(SOURCES)) {echo $$file;colordiff $(GIT_CORE_DIR)/$$file $$file || :}
 
 copy:
 	cp --target-directory . $(ORIGINS)
