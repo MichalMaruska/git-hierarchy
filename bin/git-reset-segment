@@ -5,12 +5,32 @@ GIT_DIR=$(git_dir)
 
 mark=$GIT_DIR/.rebasing-segment
 
-# fixme: canonize?
-# check that it's a segment!
-branch=$1
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h} [--] [segment]
 
-# not needed "ref/
-base="refs/base/$branch"
+If segment specified, that segment has its START moved to base.
+If no segment is specified, the info on rebase is lost.
+
+So, after this another rebase can start.
+
+EOF
+}
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift $(( OPTIND - 1 ))
+OPTIND=1
 
 # todo: use git-segment....
 git-set-start $branch $base
