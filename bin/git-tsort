@@ -45,7 +45,7 @@ OPTIND=1
 # Get a temp file:
 # generate
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
-
+extern_color=pink
 
 # segments ... look at bases.
 setopt NULL_GLOB
@@ -84,11 +84,16 @@ else
 	  cat <<EOF
 $dot_name [label="$name $length\n$age",color=$color,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
-
-$dot_base_name [label="$base_name $length\n$age",color=$color,fontsize=14,
-	      fontname="Palatino-Italic",fontcolor=black,style=filled];
-
 EOF
+
+if ! git-segment $base_name &>/dev/null ; then
+if ! git-sum $base_name &>/dev/null; then
+cat <<EOF
+$dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
+	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+fi
+fi
 
       else
 	  echo -n refs/heads/$name "\t";
