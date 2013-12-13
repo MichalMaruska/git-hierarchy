@@ -3,7 +3,7 @@
 usage()
 {
     cat <<EOF
-Remake a git sum-merge.
+Remake a git sum/merge.
 
 usage: ${0##*/} [-d] [+-r] [-h] [--] ARGS...
 -d  dry
@@ -56,8 +56,6 @@ OPTIND=1
 
 sum_branch=$1
 
-
-
 #### Here we start:
 typeset -a summand_branches
 
@@ -80,10 +78,11 @@ foreach br ($summand_branches) {
     name=${name#refs/heads/}
     real_branches+=$name
     }
+
 cecho blue "Summands: $real_branches"
 
+# uh:
 git-branch-exists $sum_branch || git branch $sum_branch
-
 
 # if exists such branch/tag ->abort
 first=$real_branches[1]
