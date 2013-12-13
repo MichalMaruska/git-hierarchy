@@ -32,11 +32,25 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
-# todo: use git-segment....
-git-set-start $branch $base
 
-if [ -e $mark -a x$branch = x$(cat $mark) ]; then
-    rm -v $mark
+# fixme: canonize?
+# check that it's a segment!
+if [ $# = 1 ]; then
+    BRANCH=$1
+    BASE="refs/base/${BRANCH#refs/base/}"
+    git-segment -r $BRANCH $BASE
+
+    if [ -e $mark -a "$BRANCH" = "$(cat $mark)" ]; then
+	echo "### so rebase was completed, moving *start* to the *base*"  >&2
+	rm -v $mark
+    else
+	    echo "### mismatch!"  >&2
+    fi
 else
-    exit 1
+    echo "### so rebase was aborted, forgetting about it"  >&2
+    rm -vf $mark
+    exit 0
 fi
+
+# not needed "ref/
+
