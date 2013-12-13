@@ -25,11 +25,14 @@ set -u
 # by default make a `clean' merge. This means
 reset=y
 dry=n
+cmd=""
 
 while getopts :rdh OPT; do
     case $OPT in
 	d)
-	    dry=y;;
+	    dry=y
+	    cmd="cecho red"
+	    ;;
 	r)
 	    # reset:
 	    reset=y
@@ -48,12 +51,6 @@ while getopts :rdh OPT; do
 done
 shift OPTIND-1
 OPTIND=1
-
-if [ $dry = "y" ]; then
-    cmd="cecho red"
-else
-    cmd=""
-fi
 
 sum_branch=$1
 
