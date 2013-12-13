@@ -60,14 +60,16 @@ else
 		return $?
 	fi
 
+	echo "mmmmmmmmmmmmmmmmmmmmmmm" >&2
 	git am $git_am_opt --rebasing --resolvemsg="$resolvemsg" <"$GIT_DIR/rebased-patches"
 	ret=$?
-
+	set -x
 	rm -f "$GIT_DIR/rebased-patches"
 fi
 
 if test 0 != $ret
 then
+    echo "rebase failed" >&2
 	test -d "$state_dir" && write_basic_state
 	return $ret
 fi
