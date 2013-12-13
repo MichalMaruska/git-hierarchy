@@ -15,11 +15,13 @@ EOF
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
-# fixme:
+# fixme: some variable is used-before-defined
 set +u
 . /usr/lib/git-core/git-sh-setup
 set -u
-# require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
+# todo:
+# octopus can leave half work, so yes, I prefer:
+require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
 
 
 # by default make a `clean' merge. This means
