@@ -1,5 +1,7 @@
 #! /usr/bin/zsh -feu
 
+# This is reimplemted in git-sum-branches!
+
 # check that commit0 is a sum of commit1 ... commitN
 
 
@@ -18,8 +20,7 @@ temp2=""
 
 clean()
 {
-    [ -n $temp1 ] && rm -f $temp1
-    [ -n $temp2 ] && rm -f $temp2
+    rm -f $temp1 $temp2
 }
 
 trap "echo error; clean" ERR
@@ -31,7 +32,7 @@ temp2=$(mktemp )
 
 # 2 arrays are the same?
 # sort & compare.
-git cat-file  commit $sha0  | awk '/^parent/ {print $2}'| sort > $temp1
+git cat-file commit $sha0 | awk '/^parent/ {print $2}'| sort > $temp1
 # echo $parents
 
 
