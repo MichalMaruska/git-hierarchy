@@ -9,6 +9,7 @@ GIT_DIR=$(git_dir)
 keep_graph_file="n"
 just_graph=n
 display=n
+debug=n
 typeset -a draw_options
 
 usage()
@@ -22,7 +23,7 @@ usage: ${0##*/} [+-k]  [-g] [-x] [--] ARGS...
 EOF
 }
 
-while getopts :kgx OPT; do
+while getopts :kgxd OPT; do
     case $OPT in
 	k|+k)
 	    keep_graph_file=y
@@ -30,6 +31,9 @@ while getopts :kgx OPT; do
 	    ;;
 	g)
 	    just_graph=y
+	    ;;
+	d)
+	    debug=y
 	    ;;
 	x)
 	    display=y
@@ -108,7 +112,7 @@ typeset -a sums
 sums=($(list_sums))
 
 if [ 0 = ${#sums} ]; then
-    echo "no sums." >&2
+    test $debug = y && echo "no sums." >&2
 else
     foreach sum ($sums)
     {
