@@ -3,6 +3,30 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+usage()
+{
+    print "usage: ${0##*/} [+-dh} [--] ARGS..."
+}
+
+
+DEBUG=n
+while getopts :dh OPT; do
+    case $OPT in
+	d|+d)
+	    DEBUG=y
+	    ;;
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    usage
+	    exit 2
+	    ;;
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 # fixme: not a ref. a BRANCH!
 
@@ -22,5 +46,9 @@ elif is_segment $branch; then
 # segment ->
     $cmd git-rebase-segment $branch
 else
-    echo "unknown -- leaving unchanged $ref"
+    test "$DEBUG" = y && echo "unknown -- leaving unchanged $ref"
 fi
+
+# note that the test && might fail, but that's not what we want to signal
+# to caller.
+exit 0
