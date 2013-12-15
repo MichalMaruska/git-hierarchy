@@ -98,18 +98,21 @@ then
 	}
     }
 else
-foreach ref ($WHAT_TO_REBASE)
-{
-    # todo: create a tag, so that if `git-rebase' fails
-    # at least I see the segment (in gitk).
-    #
-    test "$DEBUG" = y && cecho green "rebasing $ref"
+    typeset -a DEBUG_OPTIONS
 
-    if ! git-rebase-ref $ref;
-    then
-	problem=$?
-	cecho red "Failure on $ref"
-	exit $problem
-    fi
-}
+    test "$DEBUG" = y && DEBUG_OPTIONS+=(-d)
+    foreach ref ($WHAT_TO_REBASE)
+    {
+	# todo: create a tag, so that if `git-rebase' fails
+	# at least I see the segment (in gitk).
+	#
+	test "$DEBUG" = y && cecho green "rebasing $ref"
+
+	if ! git-rebase-ref $DEBUG_OPTIONS $ref;
+	then
+	    problem=$?
+	    cecho red "Failure on $ref"
+	    exit $problem
+	fi
+    }
 fi
