@@ -191,6 +191,8 @@ run_specific_rebase () {
 	ret=$?
 	if test $ret -eq 0
 	then
+	        cecho hiblue "calling finish_rebase to commit" >&2
+		# git-reset-segment name
 		finish_rebase
 	fi
 	exit $ret
@@ -388,6 +390,8 @@ abort)
 		;;
 	esac
 	output git reset --hard $orig_head
+	cecho hiblue "calling finish_rebase to abort & git-RESET-segment!" >&2
+	git-reset-segment
 	finish_rebase
 	exit
 	;;
@@ -560,6 +564,7 @@ then
 		GIT_REFLOG_ACTION="$GIT_REFLOG_ACTION: checkout $switch_to" \
 			git checkout "$switch_to" --
 		say "$(eval_gettext "Current branch \$branch_name is up to date.")"
+		cecho hiblue "calling finish_rebase to ???" >&2
 		finish_rebase
 		exit 0
 	else
@@ -595,6 +600,7 @@ if test "$mb" = "$orig_head"
 then
 	say "$(eval_gettext "Fast-forwarded \$branch_name to \$onto_name.")"
 	move_to_original_branch
+	cecho hiblue "calling finish_rebase to ????" >&2
 	finish_rebase
 	exit 0
 fi
