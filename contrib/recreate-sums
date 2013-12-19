@@ -1,5 +1,15 @@
 #!/usr/bin/zsh -feux
 
+# `very-old':
+# .git/mmc/sum1 contained:
+#
+# branch name 1
+# ..
+# branch name N
+
+# ...And this program `converted' that information into the new REPRESENTATION.
+# not yet calling the now existing API.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 SUM_DIR=$GIT_DIR/mmc
@@ -13,7 +23,9 @@ foreach sum ($SUM_DIR/*(:t))
     foreach addend ($(cat $SUM_DIR/$sum))
     {
 	ref=refs/sums/$sum/$i
-	git symbolic-ref $ref $(git show-ref refs/heads/$addend   | head -n 1| cut -f 2 -d ' ')
+	git symbolic-ref $ref \
+	    $(git show-ref refs/heads/$addend | head -n 1| cut -f 2 -d ' ')
+	# this gives the canonic ref name.
 	((i=i+1))
     }
 }
