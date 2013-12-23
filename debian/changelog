@@ -1,3 +1,28 @@
+git-hierarchy (3.0) release; urgency=low
+  * main features: avoid redoing merges for no reason. Quiet operation.
+  *                nice display of the graph.
+  * git-reset-segment: add getopt & usage
+  * git-reset: either Abort or Commit. (should rename to git-finish-segment-rebase)
+  * patches: implement "diff" command
+  * tsort: draw the "external" bases as such.
+  * Comment on using rebase state to record the segment.
+  * shell shortcut
+  * Check if the merge needs to be redone. Do nothing if it's current.
+  * git-sum-branches: comment & clean
+  * comments on Octopus merge
+  * clean shell
+  * declare git-check-sum obsolete
+  * git-tsort: quiet unless -d
+  * git-rebase-poset: quiet unless -d
+  * git-rebase-ref: quiet unless -d
+  * git-rebase-segment: inform when starting rebase
+  * propagate the -d option
+  * test to make git-rebase invoke itself
+  * verbosity in git-rebase for the hooks.
+  * document recreate-sums
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 23 Dec 2013 13:11:27 +0100
+
 git-hierarchy (2.18) release; urgency=low
 
   * Tool to patch/follow the core tools
