@@ -66,11 +66,12 @@ summand_branches=(
 #(${(f)_tmp})
 # echo $summand_branches
 
-# try to resolve them ourselves:
+# those references are symbolic "ref: ref/head/NAME", but we want to
+# use the NAMES in the commit message & interaction with the user.
+# So, `resolve' them:
 typeset -a real_branches
 real_branches=()
 
-#foreach br ($summand_branches) {real_branches+=$(dump_ref $br)}
 foreach br ($summand_branches) {
     # local
     name=$(dump_ref_without_ref $br)
