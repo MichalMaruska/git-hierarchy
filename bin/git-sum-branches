@@ -28,8 +28,9 @@ require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
 reset=y
 dry=n
 cmd=""
+debug=n
 
-while getopts :rdh OPT; do
+while getopts :rdhv OPT; do
     case $OPT in
 	d)
 	    dry=y
@@ -45,6 +46,9 @@ while getopts :rdh OPT; do
 	h)
 	    usage
 	    exit
+	    ;;
+	v)
+	    debug=y
 	    ;;
 	*)
 	    usage
@@ -79,7 +83,7 @@ foreach br ($summand_branches) {
     real_branches+=$name
     }
 
-cecho blue "Summands: $real_branches"
+test $debug = y && echo "Summands: $real_branches"
 
 # uh:
 git-branch-exists $sum_branch || git branch $sum_branch
@@ -98,7 +102,12 @@ commit_ids_summands=()
 foreach br ($summand_branches) {
     commit_ids_summands+=$(git rev-parse $br)
 }
+
+test $debug = y && echo "Summands: $commit_ids_summands" >&2
 commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
+
+
+test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
 
 # new criterion:
 # the parents "include" all summands, and each parent is one of the summands.
@@ -125,6 +134,7 @@ else
 	    cecho red "This parent is not in summands: $id" >&2
 	    equal=n
 	else
+	    test $debug = y && cecho green "found $id" >&2
 	    :
 	fi
     }
@@ -146,6 +156,7 @@ foreach id ($commit_ids_summands) {
 	    foreach parent ($commit_ids_sum_parents) {
 		if test $(git merge-base $parent $id) = $id
 		then
+		    test $debug = y && cecho green "$parent is greater than $id" >&2
 		    equal=y
 		else
 	    # cecho green "found $id" >&2
