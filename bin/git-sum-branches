@@ -100,28 +100,50 @@ foreach br ($summand_branches) {
 }
 commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
 
-equal=n
-if test ${#commit_ids_sum_parents} = ${#commit_ids_summands}
-then
-    equal=y
-    set +u # here we risk the "var. lookup" fails, so treat it explicitly
-    # here the O(N^2) tests:
+# new criterion:
+# the parents "include" all summands, and each parent is one of the summands.
+# that is, each parent is fast-forward of summands and a summand itself.
+# fixme!
+
+# how to get common base for merge:
+# git merge-base
+
+equal=y
+
+# 1/ each parent is one of summands. of one not -> N
+set +u # here we risk the "var. lookup" fails, so treat it explicitly
+# here the O(N^2) tests:
+foreach id ($commit_ids_sum_parents) {
+    if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
+	cecho red "This parent is not in summands: $id" >&2
+	equal=n
+    else
+	:
+    fi
+}
+set -u # here again we don't (intend to) risk it.
+
+# if test $equal = y
+# then
+# 2/ each summand is less than the sum. not -> N
     foreach id ($commit_ids_summands) {
-	if ! [[ ${commit_ids_sum_parents[(r)$id]} = $id ]] ; then
-	    # if I had commit_ids_summands a hash, I could report
-	    # the symbolic name!
-	    cecho red "This one is not parent of the merge $id" >&2
+	#if still a chance to win:
+	if test $equal = y;
+	then
 	    equal=n
-	else
+            # SOME of the parent covers it:
+	    foreach parent ($commit_ids_sum_parents) {
+		if test $(git merge-base $parent $id) = $id
+		then
+		    equal=y
+		else
 	    # cecho green "found $id" >&2
-	    :
+		    :
+		fi
+	    }
 	fi
     }
-    set -u # here again we don't (intend to) risk it.
-else
-    cecho red "different number of summands: " \
-	"${#commit_ids_sum_parents} != ${#commit_ids_summands}" >&2
-fi
+
 
 if test "$equal" = y;
 then
