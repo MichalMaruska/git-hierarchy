@@ -1,3 +1,13 @@
+git-hierarchy (3.1~1.gbpe58e73) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @e58e73b7716629a100a578d8d03e97abdad30b6e **
+
+  * New criterion for up-to-date sum.
+  * git-sum-branches: introduce -v option for verbosity.
+  * Propagate -d from git-rebase-poset to git-sum-branches (as -v)
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 30 Dec 2013 14:49:02 +0100
+
 git-hierarchy (3.0) release; urgency=low
   * main features: avoid redoing merges for no reason. Quiet operation.
   *                nice display of the graph.

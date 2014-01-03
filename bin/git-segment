@@ -37,6 +37,18 @@ $PROGRAM {segment} symbolic-base [start]
 EOF
 }
 
+output_dirty()
+{
+    segment=$1
+    prefix=$2
+    local count=$(segment_age $segment)
+    if [ $count = 0 ]; then
+	echo
+    else
+	echo -e $prefix"dirty: $count"
+    fi
+}
+
 describe_segment()
 {
     local name=$1
@@ -50,17 +62,18 @@ describe_segment()
     if ref_exists $baseref;
     then
 	local base=$(dump_ref $baseref |\
-           sed -e 's/^ref: //' | sed -e 's|^refs/heads/||')
-	cecho green $base
+           sed -e 's/^ref: //;s|^refs/heads/||')
+	echo -n "base is "; cecho green "$base"
 
+	output_dirty $name ""
 	git show-ref --hash $startref
 
-    # how many commits there?
+        # how many commits there?
 	local count=$(git log --oneline $startref..heads/$name |wc --lines)
 	echo $count commits:
 	git log --oneline $startref..heads/$name
     else
-	echo "$name is not a segment">&2
+	echo "$name is not a segment -- no 'base' found">&2
 	exit 1
     fi
 }
@@ -78,12 +91,7 @@ list_segments(){
 	    echo -en "\t\t";
 	    echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
 
-	    count=$(segment_age $segment)
-	    if [ $count = 0 ]; then
-		echo
-	    else
-		echo -e "\tdirty: $count"
-	    fi
+	    output_dirty $segment "\t"
 	else
 	    echo
 	fi
