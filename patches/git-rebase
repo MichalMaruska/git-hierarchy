@@ -174,7 +174,7 @@ You can run "git stash pop" or "git stash drop" at any time.
 }
 
 run_specific_rebase_internal () {
-    echo run_specific_rebase_internal >&2
+    # echo run_specific_rebase_internal >&2
 	if [ "$interactive_rebase" = implied ]; then
 		GIT_EDITOR=:
 		export GIT_EDITOR
