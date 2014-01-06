@@ -46,11 +46,11 @@ commit_id()
 
 if test $(commit_id $start) = $(commit_id $base);
 then
-    echo "no need to rebase segment $branch"
+    {echo -n "no need to rebase segment ";cecho cyan $branch} >&2
     exit 0
 fi
 
-cecho green "rebasing segment $branch" >&2
+{echo -n "rebasing segment ";cecho cyan $branch} >&2
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
