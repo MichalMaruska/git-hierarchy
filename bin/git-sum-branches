@@ -170,7 +170,9 @@ foreach id ($commit_ids_summands) {
 
 if test "$equal" = y;
 then
-    echo "no need to merge again -- the sum is up-to-date (as defined)." >&2
+    {echo -n "no need to merge again -- the sum ";
+	cecho magenta -n $sum_branch;
+	echo " is up-to-date (as defined)." } >&2
     exit 0
 fi
 
