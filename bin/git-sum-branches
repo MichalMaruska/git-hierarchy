@@ -165,7 +165,11 @@ foreach id ($commit_ids_summands) {
 	    }
 	fi
     fi
+	# if test $equal != y; then
+	#     break;
+	# fi
 }
+
 
 
 if test "$equal" = y;
