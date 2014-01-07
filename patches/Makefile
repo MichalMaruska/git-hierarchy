@@ -5,6 +5,8 @@ SOURCES := git-am  git-rebase--am git-rebase
 ORIGINS := $(foreach x,$(SOURCES),$(GIT_CORE_DIR)$(x))
 
 
+.DEFAULT:	diff
+
 diff:
 	@foreach file ($(SOURCES)) {echo $$file;colordiff $(GIT_CORE_DIR)/$$file $$file || :}
 
