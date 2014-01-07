@@ -6473,6 +6473,7 @@ proc drawtags {id x xt y1} {
 		set xi [expr {$x + 1}]
 		set yti [expr {$yt + 1}]
 		set xri [expr {$x + $rwid}]
+		# mmc: ZERO boundary line, but FILLed with remote color!
 		$canv create polygon $xi $yti $xri $yti $xri $yb $xi $yb \
 			-width 0 -fill $remotebgcolor -tags tag.$id
 	    }
