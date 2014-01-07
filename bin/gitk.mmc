@@ -6476,6 +6476,23 @@ proc drawtags {id x xt y1} {
 		# mmc: ZERO boundary line, but FILLed with remote color!
 		$canv create polygon $xi $yti $xri $yti $xri $yb $xi $yb \
 			-width 0 -fill $remotebgcolor -tags tag.$id
+
+	    } elseif {[regexp {^(start/|base/)} $tag match remoteprefix]} {
+	        set rwid [font measure mainfont $remoteprefix]
+		set xi [expr {$x + 1}]
+		set yti [expr {$yt + 1}]
+		set xri [expr {$x + $rwid}]
+
+		# I think  start:xx,yy,zz would be enough
+		if {[string equal $remoteprefix "start/"]} {
+		    set prefixbgcolor "IndianRed"
+		} else {
+		    set prefixbgcolor "#aaddbb"
+		    #
+		}
+		# mmc: ZERO boundary line, but FILLed with remote color!
+		$canv create polygon $xi $yti $xri $yti $xri $yb $xi $yb \
+			-width 0 -fill $prefixbgcolor -tags tag.$id
 	    }
 	}
 	set t [$canv create text $xl $y1 -anchor w -text $tag -fill $headfgcolor \
