@@ -147,7 +147,7 @@ set -u # here again we don't (intend to) risk it.
 foreach id ($commit_ids_summands) {
 	#if still a chance to win:
     if test $id = $sum_id; then
-	echo ignoring ;
+	echo ignoring ;  # for example S=a+b  but b>a.
     else
 	if test $equal = y;
 	then
@@ -163,11 +163,11 @@ foreach id ($commit_ids_summands) {
 		    :
 		fi
 	    }
+	else
+	    # no need to check further
+	    break;
 	fi
     fi
-	# if test $equal != y; then
-	#     break;
-	# fi
 }
 
 
