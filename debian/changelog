@@ -1,3 +1,11 @@
+git-hierarchy (3.2) release; urgency=low
+
+  * sum: suppress too verbosity
+  * patches: reset a segment, only if requested
+  * improve sum-validity verification
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 15 Jan 2014 16:56:36 +0100
+
 git-hierarchy (3.1) release; urgency=low
   * New criterion for up-to-date sum.
   * sum: treat the case when 1 summand is the sum itself.
