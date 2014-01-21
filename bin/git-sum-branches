@@ -126,7 +126,7 @@ set +u # here we risk the "var. lookup" fails, so treat it explicitly
 
 sum_id=$(git rev-parse $sum_branch)
 if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
-    cecho red "This merge is itself a summand." >&2
+    test $debug = y && cecho red "This merge is itself a summand." >&2
 else
 # here the O(N^2) tests:
     foreach id ($commit_ids_sum_parents) {
@@ -147,7 +147,7 @@ set -u # here again we don't (intend to) risk it.
 foreach id ($commit_ids_summands) {
 	#if still a chance to win:
     if test $id = $sum_id; then
-	echo ignoring ;  # for example S=a+b  but b>a.
+	test $debug = y && echo ignoring ;  # for example S=a+b  but b>a.
     else
 	if test $equal = y;
 	then
