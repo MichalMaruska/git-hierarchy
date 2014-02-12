@@ -59,6 +59,9 @@ then
     # todo: git-segment $branch $base
     git-set-start $branch $base
 else
+    cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
+
+
     echo "$branch" > $GIT_DIR/.rebasing-segment
     cecho red "** ERROR: Rebase failed."
     echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"

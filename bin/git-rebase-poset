@@ -64,6 +64,7 @@ foreach ref ($WHAT_TO_REBASE)
     then
 	problem=$?
 	cecho red "Failure on $ref"
+	# todo: list the path from .... poset root to this one
 	exit $problem
     fi
 }
