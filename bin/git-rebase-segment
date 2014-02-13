@@ -1,5 +1,6 @@
 #! /usr/bin/zsh -feu
 
+# rebase  start...segment --onto base
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
