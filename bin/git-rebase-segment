@@ -51,7 +51,7 @@ then
     exit 0
 fi
 
-{echo -n "rebasing segment ";cecho cyan $branch} >&2
+{cecho yellow -n "rebasing segment ";cecho cyan $branch} >&2
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
 if git rebase --onto $base $start $branch;
