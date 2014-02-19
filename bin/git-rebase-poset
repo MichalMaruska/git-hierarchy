@@ -50,20 +50,20 @@ else
 fi
 
 
-    typeset -a DEBUG_OPTIONS
+typeset -a GIT_DEBUG_OPTIONS
 
-    test "$DEBUG" = y && DEBUG_OPTIONS+=(-d)
-    foreach ref ($WHAT_TO_REBASE)
-    {
+test "$DEBUG" = y && GIT_DEBUG_OPTIONS+=(-d)
+foreach ref ($WHAT_TO_REBASE)
+{
 	# todo: create a tag, so that if `git-rebase' fails
 	# at least I see the segment (in gitk).
 	#
     test "$DEBUG" = y && cecho green "rebasing $ref"
 
-	if ! git-rebase-ref $DEBUG_OPTIONS $ref;
-	then
-	    problem=$?
-	    cecho red "Failure on $ref"
-	    exit $problem
-	fi
-    }
+    if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
+    then
+	problem=$?
+	cecho red "Failure on $ref"
+	exit $problem
+    fi
+}
