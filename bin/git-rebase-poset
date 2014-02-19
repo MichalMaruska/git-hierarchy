@@ -6,7 +6,7 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [-d] [--] ARGS...
+usage: ${0##*/} [+-h] [-d] [--]  [sum|segment] ...
 -d debug
 EOF
 }
