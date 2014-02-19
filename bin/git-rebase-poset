@@ -2,7 +2,6 @@
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-move_only=n
 
 usage()
 {
@@ -14,12 +13,8 @@ EOF
 
 DEBUG=n
 
-while getopts :m:hd OPT; do
+while getopts :hd OPT; do
     case $OPT in
-	m)
-	    move_only=y
-	    new_base=$OPTARG
-	    ;;
 	d) DEBUG=y
 	    ;;
 	h|+h)
@@ -55,49 +50,6 @@ else
 fi
 
 
-if test $move_only = y;
-then
-    # find minimums
-    minimal=()
-    foreach ref ($WHAT_TO_REBASE)
-    {
-	if git-segment $ref > /dev/null; then
-	    :
-	elif git-sum $ref > /dev/null; then
-	    :
-	else
-	    test "$DEBUG" = y && echo "non-rebaseable ref $ref" >&2
-	    #
-	    minimal+=($ref)
-	fi
-    }
-
-    test "$DEBUG" = y && echo "bases: $minimal" >&2
-
-    # exchange base new_base
-    # if git-segment  -> base
-    # git-segment -u $name $new_base
-    graph=$(git-walk-down $ref)
-    foreach min ($minimal)
-    {
-	min=${min#refs/heads/}
-	test "$DEBUG" = y && cecho red "processing $min"
-	foreach ref ($WHAT_TO_REBASE)
-	{
-	    ref=${ref#refs/heads/}
-	    cecho blue "processing $ref  $(segment_base $ref)"
-
-	    if git-segment $ref > /dev/null && \
-		test $(segment_base $ref) = refs/heads/$min;
-	    then
-		echo git-segment -u $ref $new_base
-		cecho green "should update segment $ref"
-	    else
-		# echo $(segment_base $ref)
-	    fi
-	}
-    }
-else
     typeset -a DEBUG_OPTIONS
 
     test "$DEBUG" = y && DEBUG_OPTIONS+=(-d)
@@ -106,7 +58,7 @@ else
 	# todo: create a tag, so that if `git-rebase' fails
 	# at least I see the segment (in gitk).
 	#
-	test "$DEBUG" = y && cecho green "rebasing $ref"
+    test "$DEBUG" = y && cecho green "rebasing $ref"
 
 	if ! git-rebase-ref $DEBUG_OPTIONS $ref;
 	then
@@ -115,4 +67,3 @@ else
 	    exit $problem
 	fi
     }
-fi
