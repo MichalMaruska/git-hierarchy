@@ -11,7 +11,8 @@ die()
 
 git_dir()
 {
-    echo $(git rev-parse --show-toplevel)/.git
+    git rev-parse --git-dir
+    # echo $(git rev-parse --show-toplevel)/.git
 }
 
 
