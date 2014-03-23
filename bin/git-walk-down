@@ -53,20 +53,24 @@ fi
 
 root=$(git-expand-ref $1)
 
-typeset -a nodes
-nodes=($root)
 
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 
+
+# DFS:
+
+typeset -a nodes
+nodes=($root)
 typeset -a processed
 while [[ ${#nodes} -ge 1  ]];
 do
 
     this=${nodes[1]}
-    processed=($this)
+    processed=($this)		#  += ?
+    nodes=(${nodes:|processed})# fixme: processed ?
     # take the first, and append the base(s)
     # also remove "first" if it's repeated.
-    nodes=(${nodes:|processed})
+
 
     test "$DEBUG" = y && \
 	cecho yellow "processing $this, remain $nodes ${#nodes}" >&2 || : ok

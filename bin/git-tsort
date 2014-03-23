@@ -3,6 +3,8 @@
 # Generate list of my known branches (sums & segments)
 # and output them in topological order.
 
+# note this generates the graph "globally", not by search.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
