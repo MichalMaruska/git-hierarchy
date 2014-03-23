@@ -1,9 +1,10 @@
 #! /usr/bin/zsh -fue
 
+# rename a branch: keeps the support ref (base/start/summands) in sync.
+
 usage()
 {
-    # print "usage: ${0##*/} [+-h} [--] ARGS..."
-    echo ""
+    print "usage: ${0##*/} [+-h} [--] {from} {new-name}"
 }
 
 while getopts :h OPT; do
@@ -19,6 +20,12 @@ while getopts :h OPT; do
 done
 shift OPTIND-1
 OPTIND=1
+
+if [ $# = 2 ];
+then
+    usage
+    exit 1
+fi
 
 from=$1
 new=$2
