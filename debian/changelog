@@ -1,3 +1,33 @@
+git-hierarchy (3.3) release; urgency=low
+
+  * suppress too verbosity on sum up-to-date check.
+  * patches: drop tracing
+  * comment
+  * improve color of tracing
+  * Drop the "move-only" option & code.
+  * rename DEBUG_OPTIONS to GIT_DEBUG_OPTIONS + reindent.
+  * usage
+  * test: avoid hardwired path
+  * import new git-core
+  * Carry gitk
+  * gitk comments
+  * comment on how Remote heads have the prefix in different background color.
+  * fill the bg of start/base prefixes
+  * patches: by default diff
+  * start treating failures during rebasing.
+  * Less verbosity in git-rebase patch
+  * git-dump-poset: fix the algo. Drop unused var
+  * new way to get .git path
+  * fix identation
+  * git-rename: usage, check args
+  * rename display -> dot_format
+  * Add one-line descriptions (to scripts)
+  * Document similarities in 3 algs -- 2 + 1 for graph collection
+  * git-sum-branches: fix -h, and stash & cd when necessary.
+  * comments
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 23 Mar 2014 22:28:14 +0100
+
 git-hierarchy (3.2) release; urgency=low
 
   * sum: suppress too verbosity
