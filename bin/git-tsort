@@ -90,14 +90,14 @@ $dot_name [label="$name $length\n$age",color=$color,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
 
-if ! git-segment $base_name &>/dev/null ; then
-if ! git-sum $base_name &>/dev/null; then
-cat <<EOF
+          if ! git-segment $base_name &>/dev/null ; then
+	      if ! git-sum $base_name &>/dev/null; then
+		  cat <<EOF
 $dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
-fi
-fi
+	      fi
+	  fi
 
       else
 	  echo -n refs/heads/$name "\t";
