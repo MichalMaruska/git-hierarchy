@@ -14,8 +14,6 @@ EOF
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-SUM_DIR=$GIT_DIR/mmc
-
 
 # recursively dump the poset:
 dump_poset()
@@ -27,14 +25,15 @@ dump_poset()
 
     while [[ ${#nodes} -gt 0 ]]
     do
-	# take one: sum -> summands
+
+	# report:
+	local first=$nodes[1];
+	shift nodes
+	cecho green $first
+
+	# recurse:
 	# segment -> base.
 	# limit base -> stop.
-
-	local first=$nodes[1];
-	cecho green $first
-	nodes[1]=();
-
 	name=${first#refs/heads/}
 	if is_segment $name; then
 	    # one could filter those already in.
@@ -43,7 +42,7 @@ dump_poset()
 	    # one could filter those already in.
 	    nodes+=( $(summands_of $name) )
 	else
-	    break
+	    : do_nothing #break
 	fi
     done
 }
