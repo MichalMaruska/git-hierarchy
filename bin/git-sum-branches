@@ -12,16 +12,11 @@ usage: ${0##*/} [-d] [+-r] [-h] [--] ARGS...
 EOF
 }
 
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-
-# fixme: some variable is used-before-defined
-set +u
-. /usr/lib/git-core/git-sh-setup
-set -u
-# todo:
-# octopus can leave half work, so yes, I prefer:
-require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
+# fixme:
+cd $(git rev-parse --show-toplevel)
 
 
 # by default make a `clean' merge. This means
@@ -57,6 +52,26 @@ while getopts :rdhv OPT; do
 done
 shift OPTIND-1
 OPTIND=1
+
+STASHED=no
+
+# fixme: some variable is used-before-defined
+set +u
+# this is run after processing the command line args. Otherwise -h would be
+# handled by it
+. /usr/lib/git-core/git-sh-setup
+set -u
+# todo:
+# octopus can leave half work, so yes, I prefer:
+if (require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")")
+then
+    echo $?
+#    exit 0
+else
+    cecho yellow "stashing for you..."
+    git stash save "git-sum-branches saving"
+    STASHED=yes
+fi
 
 sum_branch=$1
 
@@ -170,6 +185,13 @@ foreach id ($commit_ids_summands) {
     fi
 }
 
+restore()
+{
+    if [ $STASHED = yes ]; then
+	cecho yellow "Unstashing now."
+	git stash pop
+    fi
+}
 
 
 if test "$equal" = y;
@@ -177,6 +199,7 @@ then
     {echo -n "no need to merge again -- the sum ";
 	cecho magenta -n $sum_branch;
 	echo " is up-to-date (as defined)." } >&2
+    restore
     exit 0
 fi
 
@@ -203,7 +226,8 @@ git merge -m "Sum: $sum_branch = $others + $first" \
     -s octopus \
     -s recursive -X patience -X ignore-space-change $others
 
-
+restore
+exit 0
 # foreach next ($others)
 # {
 #     eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate $next;
