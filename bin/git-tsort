@@ -8,7 +8,7 @@ GIT_DIR=$(git_dir)
 
 keep_graph_file="n"
 just_graph=n
-display=n
+dot_format=n
 debug=n
 typeset -a draw_options
 
@@ -36,7 +36,7 @@ while getopts :kgxd OPT; do
 	    debug=y
 	    ;;
 	x)
-	    display=y
+	    dot_format=y
 	    ;;
 	*)
 	    usage
@@ -67,7 +67,7 @@ else
   {
       # mmc: why not output the full base ref?
       name=${segment#refs/base/}
-      if [ $display = y ];
+      if [ $dot_format = y ];
       then
 	  dot_name=${name//-/_}
 	  # todo:  #
@@ -119,7 +119,7 @@ else
 
 	git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
 	(while read a; do
-	    if [ $display = y ];
+	    if [ $dot_format = y ];
 	    then
 		echo -n ${sum//-/_} "->";
 		echo ${${$(dump_ref $a|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
@@ -128,7 +128,7 @@ else
 	    fi
 	    done )
 
-	if [ $display = y ]; then
+	if [ $dot_format = y ]; then
             cat <<EOF
 ${sum//-/_} [label="$sum",color=red,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
@@ -139,7 +139,7 @@ fi
 
 
 
-if [ $display = y ]; then
+if [ $dot_format = y ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
