@@ -1,5 +1,7 @@
 #! /usr/bin/zsh -feu
 
+# This is .... unmaintained.... the display part is left behind git-tsort -x.
+#
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 

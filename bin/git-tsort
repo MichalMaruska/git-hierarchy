@@ -102,6 +102,7 @@ EOF
 	  fi
 
       else
+	  # for tsort:
 	  echo -n refs/heads/$name "\t";
 	  segment_base $name
       fi
@@ -126,6 +127,7 @@ else
 		echo -n ${sum//-/_} "->";
 		echo ${${$(dump_ref $a|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
 	    else
+		# for tsort:
 		echo -n "refs/heads/$sum" "\t"; dump_ref $a|sed -e 's/^ref:\s//'
 	    fi
 	    done )
