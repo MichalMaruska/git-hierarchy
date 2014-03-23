@@ -1,5 +1,10 @@
 #!/usr/bin/zsh -feu
 
+
+# This is the reverse of `git-dump-refs':  deserializer
+# It restores/creates segments & sums.
+
+
 # get this from cmdline:
 REMOTE=origin
 

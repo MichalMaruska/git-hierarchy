@@ -1,5 +1,8 @@
 #!/usr/bin/zsh -feu
 
+# output all relevant references: sums, bases, starts
+
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 

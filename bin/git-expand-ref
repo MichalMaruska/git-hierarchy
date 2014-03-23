@@ -2,7 +2,7 @@
 
 # This is about S.Ref `resolution':
 # turning the input from user into fully-qualified S.Ref name.
-
+# compare with "git rev-parse"
 
 try_to_expand()
 {
