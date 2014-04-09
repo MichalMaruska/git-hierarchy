@@ -65,7 +65,8 @@ set -u
 # octopus can leave half work, so yes, I prefer:
 if (require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")")
 then
-    echo $?
+    :
+    # echo $?
 #    exit 0
 else
     cecho yellow "stashing for you..."
@@ -150,7 +151,6 @@ else
 	    equal=n
 	else
 	    test $debug = y && cecho green "found $id" >&2
-	    :
 	fi
     }
 fi
@@ -189,7 +189,7 @@ restore()
 {
     if [ $STASHED = yes ]; then
 	cecho yellow "Unstashing now."
-	git stash pop
+	git stash pop --quiet
     fi
 }
 
