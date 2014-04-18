@@ -188,7 +188,7 @@ foreach id ($commit_ids_summands) {
 restore()
 {
     if [ $STASHED = yes ]; then
-	cecho yellow "Unstashing now."
+	cecho yellow "unstashing now."
 	git stash pop --quiet
     fi
 }
