@@ -1,3 +1,10 @@
+git-hierarchy (3.5) release; urgency=low
+
+  * Don't emit Esc seq on non-terminal
+  * git-rebase-poset: Correctly propagate a failure up
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 13 Jun 2014 11:03:23 +0200
+
 git-hierarchy (3.4) release; urgency=low
 
   * Be quiet on sum update.
