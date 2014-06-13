@@ -62,8 +62,9 @@ foreach ref ($WHAT_TO_REBASE)
 
     if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
     then
-	problem=$?
-	cecho red "Failure on $ref"
+	#problem=$?
+	problem=1
+	cecho red "Failure on $ref: $?"
 	# todo: list the path from .... poset root to this one
 	exit $problem
     fi
