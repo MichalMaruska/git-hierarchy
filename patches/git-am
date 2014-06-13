@@ -817,7 +817,8 @@ To restore the original branch and stop patching run \"\$cmdline --abort\"."
 	fi
 
 #	say "$(eval_gettext "Applying: \$FIRSTLINE")"
-	/bin/echo -e "$(eval_gettext "Applying: \033[33m \$FIRSTLINE \033[00m")"
+	# /bin/echo -e "$(eval_gettext "Applying: \033[33m \$FIRSTLINE \033[00m")"
+	/bin/echo -n "Applying: "; cecho hiyellow $FIRSTLINE
 
 	case "$resolved" in
 	'')
