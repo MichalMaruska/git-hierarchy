@@ -141,7 +141,8 @@ test_commit_parents()
 
     set +u # here we risk the "var. lookup" fails, so treat it explicitly
 
-    local sum_id=$(git rev-parse $sum_branch)
+    local sum_id
+    sum_id=$(git rev-parse $sum_branch)
     if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
 	test $debug = y && cecho red "This merge is itself a summand." >&2
     else
