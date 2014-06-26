@@ -222,12 +222,13 @@ fi
 first=$real_branches[1]
 
 if [ $reset = "y" ]; then
-    # todo: optimize this:
-    #eval $cmd git checkout $sum_branch
-    eval $cmd git checkout $first
-    eval $cmd git branch -f $sum_branch $first
+    # Is this really necessary? only if
+    #if [ $sum_branch = $(git branch) ]; then
+	eval $cmd git checkout $first
+    #fi
+    eval $cmd git branch --force $sum_branch $first
     eval $cmd git checkout $sum_branch
-    # eval $cmd git reset --hard $first --
+
 else
     eval $cmd git checkout $sum_branch
     eval $cmd git merge $first;
