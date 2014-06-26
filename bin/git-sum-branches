@@ -57,7 +57,7 @@ OPTIND=1
 
 STASHED=no
 
-# fixme: some variable is used-before-defined
+# fixme: some variable is used-before-defined, in upstream code.
 set +u
 # this is run after processing the command line args. Otherwise -h would be
 # handled by it
@@ -83,17 +83,14 @@ fi
 
 sum_branch=$1
 
-#### Here we start:
+#### Calculate the summands: for the check and for re-merging.
 typeset -a summand_branches
-
-# get the list of summands:
-
 summand_branches=(
     $(git for-each-ref "refs/sums/$sum_branch/" --format "%(refname)") )
 #(${(f)_tmp})
-# echo $summand_branches
+#test $debug = y &&     echo $summand_branches
 
-# those references are symbolic "ref: ref/head/NAME", but we want to
+# Those references are symbolic "ref: ref/head/NAME", but we want to
 # use the NAMES in the commit message & interaction with the user.
 # So, `resolve' them:
 typeset -a real_branches
@@ -224,6 +221,7 @@ fi
 first=$real_branches[1]
 
 if [ $reset = "y" ]; then
+    # todo: optimize this:
     #eval $cmd git checkout $sum_branch
     eval $cmd git checkout $first
     eval $cmd git branch -f $sum_branch $first
