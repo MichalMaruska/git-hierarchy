@@ -104,10 +104,6 @@ test $debug = y && echo "Summands: $real_branches"
 # uh:
 git-branch-exists $sum_branch || git branch $sum_branch
 
-# if exists such branch/tag ->abort
-first=$real_branches[1]
-
-others=($real_branches[2,-1])
 
 
 ######################################## Test if up-to-date
@@ -185,7 +181,7 @@ foreach id ($commit_ids_summands) {
     fi
 }
 
-restore()
+restore_stash()
 {
     if [ $STASHED = yes ]; then
 	cecho yellow "unstashing now."
@@ -199,12 +195,13 @@ then
     {echo -n "no need to merge again -- the sum ";
 	cecho magenta -n $sum_branch;
 	echo " is up-to-date (as defined)." } >&2
-    restore
+    restore_stash
     exit 0
 fi
 
 
 ####################################### Merge
+first=$real_branches[1]
 
 if [ $reset = "y" ]; then
     #eval $cmd git checkout $sum_branch
@@ -218,15 +215,22 @@ else
 fi
 # git checkout -b $sum_branch $first
 
+if test ${#real_branches} = 1;
+then
+    # if empty, we are done!
+    test $debug = y && echo "the sum is trivial - 1 summand, no merging"
+else
+    others=($real_branches[2,-1])
 # octopus is default (for >2 children) & refuses any conflict.
 
-set -x
-git merge -m "Sum: $sum_branch = $others + $first" \
-    --rerere-autoupdate \
-    -s octopus \
-    -s recursive -X patience -X ignore-space-change $others
+    set -x
+    git merge -m "Sum: $sum_branch = $first + $others" \
+	--rerere-autoupdate \
+	-s octopus \
+	-s recursive -X patience -X ignore-space-change $others
 
-restore
+    restore_stash
+fi
 exit 0
 # foreach next ($others)
 # {
