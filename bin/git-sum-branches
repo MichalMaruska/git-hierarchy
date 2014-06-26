@@ -108,25 +108,26 @@ foreach br ($summand_branches) {
 
 test $debug = y && echo "Summands: $real_branches"
 
-# uh:
-git-branch-exists $sum_branch || git branch $sum_branch
-
 
 
 ######################################## Test if up-to-date
+test_commit_parents()
+# expects the $summand_branches variable.
+# "returns" the $equal variable
+{
 # take the branches' commit-ids
 # and parent-ids of the sum's head.
 # sort & compare
-commit_ids_summands=()
-foreach br ($summand_branches) {
-    commit_ids_summands+=$(git rev-parse $br)
-}
+    local commit_ids_summands=()
+    foreach br ($summand_branches) {
+	commit_ids_summands+=$(git rev-parse $br)
+    }
 
-test $debug = y && echo "Summands: $commit_ids_summands" >&2
-commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
+    test $debug = y && echo "Summands: $commit_ids_summands" >&2
+    commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
 
 
-test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
+    test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
 
 # new criterion:
 # the parents "include" all summands, and each parent is one of the summands.
@@ -136,56 +137,58 @@ test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
 # how to get common base for merge:
 # git merge-base
 
-equal=y
+    equal=y
 
 # 1/ each parent is one of summands.
 # But, if the merge is itself one of summands -> should be ok!
 
-set +u # here we risk the "var. lookup" fails, so treat it explicitly
+    set +u # here we risk the "var. lookup" fails, so treat it explicitly
 
-sum_id=$(git rev-parse $sum_branch)
-if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
-    test $debug = y && cecho red "This merge is itself a summand." >&2
-else
+    local sum_id=$(git rev-parse $sum_branch)
+    if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
+	test $debug = y && cecho red "This merge is itself a summand." >&2
+    else
 # here the O(N^2) tests:
-    foreach id ($commit_ids_sum_parents) {
-	if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
-	    test $debug = y && cecho red "This parent is not in summands: $id" >&2
-	    equal=n
-	else
-	    test $debug = y && cecho green "found $id" >&2
-	fi
-    }
-fi
-set -u # here again we don't (intend to) risk it.
+	foreach id ($commit_ids_sum_parents) {
+	    if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
+		test $debug = y && cecho red "This parent is not in summands: $id" >&2
+		equal=n
+	    else
+		test $debug = y && cecho green "found $id" >&2
+	    fi
+	}
+    fi
+    set -u # here again we don't (intend to) risk it.
 
 # if test $equal = y
 # then
 # 2/ each summand is less than the sum. not -> N
-foreach id ($commit_ids_summands) {
+    foreach id ($commit_ids_summands) {
 	#if still a chance to win:
-    if test $id = $sum_id; then
-	test $debug = y && echo ignoring ;  # for example S=a+b  but b>a.
-    else
-	if test $equal = y;
-	then
-	    equal=n
-            # SOME of the parent covers it:
-	    foreach parent ($commit_ids_sum_parents) {
-		if test $(git merge-base $parent $id) = $id
-		then
-		    test $debug = y && cecho green "$parent is greater than $id" >&2
-		    equal=y
-		else
-	    # cecho green "found $id" >&2
-		    :
-		fi
-	    }
+	if test $id = $sum_id; then
+	    test $debug = y && echo ignoring ;  # for example S=a+b  but b>a.
 	else
+	    if test $equal = y;
+	    then
+		equal=n
+            # SOME of the parent covers it:
+		foreach parent ($commit_ids_sum_parents) {
+		    if test $(git merge-base $parent $id) = $id
+		    then
+			test $debug = y && cecho green "$parent is greater than $id" >&2
+			equal=y
+		    else
+	    # cecho green "found $id" >&2
+			:
+		    fi
+		}
+	    else
 	    # no need to check further
-	    break;
+		break;
+	    fi
 	fi
-    fi
+    }
+
 }
 
 restore_stash()
@@ -195,6 +198,16 @@ restore_stash()
 	git stash pop --quiet
     fi
 }
+
+equal=n
+# sanity check:
+if git-branch-exists $sum_branch;
+then
+    test_commit_parents
+else
+    git branch $sum_branch
+fi
+# todo?: if exists such branch/tag ->abort
 
 
 if test "$equal" = y;
