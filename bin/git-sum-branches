@@ -5,10 +5,12 @@ usage()
     cat <<EOF
 Remake a git sum/merge.
 
-usage: ${0##*/} [-d] [+-r] [-h] [--] ARGS...
+usage: ${0##*/} [-d] [+-r] [-h] ..... [--] {sum}
 -d  dry
--r  reset (before starting merge)
+-r  reset before starting merge. Default
++r  don't reset.
 -h  help
+.... can contain upstream Git(1) options.
 EOF
 }
 
@@ -72,6 +74,11 @@ else
     cecho yellow "stashing for you..."
     git stash save "git-sum-branches saving"
     STASHED=yes
+fi
+
+if [ $# != 1 ]; then
+    usage
+    exit 1
 fi
 
 sum_branch=$1
