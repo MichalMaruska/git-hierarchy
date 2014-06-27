@@ -244,6 +244,7 @@ else
     others=($real_branches[2,-1])
 # octopus is default (for >2 children) & refuses any conflict.
 
+    {cecho green -n "re-merging sum ";cecho cyan $sum_branch} >&2
     set -x
     git merge -m "Sum: $sum_branch = $first + $others" \
 	--rerere-autoupdate \
