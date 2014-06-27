@@ -115,7 +115,8 @@ test_commit_parents()
 # take the branches' commit-ids
 # and parent-ids of the sum's head.
 # sort & compare
-    local commit_ids_summands=()
+    local commit_ids_summands
+    commit_ids_summands=()
     foreach br ($summand_branches) {
 	commit_ids_summands+=$(git rev-parse $br)
     }
