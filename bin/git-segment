@@ -3,6 +3,7 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+SEGMENT_PREFIX=""
 if getopt -T; then # should test (( $? = -4 ))
     echo "incompatible  getopt(1) installed. Abort"
     exit -1
@@ -15,8 +16,9 @@ usage()
 {
     cat <<EOF
 usage:
-$PROGRAM [-s| --short]
+$PROGRAM [-s| --short] [-f | --full]
   List the segments, -s short-format
+  Full implies output ref/heads/XXX instead of XXX
 
 $PROGRAM {segment-name}
   Show the definition & dump the commits/history
@@ -85,7 +87,7 @@ list_segments(){
         sed -e 's|^refs/base/||' |\
     while read segment;
     do
-	echo -e -n $segment
+	echo -e -n "$SEGMENT_PREFIX$segment"
 
 	if [ $short_list = n ]; then
 	    echo -en "\t\t";
@@ -104,10 +106,9 @@ short_list=n
 
 update=n
 restart=n
-
 cmd_options=$(getopt --name $0 --shell bash \
-	--longoptions help,short,delete,prune,update:,restart \
-        --options     hsdDur \
+	--longoptions help,short,delete,prune,update:,restart,full \
+        --options     hsdDurf \
 	-- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -116,6 +117,9 @@ while (( $# > 0 )); do
 	-h | --help)
 	    usage
 	    exit 0
+	    ;;
+	-f | --full)
+	    SEGMENT_PREFIX=ref/head/
 	    ;;
 	-s | --short)
 	    short_list=y
