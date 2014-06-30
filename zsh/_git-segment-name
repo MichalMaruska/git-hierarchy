@@ -5,7 +5,7 @@
 #{
 typeset -a AVAILABLE
     # todo: must be silent if not in a git dir.
-AVAILABLE=( $(git-segment -s) )
+AVAILABLE=( $(git-segment -s 2>/dev/null) )
 
 compadd -a AVAILABLE && ret=0
 #}

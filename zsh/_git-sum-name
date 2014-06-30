@@ -2,7 +2,7 @@
 
 typeset -a available
     # todo: must be silent if not in a git dir.
-available=( $(git-sum) )
+available=( $(git-sum 2>/dev/null) )
 compadd -- ${(k)available} && ret=0
     # _arguments "1:Segments:($available)"
 
