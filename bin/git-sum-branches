@@ -72,7 +72,7 @@ then
 #    exit 0
 else
     cecho yellow "stashing for you..."
-    git stash save "git-sum-branches saving"
+    eval $cmd git stash save "git-sum-branches saving"
     STASHED=yes
 fi
 
@@ -194,7 +194,7 @@ restore_stash()
 {
     if [ $STASHED = yes ]; then
 	cecho yellow "unstashing now."
-	git stash pop --quiet
+	eval $cmd git stash pop --quiet
     fi
 }
 
@@ -246,7 +246,7 @@ else
 
     {cecho green -n "re-merging sum ";cecho cyan $sum_branch} >&2
     set -x
-    git merge -m "Sum: $sum_branch = $first + $others" \
+    eval $cmd git merge -m "Sum: $sum_branch = $first + $others" \
 	--rerere-autoupdate \
 	-s octopus \
 	-s recursive -X patience -X ignore-space-change $others
