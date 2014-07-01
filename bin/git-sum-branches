@@ -246,7 +246,7 @@ else
 
     {cecho green -n "re-merging sum ";cecho cyan $sum_branch} >&2
     set -x
-    eval $cmd git merge -m "Sum: $sum_branch = $first + $others" \
+    eval $cmd git merge -m '"Sum: $sum_branch = $first + $others"' \
 	--rerere-autoupdate \
 	-s octopus \
 	-s recursive -X patience -X ignore-space-change $others
