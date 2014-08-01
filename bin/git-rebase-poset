@@ -51,8 +51,12 @@ fi
 
 
 typeset -a GIT_DEBUG_OPTIONS
+GIT_DEBUG_OPTIONS=()
 
 test "$DEBUG" = y && GIT_DEBUG_OPTIONS+=(-d)
+test "$DEBUG" = n && GIT_DEBUG_OPTIONS+=(-q)
+#test "$SILENT" = y &&
+
 foreach ref ($WHAT_TO_REBASE)
 {
 	# todo: create a tag, so that if `git-rebase' fails

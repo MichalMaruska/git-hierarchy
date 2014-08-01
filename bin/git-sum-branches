@@ -9,6 +9,8 @@ usage: ${0##*/} [-d] [+-r] [-h] ..... [--] {sum}
 -d  dry
 -r  reset before starting merge. Default
 +r  don't reset.
+-v  verbose
+-q  quiet (not-implemented)
 -h  help
 .... can contain upstream Git(1) options.
 EOF
@@ -27,7 +29,7 @@ dry=n
 cmd=""
 debug=n
 
-while getopts :rdhv OPT; do
+while getopts :rdhvq OPT; do
     case $OPT in
 	d)
 	    dry=y
@@ -43,6 +45,9 @@ while getopts :rdhv OPT; do
 	h)
 	    usage
 	    exit
+	    ;;
+	q)
+	    # quiet silent
 	    ;;
 	v)
 	    debug=y

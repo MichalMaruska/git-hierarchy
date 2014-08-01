@@ -10,10 +10,16 @@ usage()
 
 
 DEBUG=n
-while getopts :dh OPT; do
+SILENT=n
+
+while getopts :dqh OPT; do
     case $OPT in
 	d|+d)
 	    DEBUG=y
+	    SILENT=n
+	    ;;
+	q)
+	    SILENT=y
 	    ;;
 	h|+h)
 	    usage
@@ -38,14 +44,18 @@ branch=${ref#refs/heads/}
 cmd=
 # cmd=echo
 
-if is_sum $branch; then
-    # sum? ->
+typeset -a verbosity
+verbosity=()
+test "$DEBUG" = y && verbosity+=("-v")
+test "$SILENT" = y && verbosity+=("-q")
+
+if is_sum $branch;
+then
     # shouldn't it be  EVALed?
-    if test "$DEBUG" = y; then debug="-v"; else debug="";fi
-    $cmd git-sum-branches $debug -r $branch
-elif is_segment $branch; then
-# segment ->
-    $cmd git-rebase-segment $branch
+    $cmd git-sum-branches $verbosity -r $branch
+elif is_segment $branch;
+then
+    $cmd git-rebase-segment $verbosity $branch
 else
     test "$DEBUG" = y && echo "unknown -- leaving unchanged $ref"
 fi

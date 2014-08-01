@@ -5,20 +5,33 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+DEBUG=n
+SILENT=n
 
 usage()
 {
-    print "usage: ${0##*/} [--] ARGS..."
+    cat <<EOF
+usage: ${0##*/} [-qv] [--] ARGS...
+
+-v verbose
+-q quiet
+EOF
 }
 
-while getopts :h OPT; do
+while getopts :hqv OPT; do
     case $OPT in
 	h)
 	    usage
 	    exit 0
 	    ;;
+	q)
+	    SILENT=y
+	    ;;
+	v)
+	    DEBUG=y
+	    ;;
 	*)
-	    print "usage: ${0##*/} [--] ARGS..."
+	    usage
 	    exit 2
     esac
 done
@@ -47,7 +60,8 @@ commit_id()
 
 if test $(commit_id $start) = $(commit_id $base);
 then
-    {echo -n "no need to rebase segment ";cecho cyan $branch} >&2
+    test $SILENT = n && \
+	{echo -n "no need to rebase segment ";cecho cyan $branch} >&2
     exit 0
 fi
 
