@@ -17,7 +17,7 @@ typeset -a draw_options
 usage()
 {
 cat <<EOF
-usage: ${0##*/} [+-k]  [-g] [-x] [--] ARGS...
+usage: ${0##*/} [+-k]  [-g] [-x] [--]
 -x display using  dot(1)
 -k keep the generated file (for tsort(1))
 
