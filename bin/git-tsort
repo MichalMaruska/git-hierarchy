@@ -49,7 +49,6 @@ shift OPTIND-1
 OPTIND=1
 
 # Get a temp file:
-# generate
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 extern_color=pink
 
@@ -57,8 +56,6 @@ extern_color=pink
 setopt NULL_GLOB
 
 typeset -a segments
-# fixme:
-#segments=($GIT_DIR/refs/base/*)
 
 # this list_segments is also in `git-segment'
 segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
