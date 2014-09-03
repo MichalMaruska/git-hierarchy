@@ -1,3 +1,26 @@
+git-hierarchy (3.6) release; urgency=low
+
+  * drop core-git patches from master branch
+  * Don't (re)merge with 1 summand only.
+  * clean usage & check params
+  * Make it a function: test_commit_parents
+  * Comments in git-sum-*
+  * fix shell syntax error: local x=value
+  * Explain the 1st summand treatment (reset case)
+  * again, local x=value  does not work for value an array!
+  * sum-branches: same 1-line step info as in rebase-segment
+  * git-segment: optionally list full ref names, unambiguous.
+  * Hide the error messages on completion
+  * git-sum-branches: fix the --dry case.
+  * There are no arguments to git-tsort
+  * clean
+  * drop obsolete git-walk-down
+  * git-sum-branches: fix the --dry case.
+  * Silent/quiet option.
+  * FUNCTION_ARGZERO
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 03 Sep 2014 13:12:16 +0200
+
 git-hierarchy (3.5) release; urgency=low
 
   * Don't emit Esc seq on non-terminal
