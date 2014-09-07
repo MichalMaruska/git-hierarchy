@@ -21,10 +21,11 @@ GIT_DIR=$(git_dir)
 typeset -a remote_heads
 remote_heads=($(git for-each-ref --format="%(refname)" refs/remotes/$REMOTE/))
 
-typeset -A remote_branches
+# make a hash out of it:
+typeset -A remote_heads_hash
 remote_prefix=refs/remotes/$REMOTE/
 foreach rem ($remote_heads) {
-    remote_branches[${rem#$remote_prefix}]=1
+    remote_heads_hash[${rem#$remote_prefix}]=1
 }
 
 while getopts :hd OPT; do
@@ -84,16 +85,13 @@ do
 		then
 		    branch=${ref#refs/heads/}
 		    cecho yellow "need to setup branch		$branch"
-		    if
-			# git symbolic-ref refs/remotes/$REMOTE/$branch &> /dev/null
-			if [ $remote_branches[$branch] ];
-			then
-			    cecho red "possibly need to localize the branch $branch from " \
-				"${remote_prefix}$branch"
-			    #git branch -f $branch "${remote_prefix}$branch"
-			else
-			    cecho red "cannot see that name in remote branches"
-			fi
+		    # if git symbolic-ref refs/remotes/$REMOTE/$branch &> /dev/null
+		    if [ $remote_heads_hash[$branch] ]; then
+			cecho red "possibly need to localize the branch $branch from " \
+			    "${remote_prefix}$branch"
+			#git branch -f $branch "${remote_prefix}$branch"
+		    else
+			cecho red "cannot see that name in remote branches"
 		    fi
 		else
 		    echo "not a branch $ref"
