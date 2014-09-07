@@ -60,6 +60,13 @@ fi
 
 root=$(git-expand-ref $1)
 
+GRAPH=
+
+trap "clean" EXIT
+clean()
+{
+    test -n "$GRAPH" && rm -f $GRAPH
+}
 
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 
