@@ -10,7 +10,7 @@ GIT_DIR=$(git_dir)
 
 keep_graph_file="n"
 just_graph=n
-dot_format=n
+dump_format=tsort
 debug=n
 typeset -a draw_options
 
@@ -38,7 +38,7 @@ while getopts :kgxd OPT; do
 	    debug=y
 	    ;;
 	x)
-	    dot_format=y
+	    dump_format=y
 	    ;;
 	*)
 	    usage
@@ -84,7 +84,7 @@ fi
 
 
 
-if [ $dot_format = y ]; then
+if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH

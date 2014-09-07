@@ -36,7 +36,7 @@ EOF
 # sum_bases()
 display_gui=n
 just_graph=n
-dot_format=n
+dump_format=tsort
 extern_color=pink
 DEBUG=n
 typeset -a draw_options
@@ -46,7 +46,7 @@ while getopts :dghx OPT; do
     case $OPT in
 	x|+x)
 	    display_gui=y
-	    dot_format=y
+	    dump_format=dot
 	    ;;
 	g|+g)
 	    just_graph=y
@@ -125,7 +125,7 @@ done  > $GRAPH
 # cat $GRAPH
 
 # same as git-tsort:
-if [ $dot_format = y ]; then
+if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
