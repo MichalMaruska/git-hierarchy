@@ -22,12 +22,17 @@ EOF
 # sum_bases()
 display_gui=n
 just_graph=n
+dot_format=n
+extern_color=pink
 DEBUG=n
+typeset -a draw_options
+
 
 while getopts :dghx OPT; do
     case $OPT in
 	x|+x)
 	    display_gui=y
+	    dot_format=y
 	    ;;
 	g|+g)
 	    just_graph=y
@@ -58,60 +63,49 @@ root=$(git-expand-ref $1)
 
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 
-
 # DFS:
 
-typeset -a nodes
-nodes=($root)
+typeset -a queue
+queue=($root)
 typeset -a processed
-while [[ ${#nodes} -ge 1  ]];
+while [[ ${#queue} -ge 1  ]];
 do
 
-    this=${nodes[1]}
-    processed=($this)		#  += ?
-    nodes=(${nodes:|processed})# fixme: processed ?
+    this=${queue[1]}
+    # we don't need += here:
+    processed=($this)
+    queue=(${queue:|processed})# fixme: processed ?
     # take the first, and append the base(s)
     # also remove "first" if it's repeated.
 
 
     test "$DEBUG" = y && \
-	cecho yellow "processing $this, remain $nodes ${#nodes}" >&2 || : ok
+	cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
 
     name=${this#refs/heads/}
     if is_sum $name; then
-	dependants=($(summands_of $name))
+	dump_sum $name
+	queue+=($(summands_of $name))
     elif is_segment $name; then
-	dependants=($(segment_base $name))
+	dump_segment $name
+	queue+=($(segment_base $name))
     else
 	if test "$DEBUG" = y; then
 	    cecho red "stopping @ $name" >&2
 	fi
-	dependants=()
     fi
-
-    # output the dependency:
-    foreach dep ($dependants)
-    {
-	echo "$this $dep"
-    } >> $GRAPH
-    nodes+=($dependants)
 
     if test "$DEBUG" = y; then
-	cecho green "iterate $nodes -- ${#nodes}" >&2
+	cecho green "iterate $queue -- ${#queue}" >&2
     fi
-done
-
-# trap exit
-# rm $GRAPH
+done  > $GRAPH
 
 
-# echo $GRAPH
 # cat $GRAPH
-if [ $display_gui = y ]; then
-    #set -x
-    sed -e 's|refs/heads/||g;s|[/-]|_|g;s/ \+/ ->/;s/$/;/;s/mmc_//g' \
-	$GRAPH |\
-    draw-tsort-graph -F png | display -
+
+# same as git-tsort:
+if [ $dot_format = y ]; then
+    draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
 elif [ $just_graph = y ]; then
@@ -120,14 +114,12 @@ elif [ $just_graph = y ]; then
     # while read
     for  a in $(tsort $GRAPH)
     do
-	if test "$DEBUG" = y; then
-	    cecho green $a
-	fi
+	cecho green $a
 	grep -e "^$a" $GRAPH || :
     done
-    rm $GRAPH
-
 else
     tsort $GRAPH | tac
-    rm $GRAPH
+    # rm $GRAPH
 fi
+
+

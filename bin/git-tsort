@@ -64,46 +64,8 @@ if [ 0 =  ${#segments} ]; then
 else
   foreach segment ($segments);
   {
-      # mmc: why not output the full base ref?
-      name=${segment#refs/base/}
-      if [ $dot_format = y ];
-      then
-	  dot_name=${name//-/_}
-	  # todo:  #
-	  slash="/"
-	  base_name=${$(segment_base $name)#refs/heads/}
-	  dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
-
-	  echo "$dot_name -> $dot_base_name"
-
-	  local age=$(segment_age $name)
-	  local length=$(segment_length $name)
-	  local color
-	  if [ $age = 0 ];then
-	      color=yellow
-	  else
-	      color=orange
-	  fi
-	  cat <<EOF
-$dot_name [label="$name $length\n$age",color=$color,fontsize=14,
-	      fontname="Palatino-Italic",fontcolor=black,style=filled];
-EOF
-
-          if ! git-segment $base_name &>/dev/null ; then
-	      if ! git-sum $base_name &>/dev/null; then
-		  cat <<EOF
-$dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
-	      fontname="Palatino-Italic",fontcolor=black,style=filled];
-EOF
-	      fi
-	  fi
-
-      else
-	  # for tsort:
-	  echo -n refs/heads/$name "\t";
-	  segment_base $name
-      fi
-  }   > $GRAPH
+      dump_segment $segment
+}   > $GRAPH
 fi
 
 
@@ -116,25 +78,7 @@ if [ 0 = ${#sums} ]; then
 else
     foreach sum ($sums)
     {
-
-	git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
-	(while read a; do
-	    if [ $dot_format = y ];
-	    then
-		echo -n ${sum//-/_} "->";
-		echo ${${$(dump_ref $a|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
-	    else
-		# for tsort:
-		echo -n "refs/heads/$sum" "\t"; dump_ref $a|sed -e 's/^ref:\s//'
-	    fi
-	    done )
-
-	if [ $dot_format = y ]; then
-            cat <<EOF
-${sum//-/_} [label="$sum",color=red,fontsize=14,
-	      fontname="Palatino-Italic",fontcolor=black,style=filled];
-EOF
-        fi
+	dump_sum $sum
     } >> $GRAPH
 fi
 

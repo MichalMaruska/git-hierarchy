@@ -161,3 +161,83 @@ drop_symbolic_ref()
     # With this it was recreating .git/refs/heads/refs/sums/all/10
 }
 
+
+# needed:  dot_format y/n, extern_color
+dump_segment()
+{
+    local segment=$1
+
+    # mmc: why not output the full base ref?
+    local name=${segment#refs/base/}
+    if [ $dot_format = y ];
+    then
+	# for dot(1) we have to follow some restrictions on symbols:
+	#  - has a special meaning.
+	#  and we simplify the names ... as they are directly visible:
+	#  todo: should be done elsewhere
+
+	local dot_name=${name//-/_}
+	# todo:  #
+	local slash="/"
+	local base_name=${$(segment_base $name)#refs/heads/}
+	local dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
+	# remotes/debian/master ->  debian_master.
+
+	# the incidence:
+	echo "$dot_name -> $dot_base_name"
+
+	# now the label for the vertex:
+	local age=$(segment_age $name)
+	local length=$(segment_length $name)
+	local color
+	if [ $age = 0 ];then
+	    color=yellow
+	else
+	    color=orange
+	fi
+	cat <<EOF
+$dot_name [label="$name $length\n$age",color=$color,fontsize=14,
+	    fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+
+        if ! git-segment $base_name &>/dev/null ; then
+	    if ! git-sum $base_name &>/dev/null; then
+		cat <<EOF
+		$dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
+		    fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+	    fi
+	fi
+    else
+	# for tsort:
+	echo -n refs/heads/$name "\t";
+	segment_base $name
+    fi
+}
+
+
+dump_sum()
+{
+    local sum=$1
+    local summand
+    # dump the summands:
+    git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
+	(while read summand;
+	do
+	if [ $dot_format = y ];
+	then
+	    echo -n ${sum//-/_} "->";
+	    echo ${${$(dump_ref $summand|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
+	else
+	    # for tsort:
+	    echo -n "refs/heads/$sum" "\t"; dump_ref $summand|sed -e 's/^ref:\s//'
+	fi
+	done )
+
+    if [ $dot_format = y ]; then
+        cat <<EOF
+${sum//-/_} [label="$sum",color=red,fontsize=14,
+	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+EOF
+    fi
+}
