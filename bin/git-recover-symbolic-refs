@@ -1,9 +1,14 @@
 #!/usr/bin/zsh -feu
 
+usage()
+{
+    echo "$0 < file"
+}
 
 # This is the reverse of `git-dump-refs':  deserializer
 # It restores/creates segments & sums.
 
+DEBUG=n
 
 # get this from cmdline:
 REMOTE=origin
@@ -22,6 +27,24 @@ foreach rem ($remote_heads) {
     remote_branches[${rem#$remote_prefix}]=1
 }
 
+while getopts :hd OPT; do
+    case $OPT in
+	h|+h)
+	    usage()
+	    exit 0
+	    ;;
+	d)
+	    DEBUG=y
+	    ;;
+	*)
+	    print "usage: ${0##*/} [+-h} [--] ARGS..."
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
 # read from stdin.
 
 while read line;
@@ -29,7 +52,7 @@ do
     name=${line%%	*}
     ref_link=${line#*	}
 
-    if false; then
+    if [ $DEBUG = y ]; then
 	echo $name
 	echo $ref_link
     fi
