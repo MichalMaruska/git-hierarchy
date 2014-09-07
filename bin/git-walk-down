@@ -1,7 +1,21 @@
 #! /usr/bin/zsh -feu
 
-# This is .... unmaintained.... the display part is left behind git-tsort -x.
+
+# Tools can operate in 2 modes: `set' mode, in which ALL segments & sums are collected,
+# and t-sorted by _local_ property of incidence.
 #
+# or the `graph' mode, in which some root(s) is given, and we walk down and get a restricted
+# set of segments/sums.
+#
+# DISPlay etc should be separate. These 2 methods should feed a commot format of data.
+
+
+# apparently I use 2 formats:  `dot' and `tsort'
+
+
+# old: This is .... unmaintained.... the display part is left behind git-tsort -x.
+
+# fixme: this does not dump the TYPE of the relationship. (sum vs segment-base)
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
