@@ -24,32 +24,36 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-xgh} [--] {root-ref}
+usage: ${0##*/} [+-dghxr] [--] {root-ref}
 
 Output or Display the order of segments & sums below REF
 -x  display the graph w/ ImageMagick
 -g  dump the graph
-
+-r  raw format
+-d  turn on Debugging
+-h  help
 EOF
 }
 
 # sum_bases()
 display_gui=n
-just_graph=n
 dump_format=tsort
 extern_color=pink
 DEBUG=n
 typeset -a draw_options
 
 
-while getopts :dghx OPT; do
+while getopts :dghxr OPT; do
     case $OPT in
 	x|+x)
 	    display_gui=y
 	    dump_format=dot
 	    ;;
 	g|+g)
-	    just_graph=y
+	    dump_format=tsort
+	    ;;
+	r|+r)
+	    dump_format=raw
 	    ;;
 	h|+h)
 	    usage
@@ -82,10 +86,9 @@ clean()
     test -n "$GRAPH" && rm -f $GRAPH
 }
 
-GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
+GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
 
 # DFS:
-
 typeset -a queue
 queue=($root)
 typeset -a processed
@@ -93,18 +96,19 @@ while [[ ${#queue} -ge 1  ]];
 do
 
     this=${queue[1]}
-    # we don't need += here:
+    # remove "first" if it's repeated:
+    # we don't need += here, since all previously processed cannot be in `queue' anymore,
+    # if the graph is DAG (acyclic!):
     processed=($this)
-    queue=(${queue:|processed})# fixme: processed ?
-    # take the first, and append the base(s)
-    # also remove "first" if it's repeated.
-
+    queue=(${queue:|processed})
 
     test "$DEBUG" = y && \
 	cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
 
+    # append the base(s), or summands:
     name=${this#refs/heads/}
     if is_sum $name; then
+	# note these functions need the variables: dump_format etc.
 	dump_sum $name
 	queue+=($(summands_of $name))
     elif is_segment $name; then
@@ -127,9 +131,7 @@ done  > $GRAPH
 # same as git-tsort:
 if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
-    #dot -Tpng  $GRAPH
-    #rm $GRAPH
-elif [ $just_graph = y ]; then
+elif [ $dump_format = raw ]; then
     # sort:
 
     # while read
