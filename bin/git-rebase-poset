@@ -45,7 +45,7 @@ typeset -a WHAT_TO_REBASE
 
 if [ $# -gt 0 ]; then
     test "$DEBUG" = y && {echo -n "... down from ";cecho cyan "$1"} >&2
-    WHAT_TO_REBASE=($(git-walk-down $1))
+    WHAT_TO_REBASE=($(git-walk-down -g $1))
 else
     WHAT_TO_REBASE=($(git-tsort))
 fi
