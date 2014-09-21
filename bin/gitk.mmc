@@ -6396,6 +6396,7 @@ proc drawtags {id x xt y1} {
     global tagbgcolor tagfgcolor tagoutlinecolor
     global reflinecolor
 
+    #set fgcolor $headfgcolor
     set marks {}
     set ntags 0
     set nheads 0
@@ -6437,14 +6438,21 @@ proc drawtags {id x xt y1} {
 	lappend wvals $wid
 	set xt [expr {$xt + $delta + $wid + $lthickness + $linespc}]
     }
+
     set t [$canv create line $x $y1 [lindex $xvals end] $y1 \
 	       -width $lthickness -fill $reflinecolor -tags tag.$id]
     $canv lower $t
+
+
+
     foreach tag $marks x $xvals wid $wvals {
+	set lfgcolor $fgcolor
+
 	set tag_quoted [string map {% %%} $tag]
 	set xl [expr {$x + $delta}]
 	set xr [expr {$x + $delta + $wid + $lthickness}]
 	set font mainfont
+
 	# mmc: First we draw Tags, then heads, then the rest.
 	if {[incr ntags -1] >= 0} {
 	    # draw a tag  <===|
@@ -6459,15 +6467,24 @@ proc drawtags {id x xt y1} {
 	    if {[incr nheads -1] >= 0} {
 		# mmc: the only use of $headbgcolor:
 		set col $headbgcolor
+		puts "drawtags: $tag"
+		if {[string equal $tag "mmc-all"]} {
+		# mmc: I want ForestGreen and DarkGreen for segments/sums.
+		    set col "ForestGreen"
+		} elseif {[string equal $tag "mmc-keep-time"]} {
+		    set col "DarkGreen"
+		    set lfgcolor "White"
+		}
+
 		if {$tag eq $mainhead} {
 		    set font mainfontbold
 		}
 	    } else {
+		# mmc: so this is the generic  ref:
+		#if
 		set col "#ddddff"
 	    }
-	    set xl [expr {$xl - $delta/2}]
-	    $canv create polygon $x $yt $xr $yt $xr $yb $x $yb \
-		-width 1 -outline black -fill $col -tags tag.$id
+
 	    if {[regexp {^(remotes/.*/|remotes/)} $tag match remoteprefix]} {
 	        set rwid [font measure mainfont $remoteprefix]
 		set xi [expr {$x + 1}]
@@ -6478,10 +6495,13 @@ proc drawtags {id x xt y1} {
 			-width 0 -fill $remotebgcolor -tags tag.$id
 
 	    } elseif {[regexp {^(start/|base/)} $tag match remoteprefix]} {
+		# trying to DROP the prefix, and rely on distinction by color!
+		# set tag [string range $tag [string length $remoteprefix ] -1 ]
 	        set rwid [font measure mainfont $remoteprefix]
 		set xi [expr {$x + 1}]
 		set yti [expr {$yt + 1}]
 		set xri [expr {$x + $rwid}]
+
 
 		# I think  start:xx,yy,zz would be enough
 		if {[string equal $remoteprefix "start/"]} {
@@ -6494,9 +6514,19 @@ proc drawtags {id x xt y1} {
 		$canv create polygon $xi $yti $xri $yti $xri $yb $xi $yb \
 			-width 0 -fill $prefixbgcolor -tags tag.$id
 	    }
+	    # elseif  sums/xxx/digit
+
+
+	    set xl [expr {$xl - $delta/2}]
+	    # mmc:
+	    $canv create polygon $x $yt $xr $yt $xr $yb $x $yb \
+		-width 1 -outline black -fill $col -tags tag.$id
+
 	}
-	set t [$canv create text $xl $y1 -anchor w -text $tag -fill $headfgcolor \
+
+	set t [$canv create text $xl $y1 -anchor w -text $tag -fill $lfgcolor \
 		   -font $font -tags [list tag.$id text]]
+	#
 	if {$ntags >= 0} {
 	    $canv bind $t <1> [list showtag $tag_quoted 1]
 	} elseif {$nheads >= 0} {
