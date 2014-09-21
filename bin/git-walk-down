@@ -118,6 +118,9 @@ do
 	if test "$DEBUG" = y; then
 	    cecho red "stopping @ $name" >&2
 	fi
+	if [ $dump_format = raw ]; then
+	    echo "base: $name"
+	fi
     fi
 
     if test "$DEBUG" = y; then
