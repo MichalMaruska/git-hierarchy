@@ -177,34 +177,34 @@ dump_segment()
     local segment_name=${segment#refs/base/}
     case $dump_format in
 	dot)
-	# for dot(1) we have to follow some restrictions on symbols:
-	#  - has a special meaning.
-	#  and we simplify the names ... as they are directly visible:
-	#  todo: should be done elsewhere
+	    # for dot(1) we have to follow some restrictions on symbols:
+	    #  - has a special meaning.
+	    #  and we simplify the names ... as they are directly visible:
+	    #  todo: should be done elsewhere
 
-	local dot_name=${segment_name//-/_}
-	# todo:  #
-	local slash="/"
-	local base_name=${$(segment_base $segment_name)#refs/heads/}
-	local dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
-	# remotes/debian/master ->  debian_master.
+	    local dot_name=${segment_name//-/_}
+	    # todo:  #
+	    local slash="/"
+	    local base_name=${$(segment_base $segment_name)#refs/heads/}
+            local dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
+	    # remotes/debian/master ->  debian_master.
 
-	# the `incidence':
-	echo "$dot_name -> $dot_base_name"
+	    # the `incidence':
+	    echo "$dot_name -> $dot_base_name"
 
-	# now the label for the vertex:
-	local length=$(segment_length $segment_name)
-	# if needs rebase:
-	local age=$(segment_age $segment_name)
-	local color
-	if [ $age = 0 ];then
-	    color=yellow
-	else
-	    color=orange
-	fi
+	    # now the label for the vertex:
+	    local length=$(segment_length $segment_name)
+	    # if needs rebase:
+	    local age=$(segment_age $segment_name)
+	    local color
+	    if [ $age = 0 ];then
+		color=yellow
+	    else
+		color=orange
+	    fi
 
-	# show the vertex
-	cat <<EOF
+	    # show the vertex
+	    cat <<EOF
 $dot_name [label="$segment_name $length\n$age",color=$color,fontsize=14,
 	    fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
@@ -243,8 +243,6 @@ dump_sum()
 	    ;;
 	*)
     esac
-
-
 
     # dump the summands:
     git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
