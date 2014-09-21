@@ -132,20 +132,25 @@ done  > $GRAPH
 # cat $GRAPH
 
 # same as git-tsort:
-if [ $dump_format = dot ]; then
-    draw-tsort-graph $draw_options -F png $GRAPH | display -
-elif [ $dump_format = raw ]; then
-    # sort:
+case $dump_format in
+    dot)
+	draw-tsort-graph $draw_options -F png $GRAPH | display -
+	;;
+    raw)
+	cat $GRAPH
+	;;
+    tsort)
+	tsort $GRAPH | tac
+	;;
+    *)
+	for  a in $(tsort $GRAPH)
+	do
+	    cecho green $a
+	    grep -e "^$a" $GRAPH || :
+	done
 
-    # while read
-    for  a in $(tsort $GRAPH)
-    do
-	cecho green $a
-	grep -e "^$a" $GRAPH || :
-    done
-else
-    tsort $GRAPH | tac
-    # rm $GRAPH
-fi
+esac
+
+# rm $GRAPH
 
 
