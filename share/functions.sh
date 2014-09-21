@@ -257,10 +257,10 @@ dump_sum()
 		    echo ${${$(dump_ref $summand|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
 		    ;;
 		tsort)
-		    echo -n "refs/heads/$sum" "\t"; dump_ref $summand|sed -e 's/^ref:\s//'
+		    echo -n "refs/heads/$sum" "\t"; dump_ref_without_ref $summand
 		    ;;
 		raw)
-		    echo -n "\t"; dump_ref $summand|sed -e 's/^ref:\s//'
+		    echo -n "\t"; dump_ref_without_ref $summand
 		    ;;
 		*)
 	    esac
