@@ -4,8 +4,8 @@
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [--] top-ref
-${0##*/} {top-ref} [remote or base]
+usage: ${0##*/} [+-h] [-f] [--] {top-ref} [remote or base]
+-f  git fetch origin
 
 EOF
 }
