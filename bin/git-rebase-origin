@@ -1,0 +1,60 @@
+#!/bin/zsh -feu
+
+# I could even 'git fetch'
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h] [--] top-ref
+${0##*/} {top-ref} [remote or base]
+
+EOF
+}
+
+
+fetch=no
+remote=origin
+
+# if only debian/changelog -> stash
+while getopts :hf OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	f)
+	    fetch=y
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift $(( OPTIND - 1 ))
+OPTIND=1
+
+
+top=$1
+
+if [ $fetch = y ]; then
+    git fetch $remote
+fi
+
+
+
+
+# todo: git-walk-down and solve the baseS. move them,
+typeset -a bases
+#todo: have to
+git checkout HEAD
+
+bases=($(git-walk-down   $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
+foreach base ($bases)
+{
+    remote=$(git for-each-ref --format='%(upstream:short)' refs/heads/$base)
+    git branch -f $base $remote
+
+}
+#$2
+# origin/$base
+git-rebase-poset $top
+
