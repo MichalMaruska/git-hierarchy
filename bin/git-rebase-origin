@@ -47,7 +47,7 @@ typeset -a bases
 #todo: have to
 git checkout HEAD
 
-bases=($(git-walk-down   $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
+bases=($(git-walk-down -r $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
 foreach base ($bases)
 {
     remote=$(git for-each-ref --format='%(upstream:short)' refs/heads/$base)
