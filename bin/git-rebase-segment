@@ -69,6 +69,9 @@ fi
 {cecho yellow -n "rebasing segment ";cecho cyan $branch} >&2
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
+
+check_git_rebase_hooks
+
 if git rebase --onto $base $start $branch;
 then
     # todo: git-segment $branch $base

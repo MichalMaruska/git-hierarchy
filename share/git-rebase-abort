@@ -1,0 +1,5 @@
+#!/bin/bash -eu
+
+
+# abort
+git-reset-segment

@@ -272,3 +272,20 @@ EOF
     fi
 }
 
+
+# Create symlinks to the system copies.
+check_git_rebase_hooks()
+{
+    if [ ! -d $GIT_DIR/hooks ]; then
+	mkdir $GIT_DIR/hooks
+    fi
+
+    if [ ! -e $GIT_DIR/hooks/rebase-abort ]; then
+	ln -s /usr/share/git-hierarchy/git-rebase-abort $GIT_DIR/hooks/rebase-abort
+    fi
+
+    if [ ! -e $GIT_DIR/hooks/post-rebase ]; then
+	# fixme: this should be renamed: git-complete-segment-rebase
+	ln -s /usr/share/git-hierarchy/git-rebase-complete $GIT_DIR/hooks/post-rebase
+    fi
+}
