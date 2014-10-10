@@ -110,6 +110,12 @@ segment_base()
     dump_ref refs/base/$1 | sed -e 's/ref:\s//'
 }
 
+segment_start()
+{
+    # git rev-list  --max-count=1 start/${segment_name}
+    dump_ref refs/start/$1
+}
+
 # return the distance between start & base
 segment_age()
 {
@@ -215,6 +221,12 @@ EOF
 	tsort)
 	    echo -n refs/heads/$segment_name "\t"; segment_base $segment_name
 	    ;;
+	raw)
+	    # dump the start  segment_start_sha
+	    echo segment $segment_name "\t"  $(dump_ref refs/heads/$segment_name) \
+		 "\t" $(segment_base $segment_name) \
+		 "\t" $(segment_start $segment_name)
+	    ;;
 	*)
     esac
 }
@@ -224,6 +236,16 @@ dump_sum()
 {
     local sum=$1
     local summand
+
+    case $dump_format in
+	raw)
+	    echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
+	    ;;
+	*)
+    esac
+
+
+
     # dump the summands:
     git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
 	{
@@ -238,7 +260,7 @@ dump_sum()
 		    echo -n "refs/heads/$sum" "\t"; dump_ref $summand|sed -e 's/^ref:\s//'
 		    ;;
 		raw)
-
+		    echo -n "\t"; dump_ref $summand|sed -e 's/^ref:\s//'
 		    ;;
 		*)
 	    esac
