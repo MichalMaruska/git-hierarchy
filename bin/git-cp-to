@@ -1,0 +1,20 @@
+#!/bin/bash -eu
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+
+commit=$1
+branch=$2
+
+# current branch?
+head=$(dump_ref_without_ref HEAD)
+head=${head##refs/heads/}
+
+git checkout $branch
+git cherry-pick $commit
+
+# this migth be in TRAP
+# and avoid the warning on detached.
+# so just echo > .git/HEAD ?
+git checkout $head
