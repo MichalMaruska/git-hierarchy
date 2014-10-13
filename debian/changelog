@@ -1,3 +1,30 @@
+git-hierarchy (4.0) release; urgency=medium
+
+  * extract common functions out of git-tsort & git-walk-down.
+  * git-walk-down: better usage & just 1 arg.
+  * clean GRAPH file on exit.
+  * documentation on the 2 tools
+  * git-recover-symbolic-refs: provide option parsing, usage, and DEBUG
+  * name a hash as such.
+  * Support more than 2 dump_format-s -- more options use sh-case, rather than if-else.
+  * clean git-walk-down
+  * the "raw" format of dump_segment/sum
+  * adapt git-rebase-poset to explicitly ask for tsort format of git-walk-down
+  * dump the bases too.
+  * git-walk-down: the post-processing for raw
+  * git-rebase-origin: new command
+  * unfinished gitk changes
+  * use dump_ref_without_ref !
+  * comments
+  * reformatting
+  * git-rebase-origin: use the new option to get the base (from git-walk-down)
+  * git-rebase-origin: usage
+  * git-rebase-origin: add debugging
+  * Use the git-hooks around rebase.
+  * new command: git-cp-to mainly for Zsh completion?
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 13 Oct 2014 22:57:12 +0200
+
 git-hierarchy (3.6) release; urgency=low
 
   * drop core-git patches from master branch
