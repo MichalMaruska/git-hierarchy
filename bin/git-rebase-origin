@@ -5,13 +5,13 @@ usage()
 {
     cat <<EOF
 usage: ${0##*/} [+-hfv] [--] {top-ref} [remote or base]
--f  git fetch origin
+-f  do NOT git fetch origin
 -v  verbose
 EOF
 }
 
 DEBUG=n
-fetch=no
+fetch=yes
 remote=origin
 
 # if only debian/changelog -> stash
@@ -22,7 +22,7 @@ while getopts :hfv OPT; do
 	    exit 0
 	    ;;
 	f)
-	    fetch=y
+	    fetch=no
 	    ;;
 	v)
 	    DEBUG=y
@@ -38,7 +38,8 @@ OPTIND=1
 
 top=$1
 
-if [ $fetch = y ]; then
+if [ $fetch = yes ]; then
+    if [ $DEBUG = y ]; then echo "fetching from $remote">&2;fi
     git fetch $remote
 fi
 
