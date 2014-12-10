@@ -35,7 +35,10 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
-
+if [ $# -lt 1 ]; then
+    echo "error: missing parameters" >&2
+    usage; exit 2
+fi
 top=$1
 
 if [ $fetch = yes ]; then
