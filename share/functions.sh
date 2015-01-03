@@ -307,6 +307,10 @@ try_to_expand()
 expand_ref()
 {
     local name=$1
+    local my_priority=n
+    if [ $# -gt 1 ]; then
+       my_priority=$2
+    fi
     case $name in
 	refs/*)
 	    ;;
@@ -320,7 +324,7 @@ expand_ref()
 	    name=refs/$name
 	    ;;
 	*)
-	    if false; then
+	    if [ ! $my_priority = n ]; then
 		name=$(try_to_expand $name)
 	    else
 		name=$(git rev-parse --symbolic-full-name heads/$name)
