@@ -296,7 +296,7 @@ check_git_rebase_hooks()
 
 try_to_expand()
 {
-    local $name=$1
+    local name=$1
     # Here the priority
     {git show-ref heads/$name || \
 	git show-ref remotes/$name || \
