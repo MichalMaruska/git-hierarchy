@@ -88,6 +88,13 @@ fi
 
 sum_branch=$1
 
+# git-sum
+if ! is_sum $sum_branch &>/dev/null ;
+then
+    echo "not a sum branch" >&2
+    exit 1
+fi
+
 #### Calculate the summands: for the check and for re-merging.
 typeset -a summand_branches
 summand_branches=(
