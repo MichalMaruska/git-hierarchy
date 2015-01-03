@@ -1,44 +1,4 @@
 #!/usr/bin/zsh -feu
 
-# This is about S.Ref `resolution':
-# turning the input from user into fully-qualified S.Ref name.
-# compare with "git rev-parse"
-
-try_to_expand()
-{
-    {git show-ref heads/$name || \
-	git show-ref remotes/$name || \
-	git show-ref $name } |\
-       head -n 1|cut -f 2 '-d '
-}
-
-expand_ref()
-{
-    name=$1
-    case $name in
-	refs/*)
-	    ;;
-	heads/*)
-	    name=refs/$name
-	    ;;
-	remotes/*)
-	    name=refs/$name
-	    ;;
-	tags/*)
-	    name=refs/$name
-	    ;;
-	*)
-	    if false; then
-		name=$(try_to_expand $name)
-	    else
-		name=$(git rev-parse --symbolic-full-name $name)
-	    fi
-	    # name=refs/heads/$name
-	    # prepend refs/
-    esac
-
-    echo $name
-}
-
-
+source /usr/share/git-hierarchy/functions.sh
 expand_ref $1

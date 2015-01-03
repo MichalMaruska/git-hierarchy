@@ -289,3 +289,46 @@ check_git_rebase_hooks()
 	ln -s /usr/share/git-hierarchy/git-rebase-complete $GIT_DIR/hooks/post-rebase
     fi
 }
+
+## This is about S.Ref `resolution':
+# turning the input from user into fully-qualified S.Ref name.
+# compare with "git rev-parse"
+
+try_to_expand()
+{
+    local $name=$1
+    # Here the priority
+    {git show-ref heads/$name || \
+	git show-ref remotes/$name || \
+	git show-ref $name } |\
+       head -n 1|cut -f 2 '-d '
+}
+
+expand_ref()
+{
+    local name=$1
+    case $name in
+	refs/*)
+	    ;;
+	heads/*)
+	    name=refs/$name
+	    ;;
+	remotes/*)
+	    name=refs/$name
+	    ;;
+	tags/*)
+	    name=refs/$name
+	    ;;
+	*)
+	    if false; then
+		name=$(try_to_expand $name)
+	    else
+		name=$(git rev-parse --symbolic-full-name heads/$name)
+	    fi
+	    # name=refs/heads/$name
+	    # prepend refs/
+    esac
+
+    echo $name
+}
+
