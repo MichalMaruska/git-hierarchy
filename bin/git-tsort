@@ -38,7 +38,7 @@ while getopts :kgxd OPT; do
 	    debug=y
 	    ;;
 	x)
-	    dump_format=y
+	    dump_format=dot
 	    ;;
 	*)
 	    usage
