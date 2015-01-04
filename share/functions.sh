@@ -190,7 +190,7 @@ dump_segment()
 	    # remotes/debian/master ->  debian_master.
 
 	    # the `incidence':
-	    echo "$dot_name -> $dot_base_name"
+	    echo "\"$dot_name\" -> \"$dot_base_name\""
 
 	    # now the label for the vertex:
 	    local length=$(segment_length $segment_name)
@@ -205,7 +205,7 @@ dump_segment()
 
 	    # show the vertex
 	    cat <<EOF
-$dot_name [label="$segment_name $length\n$age",color=$color,fontsize=14,
+"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,
 	    fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
         # if the base is `external', dump it:
@@ -251,8 +251,8 @@ dump_sum()
 	do
 	    case $dump_format in
 		dot)
-		    echo -n ${sum//-/_} "->"
-		    echo ${${$(dump_ref $summand|sed -e 's/^ref:\s//')#refs/heads/}//-/_}
+		    echo -n "\"${sum//-/_}\"" "->"
+		    echo "\"${${$(dump_ref $summand |sed -e 's/^ref:\s//')#refs/heads/}//-/_}\""
 		    ;;
 		tsort)
 		    echo -n "refs/heads/$sum" "\t"; dump_ref_without_ref $summand
@@ -266,7 +266,7 @@ dump_sum()
 
     if [ $dump_format = dot ]; then
         cat <<EOF
-${sum//-/_} [label="$sum",color=red,fontsize=14,
+"${sum//-/_}" [label="$sum",color=red,fontsize=14,
 	      fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
     fi
