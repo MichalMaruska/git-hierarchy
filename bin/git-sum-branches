@@ -234,19 +234,22 @@ fi
 
 
 ####################################### Merge
+# no way. `git-checkout' prefers branches (over tags)
+# http://programmers.stackexchange.com/questions/230438/in-git-is-it-a-bad-idea-to-create-a-tag-with-the-same-name-as-a-deleted-branch
 first=$real_branches[1]
+first_branch=$(expand_ref $first)
 
 if [ $reset = "y" ]; then
     # Is this really necessary? only if
     #if [ $sum_branch = $(git branch) ]; then
-	eval $cmd git checkout $first
+    eval $cmd git checkout --detach $first
     #fi
-    eval $cmd git branch --force $sum_branch $first
-
+    eval $cmd git branch --force $sum_name HEAD
     eval $cmd git checkout $sum_name
 else
-    eval $cmd git merge $first;
     eval $cmd git checkout $sum_name
+    # but here it is needed:
+    eval $cmd git merge $first_branch
 fi
 # git checkout -b $sum_name $first
 
