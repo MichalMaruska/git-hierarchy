@@ -1,3 +1,21 @@
+git-hierarchy (4.1) release; urgency=medium
+
+  * Resolve ref before changing branches/HEAD
+  * git-rebase-origin: do fetch by default
+  * git-rebase-origin: err on missing arguments
+  * git-sum: drop doubled usage()
+  * Move expand_ref from git-expand-ref to functions.
+  * and fix the unused try_to_expand
+  * And use it if requested. Finally.
+  * Check it's a sum, before re-making the merge.
+  * Distinguish sum branch and the (sum) name.
+  * Work in presence of tags named as summand branches.
+  * double-quote the git branches names, before pushing to dot(1)
+  * fix the dot "format" invocation.
+  * git-cp-to: usage(), and check parameters
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 05 Jan 2015 13:24:41 +0100
+
 git-hierarchy (4.0) release; urgency=medium
 
   * extract common functions out of git-tsort & git-walk-down.
