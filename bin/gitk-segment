@@ -1,0 +1,29 @@
+#!/bin/zsh -eu
+
+full=n
+while getopts :f OPT; do
+    case $OPT in
+	f|+f)
+	    full=y
+	    ;;
+	*)
+	    echo "usage: ${0##*/} [+-f} [--] ARGS..."
+	    exit 2
+    esac
+done
+
+shift $(( OPTIND - 1 ))
+OPTIND=1
+
+
+name=${1#refs/heads/}
+if [[ $full = y ]]; then
+    bottom=$(git-walk-down $name |head -n 1)
+else
+    bottom=refs/base/$name
+fi
+
+gitk $bottom...heads/$name
+
+# full:
+# git-walk-down mmc-focus |
