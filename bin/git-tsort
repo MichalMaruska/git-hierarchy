@@ -48,6 +48,12 @@ done
 shift OPTIND-1
 OPTIND=1
 
+if [ $# -gt 0 ]; then
+    echo "unexpected argument(s)" >&2
+    usage >&2
+    exit 1
+fi
+
 # Get a temp file:
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
 extern_color=pink
