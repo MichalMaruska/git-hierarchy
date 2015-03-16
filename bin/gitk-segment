@@ -1,13 +1,33 @@
 #!/bin/zsh -eu
 
-full=n
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-f] [--] REF...
+
+REF is segment or sum
+-f  show the whole poset! (uses git-tsort to get the base).
+
+# to be used:
+# $0 mmc-segment
+# will invoke gitk(1) on .... mmc-segment..base/mmc-segment?
+# or even mmc-sum including all summands
+
+EOF
+}
+
+
+full_poset=n
 while getopts :f OPT; do
     case $OPT in
 	f|+f)
-	    full=y
+	    full_poset=y
 	    ;;
 	*)
-	    echo "usage: ${0##*/} [+-f} [--] ARGS..."
+	    usage >&2
 	    exit 2
     esac
 done
@@ -15,15 +35,41 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
-
-name=${1#refs/heads/}
-if [[ $full = y ]]; then
-    bottom=$(git-walk-down $name |head -n 1)
-else
-    bottom=refs/base/$name
+if [ $# -lt 1 ]; then
+    usage >&2
+    exit 1
 fi
 
-gitk $bottom...heads/$name
 
-# full:
+ref_name=${1#refs/heads/}
+if [[ $full_poset = y ]]; then
+    bottom=$(git-walk-down $ref_name |head -n 1)
+else
+    bottom=refs/base/$ref_name
+fi
+
+if is_sum $ref_name;
+then
+    typeset -a summands
+    summands=($(git-sum $1))
+
+    typeset -a ranges
+    ranges=()
+
+    foreach br ($summands)
+    {
+	if [[ $full_poset = n ]]; then
+	    bottom=
+	fi
+
+	#    echo "adding $br"
+	# heads/
+	ranges+=( "$bottom..$br")
+    }
+    set -x
+    gitk $ranges
+else
+    gitk $bottom...heads/$ref_name
+fi
+# full_poset:
 # git-walk-down mmc-focus |
