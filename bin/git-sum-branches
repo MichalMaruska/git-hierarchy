@@ -5,13 +5,14 @@ usage()
     cat <<EOF
 Remake a git sum/merge.
 
-usage: ${0##*/} [-d] [+-r] [-h] ..... [--] {sum}
+usage: ${0##*/} [-d] [+-r] [-h] [-s] [--] {sum}
 -d  dry
 -r  reset before starting merge. Default
 +r  don't reset.
 -v  verbose
 -q  quiet (not-implemented)
 -h  help
+-s  stepwise: don't try to merge in 1 git-merge.
 .... can contain upstream Git(1) options.
 EOF
 }
@@ -28,8 +29,9 @@ reset=y
 dry=n
 cmd=""
 debug=n
+stepwise=0
 
-while getopts :rdhvq OPT; do
+while getopts :rdhvqs OPT; do
     case $OPT in
 	d)
 	    dry=y
@@ -48,6 +50,9 @@ while getopts :rdhvq OPT; do
 	    ;;
 	q)
 	    # quiet silent
+	    ;;
+	s)
+	    stepwise=1
 	    ;;
 	v)
 	    debug=y
@@ -263,16 +268,17 @@ else
 
     {cecho green -n "re-merging sum ";cecho cyan $sum_name} >&2
     set -x
+    if [ $stepwise = 0 ]; then
     eval $cmd git merge -m '"Sum: $sum_name = $first + $others"' \
 	--rerere-autoupdate \
 	-s octopus \
 	-s recursive -X patience -X ignore-space-change $others
-
+    else
+	foreach next ($others)
+	{
+	    eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate "'$next'";
+	}
+    fi
     restore_stash
 fi
 exit 0
-# foreach next ($others)
-# {
-#     eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate $next;
-# }
-
