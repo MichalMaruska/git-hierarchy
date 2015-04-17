@@ -59,11 +59,15 @@ dump_ref(){
 
 dump_ref_without_ref()
 {
-    a=$(dump_ref $1)
-    a=${a#ref:}
-    a=${a# }
-    a=${a#	}
-    echo $a
+    if true; then
+	git rev-parse --symbolic-full-name $1
+    else
+	a=$(dump_ref $1)
+	a=${a#ref:}
+	a=${a# }
+	a=${a#	}
+	echo $a
+    fi
 }
 
 # is_nontrivial_sum
