@@ -150,7 +150,3 @@ case $dump_format in
 	done
 
 esac
-
-# rm $GRAPH
-
-
