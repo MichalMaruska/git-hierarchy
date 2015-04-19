@@ -2,7 +2,6 @@
 
 # output all relevant references: sums, bases, starts
 
-
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
@@ -18,13 +17,9 @@ GIT_DIR=$(git_dir)
 ##
 ##
 
-
-
 git for-each-ref "refs/sums"  "refs/base" "refs/start" \
     --format "%(refname)" |\
 while read ref; do
     link=$(dump_ref $ref)
     echo -n "$ref\t" ; dump_ref $ref
 done
-
-
