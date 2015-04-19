@@ -100,7 +100,10 @@ do
     # we don't need += here, since all previously processed cannot be in `queue' anymore,
     # if the graph is DAG (acyclic!):
     processed=($this)
-    queue=(${queue:|processed})
+
+    queue=(${queue:|processed})# A:|B is A-B. fixme: processed ?
+    # take the first, and append the base(s)
+    # also remove "first" if it's repeated.
 
     test "$DEBUG" = y && \
 	cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok

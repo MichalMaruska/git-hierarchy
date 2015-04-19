@@ -49,6 +49,8 @@ OPTIND=1
 # read from stdin.
 while read line;
 do
+    #pattern: ref     ref://
+    #         ref     sha1
     name=${line%%	*}
     ref_link=${line#*	}
 

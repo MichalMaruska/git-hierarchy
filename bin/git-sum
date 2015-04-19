@@ -30,6 +30,7 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
 
+# return (print) a new number for the (next) summand.
 find_new_index(){
     local name=$1
     typeset -i i=1
@@ -42,7 +43,8 @@ find_new_index(){
     echo $i
 }
 
-remove_from_sum(){
+# no renumbering (of summands)
+remove_from_sum() {
     local sum=$1
     local summand=$2
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
