@@ -1,0 +1,45 @@
+#compdef git-cp-to
+#description cherry-pick a commit onto a branch
+
+# I need this as I invoke other _functions:
+_git-cp-to()
+{
+local curcontext="$curcontext" state line
+typeset -A opt_args
+
+_arguments : \
+	   '-h[help]'  \
+	   '-d[Sum to drop]:sum:_git-sum-name' \
+	   '1: :->branch-or-tree-ish-or-file' \
+	   '*: :->git_segment_name' && return 0
+
+case $state in
+    branch-or-tree-ish-or-file)
+	# how to use a local function from _git?
+	# ~/git/zsh/Completion/Unix/Command/_git
+	_alternative 'branches::__git_revisions'
+	;;
+    git_segment_name)
+	    # or _sum
+	_alternative \
+	    'segment:segment:_git-segment-name' \
+	    'sum:sum:_git-sum-name'
+	    # _arguments "1:Segments:($available)"
+	;;
+    *)
+	_files
+esac
+}
+
+# git
+# _git-cp-to()
+
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-cp-to")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git

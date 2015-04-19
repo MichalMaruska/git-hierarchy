@@ -1,0 +1,24 @@
+#compdef git-walk-down
+#description walk and process git-hierarchy
+
+# I need this as I invoke other _functions:
+local curcontext="$curcontext" state line
+typeset -A opt_args
+
+_arguments : \
+    '-h[help]'  \
+    '-x[display ]'  \
+    '-r[raw format]' \
+    '*: :->hierarchy_name' && return 0
+
+case $state in
+    hierarchy_name)
+	    # or _sum
+	_alternative \
+	    'segment:segment:_git-segment-name' \
+	    'sum:sum:_git-sum-name'
+	    # _arguments "1:Segments:($available)"
+	;;
+    *)
+	_files
+esac

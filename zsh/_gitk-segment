@@ -1,0 +1,23 @@
+#compdef gitk-segment
+#description display in gitk the path from base to the given ref.
+
+# I need this as I invoke other _functions:
+local curcontext="$curcontext" state line
+typeset -A opt_args
+
+_arguments : \
+    '-h[help]'  \
+    '-f'  \
+    '*: :->hierarchy_name' && return 0
+
+case $state in
+    hierarchy_name)
+	    # or _sum
+	_alternative \
+	    'segment:segment:_git-segment-name' \
+	    'sum:sum:_git-sum-name'
+	    # _arguments "1:Segments:($available)"
+	;;
+    *)
+	_files
+esac
