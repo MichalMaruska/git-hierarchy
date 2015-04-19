@@ -55,7 +55,7 @@ if [ $# -gt 0 ]; then
 fi
 
 # Get a temp file:
-GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/}  graph.XXX)
+GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
 extern_color=pink
 
 # segments ... look at bases.
@@ -88,7 +88,9 @@ else
     } >> $GRAPH
 fi
 
-
+if [ $keep_graph_file = y ]; then
+    echo "graph left in: $GRAPH" >&2
+fi
 
 if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
@@ -110,6 +112,4 @@ fi
 
 if [ $keep_graph_file != y ]; then
     rm -f $GRAPH
-else
-    echo "graph left in: $GRAPH" >&2
 fi
