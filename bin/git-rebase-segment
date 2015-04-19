@@ -67,19 +67,23 @@ then
 fi
 
 {cecho yellow -n "rebasing segment ";cecho cyan $branch} >&2
+
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
 
-check_git_rebase_hooks
-
+# For now I can do without the hooks. At least in the succesful case.
 if git rebase --onto $base $start $branch;
 then
-    # todo: git-segment $branch $base
-    git-set-start $branch $base
+    # This is also the content of the rebase-complete hook!
+    # although there we need to recover the "state", so `git-reset-segment'
+    # and clean it after.
+    git-segment -r $branch $base
 else
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
-
-
+    # here the user *will* use git --continue --skip --abort.
+    # so register hooks to resume our work:
+    check_git_rebase_hooks
+    # So save the state for `git-reset-segment' -- invoked by the hooks.
     echo "$branch" > $GIT_DIR/.rebasing-segment
     cecho red "** ERROR: Rebase failed."
     echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
