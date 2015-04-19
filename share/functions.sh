@@ -301,11 +301,15 @@ check_git_rebase_hooks()
 try_to_expand()
 {
     local name=$1
+    # echo "try_to_expand $name" >&2
     # Here the priority
-    {git show-ref heads/$name || \
+    local expanded=$(
+	{git show-ref heads/$name || \
 	git show-ref remotes/$name || \
 	git show-ref $name } |\
-       head -n 1|cut -f 2 '-d '
+	    head -n 1|cut -f 2 '-d ')
+    # echo "expanded $expanded" >&2
+    echo $expanded
 }
 
 expand_ref()
