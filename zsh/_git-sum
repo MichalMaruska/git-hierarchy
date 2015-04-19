@@ -1,7 +1,7 @@
 #compdef git-sum
 #description manage Sums of a git-hierarchy
 
-_sum() {
+_git_sum() {
     # fixme: necessara?
     local curcontext="$curcontext" state line
     typeset -A opt_args
@@ -24,4 +24,4 @@ _sum() {
 }
 
 
-_sum "$@"
+_git_sum "$@"
