@@ -94,4 +94,3 @@ else
     echo -e "\tgit-reset-segment $branch"
     exit 1
 fi
-

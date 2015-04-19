@@ -104,7 +104,6 @@ show_prune_definition()
     done
 }
 
-
 if [ $# = 0 ];
 then
     # avoid bug! (dependency on NULL_GLOB.)

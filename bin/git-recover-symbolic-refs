@@ -47,7 +47,6 @@ OPTIND=1
 
 
 # read from stdin.
-
 while read line;
 do
     name=${line%%	*}
