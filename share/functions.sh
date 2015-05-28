@@ -280,17 +280,25 @@ EOF
 # Create symlinks to the system copies.
 check_git_rebase_hooks()
 {
+    local HOOK
     if [ ! -d $GIT_DIR/hooks ]; then
 	mkdir $GIT_DIR/hooks
     fi
 
-    if [ ! -e $GIT_DIR/hooks/rebase-abort ]; then
-	ln -s /usr/share/git-hierarchy/git-rebase-abort $GIT_DIR/hooks/rebase-abort
+    if [ ! -e ${HOOK::=$GIT_DIR/hooks/rebase-abort} ]; then
+	ln -s /usr/share/git-hierarchy/git-rebase-abort $HOOK
+    else
+	cecho red "cannot proceed: $HOOK exists" >&2
+	exit
     fi
 
-    if [ ! -e $GIT_DIR/hooks/post-rebase ]; then
+    if [ ! -e ${HOOK::=$GIT_DIR/hooks/post-rebase} ]; then
 	# fixme: this should be renamed: git-complete-segment-rebase
-	ln -s /usr/share/git-hierarchy/git-rebase-complete $GIT_DIR/hooks/post-rebase
+	ln -s /usr/share/git-hierarchy/git-rebase-complete $HOOK
+    else
+	# note: this is a problem!
+	cecho red "cannot proceed: $HOOK exists" >&2
+	exit
     fi
 }
 

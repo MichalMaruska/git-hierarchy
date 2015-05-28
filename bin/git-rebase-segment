@@ -80,11 +80,14 @@ then
     git-segment -r $branch $base
 else
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
+
+    # So save the state for `git-reset-segment' -- invoked by the hooks.
+    echo "$branch" > $GIT_DIR/.rebasing-segment
+
     # here the user *will* use git --continue --skip --abort.
     # so register hooks to resume our work:
     check_git_rebase_hooks
-    # So save the state for `git-reset-segment' -- invoked by the hooks.
-    echo "$branch" > $GIT_DIR/.rebasing-segment
+
     cecho red "** ERROR: Rebase failed."
     echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
     cecho green "then run:"
