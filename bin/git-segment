@@ -33,7 +33,7 @@ $PROGRAM -r {segment} {start}
 $PROGRAM [-u | --update ] {segment} symbolic-base [start]
   update
 
-$PROGRAM {segment} symbolic-base [start]
+$PROGRAM [-c | --checkout] {segment} symbolic-base [start]
   define
 
 EOF
@@ -104,11 +104,12 @@ delete_segment=n
 delete_branch=n
 short_list=n
 
+checkout=n
 update=n
 restart=n
 cmd_options=$(getopt --name $0 --shell bash \
-	--longoptions help,short,delete,prune,update:,restart,full \
-        --options     hsdDurf \
+	--longoptions help,short,delete,prune,update:,restart,full,checkout \
+        --options     hsdDurfc \
 	-- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -137,6 +138,9 @@ while (( $# > 0 )); do
 	-r | --restart)
 	    restart=y
 	    # new_start=$OPTARG
+	    ;;
+	-c | --checkout)
+	    checkout=y
 	    ;;
 	--)
 	    shift
@@ -261,5 +265,9 @@ else
     if [ -n "${start_hash-}" ]; then
 	cecho yellow "pushing the start to $start_hash"
 	git-set-start $name $start_hash
+    fi
+
+    if [ $checkout = "y" ]; then
+	git checkout $name
     fi
 fi
