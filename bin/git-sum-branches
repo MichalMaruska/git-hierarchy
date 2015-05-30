@@ -219,6 +219,7 @@ restore_stash()
 
 equal=n
 # sanity check:
+test $debug = y && echo "sanity check" >&2
 if git-branch-exists $sum_name;
 then
     test_commit_parents
@@ -238,6 +239,7 @@ then
 fi
 
 
+test $debug = y && echo "checkout & merge" >&2
 ####################################### Merge
 # no way. `git-checkout' prefers branches (over tags)
 # http://programmers.stackexchange.com/questions/230438/in-git-is-it-a-bad-idea-to-create-a-tag-with-the-same-name-as-a-deleted-branch
