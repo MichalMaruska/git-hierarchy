@@ -49,7 +49,7 @@ if [ $# = 1 ]; then
 	    echo "### mismatch!"  >&2
     fi
 else
-    echo "### so rebase was aborted, forgetting about it"  >&2
+    echo "### so rebase was aborted, forgetting about it: $(cat $mark)"  >&2
     rm -vf $mark
     exit 0
 fi
