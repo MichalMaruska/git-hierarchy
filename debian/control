@@ -2,7 +2,7 @@ Source: git-hierarchy
 Section: misc
 Priority: extra
 Maintainer: Michal Maruska <mmaruska@gmail.com>
-Build-Depends: cdbs, debhelper (>= 5)
+Build-Depends: debhelper (>= 7)
 Standards-Version: 3.7.2
 
 Package: git-hierarchy
