@@ -288,17 +288,20 @@ check_git_rebase_hooks()
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/rebase-abort} ]; then
 	ln -s /usr/share/git-hierarchy/git-rebase-abort $HOOK
     else
-	cecho red "cannot proceed: $HOOK exists" >&2
-	exit
+	# even if the same symlink. we want to remove it... don't we?
+	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-abort" >&2
+	# for now we check this too late, so no need for exit:
+	# exit
     fi
 
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/post-rebase} ]; then
 	# fixme: this should be renamed: git-complete-segment-rebase
 	ln -s /usr/share/git-hierarchy/git-rebase-complete $HOOK
     else
-	# note: this is a problem!
-	cecho red "cannot proceed: $HOOK exists" >&2
-	exit
+	# note: this is a problem! see ~10 lines above!
+	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-complete" >&2
+	# cecho red "cannot proceed: $HOOK exists" >&2
+	# exit
     fi
 }
 

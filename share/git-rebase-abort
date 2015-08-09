@@ -1,5 +1,14 @@
 #!/bin/bash -eu
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
 
 # abort
-git-reset-segment
+if test -f "$GIT_DIR/.rebasing-segment"; then
+    git-reset-segment
+else
+    # unexpected!
+    :
+fi
+
+rm -fv $GIT_DIR/hooks/rebase-abort

@@ -8,3 +8,6 @@ GIT_DIR=$(git_dir)
 if test -f "$GIT_DIR/.rebasing-segment"; then
     git-reset-segment $(cat "$GIT_DIR/.rebasing-segment")
 fi
+
+# success, so remove it:
+rm -fv $GIT_DIR/hooks/post-rebase
