@@ -244,7 +244,9 @@ else
 	fi
     else
 	# no update -> start is defined:
-	git-branch-exists $name || git branch $name $start_hash
+	if ! git-branch-exists $name; then
+	    git branch $name $start_hash
+	fi
 	# doing in this order intentionally?
 	if is_segment $name; then
 	    die "segment already exists: $name"
