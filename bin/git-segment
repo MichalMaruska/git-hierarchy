@@ -214,7 +214,9 @@ else
 	    new_start=$2
 	    start_hash=$(git log $new_start --max-count=1 --format="%H")
 	else
-	    new_base=$2
+	    # fixme: use rev-parse
+	    new_base=$(try_to_expand $2)
+	    #possibly remotes/$2
 
 	    if [ $update = n ]; then
 		# in this case ... we create ... we have to provide the
