@@ -2,17 +2,25 @@
 # compdef _git git-xxxx
 #description fetch and rebase ....
 
+# origin segment-sum
+
 _git-rebase-origin()
 {
 _arguments : \
     '-h[help]'  \
     '-f[fetch]'  \
-    '*: :->origin_name' && return 0
+    '1: :->origin_name' \
+    '*: :->git_poset_name' && return 0
 
 case $state in
     origin_name)
 	# or _sum
 	__git_any_repositories
+	;;
+    git_poset_name)
+	_alternative \
+	    'segment:segment:_git-segment-name' \
+	    'sum:sum:_git-sum-name'
 	;;
     *)
 	_files
