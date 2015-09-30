@@ -355,3 +355,16 @@ expand_ref()
     echo $name
 }
 
+
+report_error()
+{
+    echo "$0 ERROR: $@"
+    exit -1
+}
+
+PROGRAM=$0
+trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0' ZERR
+#ERR
+# DEBUG
+# trap 'report_error $LINENO $BASH_SOURCE' ERR
+
