@@ -15,7 +15,7 @@ fetch=yes
 remote=origin
 
 # if only debian/changelog -> stash
-while getopts :hfv OPT; do
+while getopts :hfvo: OPT; do
     case $OPT in
 	h|+h)
 	    usage
@@ -26,6 +26,9 @@ while getopts :hfv OPT; do
 	    ;;
 	v)
 	    DEBUG=y
+	    ;;
+	o)
+	    remote=$OPTARG
 	    ;;
 	*)
 	    usage
