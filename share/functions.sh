@@ -356,6 +356,17 @@ expand_ref()
 }
 
 
+# remove a file $1, but only if it's a symlink to $2
+remove_symlink_to()
+{
+    # canonicalize $2
+    if [ -L $1 -a "$(readlink $1)" = $2 ]
+    then
+	rm -fv $1
+    fi
+}
+
+
 report_error()
 {
     echo "$0 ERROR: $@"

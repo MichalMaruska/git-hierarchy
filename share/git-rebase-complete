@@ -10,4 +10,10 @@ if test -f "$GIT_DIR/.rebasing-segment"; then
 fi
 
 # success, so remove it:
-rm -fv $GIT_DIR/hooks/post-rebase
+# fixme: only if they are ours!
+
+: ${file=$GIT_DIR/hooks/post-rebase}
+
+remove_symlink_to $GIT_DIR/hooks/post-rebase /usr/share/git-hierarchy/git-rebase-complete
+remove_symlink_to $GIT_DIR/hooks/post-abort /usr/share/git-hierarchy/git-rebase-abort
+
