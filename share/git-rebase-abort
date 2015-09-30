@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/zsh -feu
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
