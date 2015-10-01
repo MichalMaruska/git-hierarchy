@@ -1,3 +1,36 @@
+git-hierarchy (4.2) release; urgency=medium
+
+  * new command: gitk-segment
+  * gitk-segment: accept a sum (poset in general).
+  * gitk by default HEAD
+  * Fail on unexpected arguments (git-tsort)
+  * tsort: announce the graph immediately, if requested to leave it.
+  * git-sum-branches: stepwise.
+  * use "git rev-parse" rather than cat(1) the ref file.
+  * zsh TAB-completions
+  * rename tab-completion function. why? ok?
+  * git-segment: -c --checkout option.
+  * trivial reformat
+  * trace:  try_to_expand()
+  * drop dead/commented-out code
+  * optimization: check_git_rebase_hooks / create hooks only when rebase failed.
+  * exit(!) when the post-rebase hooks couldn't be registered. But first save the segment name in any case!
+  * trivial spaces/empty lines
+  * comments
+  * git-reset-segment: more informative.
+  * git-sum-branches: optional tracing.
+  * FIX: Improve setting & unsetting the temp rebase-* hooks.
+  * drop cdbs
+  * handle errors by reporting them -- line number & function.
+  * The hooks rely on Zsh features -- trapping code.
+  * Improve the git hooks to remove itself when necessary.
+  * segment: Canonize the base-ref, as we can control the expansion.
+  * useless imho
+  * Fix TAB-completion for rebase-origin.
+  * unfinished: -o to specify the origin (git-rebase-origin)
+
+ -- Michal Maruska <michal@ubuntu>  Thu, 01 Oct 2015 17:51:50 +0200
+
 git-hierarchy (4.1) release; urgency=medium
 
   * Resolve ref before changing branches/HEAD
