@@ -229,7 +229,7 @@ else
 	# only in this case, there is this variable:
 	start=$3
         # fixme: check that it's an ancestor (of segment's head)
-	start_hash=$(git log $start --max-count=1 --format="%H")
+	start_hash=$(git log $start --max-count=1 --format="%H" --)
     fi
 
     # by now we determined the necessary base / start.
