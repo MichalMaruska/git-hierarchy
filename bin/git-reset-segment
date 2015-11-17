@@ -1,11 +1,6 @@
 #! /bin/zsh -feu
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
-
-mark=$GIT_DIR/.rebasing-segment
-# state_dir=$GIT_DIR"/rebase-apply/
-# head_name=$(cat "$state_dir"/head-name) &&
 
 usage()
 {
@@ -33,6 +28,12 @@ while getopts :h OPT; do
 done
 shift $(( OPTIND - 1 ))
 OPTIND=1
+
+GIT_DIR=$(git_dir)
+
+mark=$GIT_DIR/.rebasing-segment
+# state_dir=$GIT_DIR"/rebase-apply/
+# head_name=$(cat "$state_dir"/head-name) &&
 
 
 # fixme: canonize?
