@@ -33,15 +33,6 @@ shift OPTIND-1
 OPTIND=1
 
 
-# I want 3 functions, and run the 2 iterators:
-# process-base  process-segment  process-sum.
-# and the iterators:
-# git-walk-down
-# git-tsort  (all)
-# git-restore- ... same as tsort.
-
-
-
 # check, that no other rebase in progress
 if [ -e $GIT_DIR/.rebasing-segment ]; then
     cecho red "Must first finish rebasing segment " \

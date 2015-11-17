@@ -1,0 +1,6 @@
+# I want 3 functions, and run the 2 iterators:
+# process-base  process-segment  process-sum.
+# and the iterators:
+# git-walk-down
+# git-tsort  (all)
+# git-restore- ... same as tsort.
