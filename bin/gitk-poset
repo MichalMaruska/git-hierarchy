@@ -5,6 +5,7 @@ GIT_DIR=$(git_dir)
 
 usage()
 {
+setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-f] [--] REF...
 
@@ -17,6 +18,7 @@ REF is segment or sum
 # or even mmc-sum including all summands
 
 EOF
+unsetopt POSIX_ARGZERO
 }
 
 
@@ -35,12 +37,13 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
+
 if [ $# -gt 1 ]; then
     usage >&2
     exit 1
 elif [ $# = 0 ]; then
     # default:
-    ref_name=$(git rev-parse --symbolic-full-name HEAD)
+    ref_name=$(git rev-parse --symbolic-full-name "HEAD")
 else
     ref_name=$1
 fi
@@ -48,19 +51,20 @@ ref_name=${ref_name#refs/heads/}
 
 
 
-if [[ $full_poset = y ]]; then
-    bottom=$(git-walk-down $ref_name |head -n 1)
-else
+
+if [[ $full_poset = n ]] && is_segment $ref_name; then
     bottom=refs/base/$ref_name
+else
+    bottom=$(git-walk-down $ref_name |head -n 1)
 fi
 
 if is_sum $ref_name;
 then
     typeset -a summands
-    summands=($(git-sum $1))
+    summands=($(git-sum $ref_name))
 
     typeset -a ranges
-    ranges=()
+    ranges=($bottom..heads/$ref_name)
 
     foreach br ($summands)
     {
