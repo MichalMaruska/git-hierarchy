@@ -70,13 +70,18 @@ done
 shift OPTIND-1
 OPTIND=1
 
-if [ $# != 1 ]; then
-    usage
+if [ $# = 0 ]; then
+    # default is the current branch
+    ref_name=$(git rev-parse --symbolic-full-name HEAD)
+elif [ $# = 1 ]; then
+    ref_name=$1
+else
+    usage >&2
     exit 1
 fi
 
-
-root=$(git-expand-ref $1)
+ref_name=${ref_name#refs/heads/}
+root=$ref_name
 
 GRAPH=
 
