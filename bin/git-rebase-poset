@@ -4,14 +4,15 @@
 # in future possibly "git fetch".
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
-unsetopt FUNCTION_ARGZERO
 
 usage()
 {
+    setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-h] [-d] [--]  [sum|segment] ...
 -d debug
 EOF
+    unsetopt POSIX_ARGZERO
 }
 
 DEBUG=n

@@ -23,6 +23,7 @@ GIT_DIR=$(git_dir)
 
 usage()
 {
+    setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-dghxr] [--] {root-ref}
 
@@ -33,6 +34,7 @@ Output or Display the order of segments & sums below REF
 -d  turn on Debugging
 -h  help
 EOF
+    unsetopt POSIX_ARGZERO
 }
 
 # sum_bases()
