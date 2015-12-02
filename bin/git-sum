@@ -8,6 +8,7 @@
 
 usage()
 {
+setopt POSIX_ARGZERO
     cat <<EOF
 Usage:
 ${0##*/} [+-h]
@@ -24,6 +25,7 @@ ${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
 ${0##*/} [-d] branch
   drop the definition.
 EOF
+unsetopt POSIX_ARGZERO
 }
 
 source /usr/share/git-hierarchy/functions.sh
