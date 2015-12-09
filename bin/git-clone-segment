@@ -1,0 +1,19 @@
+#!/bin/zsh -euf
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+# re-create the same segment
+original=$1
+new=$2
+new_base=$3
+
+
+git branch $new $original
+
+git-segment $new $(segment_base $original) $(segment_start $original)
+
+git-segment -u $new $new_base
+
+git-rebase-segment $new
+
