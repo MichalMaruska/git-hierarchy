@@ -53,7 +53,7 @@ ref_name=${ref_name#refs/heads/}
 
 
 if [[ $full_poset = n ]] && is_segment $ref_name; then
-    bottom=refs/base/$ref_name
+    bottom=refs/start/$ref_name
 else
     bottom=$(git-walk-down $ref_name |head -n 1)
 fi
