@@ -66,16 +66,6 @@ then
     typeset -a ranges
     ranges=($bottom..heads/$ref_name)
 
-    foreach br ($summands)
-    {
-	if [[ $full_poset = n ]]; then
-	    bottom=
-	fi
-
-	#    echo "adding $br"
-	# heads/
-	ranges+=( "$bottom..$br")
-    }
     set -x
     gitk $ranges
 else
