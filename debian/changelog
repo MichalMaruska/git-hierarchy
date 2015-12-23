@@ -1,3 +1,14 @@
+git-hierarchy (4.5) release; urgency=medium
+
+  * drop ambiguity between ref & filename (was "debian")
+  * new: git-clone-segment
+  * git-clone-segment: usage & checks
+  * more POSIX_ARGZERO
+  * gitk-poset: for sums, show the sum itself.
+  * gitk-poset: from the start (not base)
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 23 Dec 2015 16:58:36 +0100
+
 git-hierarchy (4.4) release; urgency=medium
 
   * Forced to use zsh, due to trapping ZERR errors.
