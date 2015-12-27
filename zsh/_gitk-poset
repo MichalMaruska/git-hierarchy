@@ -1,4 +1,4 @@
-#compdef gitk-segment
+#compdef gitk-poset
 #description display in gitk the path from base to the given ref.
 
 # I need this as I invoke other _functions:
