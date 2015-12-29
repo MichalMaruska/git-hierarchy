@@ -63,32 +63,12 @@ extern_color=pink
 # segments ... look at bases.
 setopt NULL_GLOB
 
-typeset -a segments
 
-# this list_segments is also in `git-segment'
-segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
-if [ 0 =  ${#segments} ]; then
-    echo "no segments." >&2
-else
-  foreach segment ($segments);
-  {
-      dump_segment $segment
-}   > $GRAPH
-fi
+# why temp file?
+# tsort doesn't need it (- is ok)
+# my ../../mmc-shell/bin/draw-tsort-graph
+dump_whole_graph > $GRAPH
 
-
-# sums
-typeset -a sums
-sums=($(list_sums))
-
-if [ 0 = ${#sums} ]; then
-    test $debug = y && echo "no sums." >&2
-else
-    foreach sum ($sums)
-    {
-	dump_sum $sum
-    } >> $GRAPH
-fi
 
 if [ $keep_graph_file = y ]; then
     echo "graph left in: $GRAPH" >&2

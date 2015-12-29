@@ -392,3 +392,39 @@ current_branch_poset()
 
     echo "$head"
 }
+
+# writes to stdout 2 kinds (all for tsort input format!):
+#  segment: base
+#  sum: summand1 summand2 ...
+#
+# input: $debug
+dump_whole_graph()
+{
+
+    local segments
+    typeset -a segments
+    # this list_segments is also in `git-segment'
+    segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
+    if [ 0 =  ${#segments} ]; then
+	echo "no segments." >&2
+    else
+	foreach segment ($segments);
+	{
+	    dump_segment $segment
+	}
+    fi
+
+
+    local sums
+    typeset -a sums
+    sums=($(list_sums))
+
+    if [ 0 = ${#sums} ]; then
+	test $debug = y && echo "no sums." >&2
+    else
+	foreach sum ($sums)
+	{
+	    dump_sum $sum
+	}
+    fi
+}
