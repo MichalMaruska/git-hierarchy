@@ -50,8 +50,12 @@ else
     top=$1
 fi
 
-if [ $fetch = yes ]; then
-    if [ $DEBUG = y ]; then echo "fetching from $remote">&2;fi
+
+
+
+# todo: remove
+if [[ $fetch = yes && -n "$remote" ]]; then
+    if [ $DEBUG = y ]; then cecho blue "fetching from $remote">&2;fi
     git fetch $remote
 fi
 
@@ -66,8 +70,13 @@ git checkout HEAD
 bases=($(git-walk-down -r $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
 foreach base ($bases)
 {
-    [ $DEBUG = y ] && echo "merging upstream to $base" >&2
-    remote=$(git for-each-ref --format='%(upstream:short)' refs/heads/$base)
+    if [ $fetch = yes ]; then
+	remote=$(git for-each-ref --format='%(upstream:short)' refs/heads/$base)
+	remote=${remote%/*}
+	[ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
+	set -x
+	git fetch $remote
+    fi # manual! todo: understand what error scenarios are possible!
     git branch -f $base $remote
 
 }
