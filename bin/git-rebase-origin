@@ -1,10 +1,13 @@
 #!/bin/zsh -feu
 
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
 # I could even 'git fetch'
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-hfv] [--] {top-ref} [remote or base]
+usage: ${0##*/} [+-hfv] [--] [ {top-ref} {remote} ]
 -f  do NOT git fetch origin
 -v  verbose
 EOF
@@ -12,7 +15,7 @@ EOF
 
 DEBUG=n
 fetch=yes
-remote=origin
+remote=
 
 # if only debian/changelog -> stash
 while getopts :hfvo: OPT; do
@@ -39,10 +42,13 @@ shift $(( OPTIND - 1 ))
 OPTIND=1
 
 if [ $# -lt 1 ]; then
-    echo "error: missing parameters" >&2
-    usage; exit 2
+    # by default the current-branch-poset
+    # by default look at the base ... what it follows:
+    top=$(current_branch_poset)
+    cecho yellow "taking the current $top" >&2
+else
+    top=$1
 fi
-top=$1
 
 if [ $fetch = yes ]; then
     if [ $DEBUG = y ]; then echo "fetching from $remote">&2;fi

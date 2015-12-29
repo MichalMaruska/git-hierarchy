@@ -379,3 +379,16 @@ trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0' ZERR
 # DEBUG
 # trap 'report_error $LINENO $BASH_SOURCE' ERR
 
+
+current_branch_poset()
+{
+    local head
+    head=$(dump_ref_without_ref HEAD)
+    head=${head##refs/heads/}
+    if [ $head = HEAD ]; then
+	cecho red "currently not on a poset branch" >&2
+	exit 1;
+    fi
+
+    echo "$head"
+}
