@@ -7,10 +7,11 @@ usage()
 {
 setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-f] [--] REF...
+usage: ${0##*/} [+-f|g] [--] REF...
 
 REF is segment or sum
 -f  show the whole poset! (uses git-tsort to get the base).
+-g  the whole graphs (segments, sums)
 
 # to be used:
 # $0 mmc-segment
@@ -23,10 +24,14 @@ unsetopt POSIX_ARGZERO
 
 
 full_poset=n
-while getopts :f OPT; do
+all_graph=n
+while getopts :fg OPT; do
     case $OPT in
 	f|+f)
 	    full_poset=y
+	    ;;
+	g)
+	    all_graph=y
 	    ;;
 	*)
 	    usage >&2
@@ -37,6 +42,21 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
+
+if [ $all_graph = y ]; then
+
+    GRAPH=xxx
+    dump_whole_graph > $GRAPH
+
+    cat $GRAPH | cut -f 1|sort -u > possible
+    cat $GRAPH | cut -d\  -f 2- | sed -e "s/ /\n/g"| sort -u > covered
+    comm -1  possible covered
+
+    exit 0
+fi
+
+
+#### local version:
 
 if [ $# -gt 1 ]; then
     usage >&2
