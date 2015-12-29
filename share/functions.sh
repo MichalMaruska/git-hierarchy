@@ -284,9 +284,12 @@ check_git_rebase_hooks()
     if [ ! -d $GIT_DIR/hooks ]; then
 	mkdir $GIT_DIR/hooks
     fi
-
+    local master
+    master=/usr/share/git-hierarchy/git-rebase-abort
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/rebase-abort} ]; then
-	ln -s /usr/share/git-hierarchy/git-rebase-abort $HOOK
+	ln -fs $master $HOOK
+    elif [ -L $HOOK -a  "$(readlink $HOOK)" = $master ]; then
+	cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
 	# even if the same symlink. we want to remove it... don't we?
 	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-abort" >&2
@@ -294,9 +297,12 @@ check_git_rebase_hooks()
 	# exit
     fi
 
+    master=/usr/share/git-hierarchy/git-rebase-complete
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/post-rebase} ]; then
 	# fixme: this should be renamed: git-complete-segment-rebase
-	ln -s /usr/share/git-hierarchy/git-rebase-complete $HOOK
+	ln -fs $master $HOOK
+    elif [ -L $HOOK -a  "$(readlink $HOOK)" = $master ]; then
+	cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
 	# note: this is a problem! see ~10 lines above!
 	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-complete" >&2
