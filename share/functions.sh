@@ -223,7 +223,7 @@ EOF
 	fi
 	    ;;
 	tsort)
-	    echo -n refs/heads/$segment_name "\t"; segment_base $segment_name
+	    echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
 	    ;;
 	raw)
 	    # dump the start  segment_start_sha
@@ -259,7 +259,7 @@ dump_sum()
 		    echo "\"${${$(dump_ref $summand |sed -e 's/^ref:\s//')#refs/heads/}//-/_}\""
 		    ;;
 		tsort)
-		    echo -n "refs/heads/$sum" "\t"; dump_ref_without_ref $summand
+		    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand
 		    ;;
 		raw)
 		    echo -n "\t"; dump_ref_without_ref $summand
