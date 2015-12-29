@@ -171,7 +171,7 @@ drop_symbolic_ref()
     # With this it was recreating .git/refs/heads/refs/sums/all/10
 }
 
-
+dump_format=tsort
 # needed:  dump_format, extern_color
 dump_segment()
 {
@@ -397,7 +397,7 @@ current_branch_poset()
 #  segment: base
 #  sum: summand1 summand2 ...
 #
-# input: $debug
+# input: $debug, dump_format (see dump_segment()!)
 dump_whole_graph()
 {
 
