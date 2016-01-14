@@ -1,0 +1,47 @@
+#compdef git-clone-segment
+#description reset git-rebase state & reset the start to base (of a Segment)
+
+# I need this as I invoke other _functions:
+_git-clone-segment()
+{
+local curcontext="$curcontext" state line
+typeset -A opt_args
+
+_arguments : \
+	   '-h[help]'  \
+	   '1: :->git_segment_name' \
+	   '2: :->git_segment_name' \
+	   '*: :branch-or-tree-ish-or-file' \
+    && return 0
+
+
+case $state in
+    branch-or-tree-ish-or-file)
+	# how to use a local function from _git?
+	# ~/git/zsh/Completion/Unix/Command/_git
+	_alternative 'branches::__git_revisions'
+	;;
+    git_segment_name)
+	    # or _sum
+	_alternative \
+	    'segment:segment:_git-segment-name' \
+	    'sum:sum:_git-sum-name'
+	    # _arguments "1:Segments:($available)"
+	;;
+    *)
+	_files
+esac
+}
+
+# git
+# _git-clone-segment()
+
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-clone-segment")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git
