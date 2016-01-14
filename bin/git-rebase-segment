@@ -72,6 +72,11 @@ then
     # and clean it after.
     git-segment --restart $branch $onto
 else
+    if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
+	cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
+	cecho "red" "assuming it didn't start"
+	exit 1
+    fi
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
 
     # So save the state for `git-reset-segment' -- invoked by the hooks.
