@@ -1,0 +1,45 @@
+#!/bin/zsh -feu
+
+# export a segment as patches, into separate subdirectory
+
+set -x
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+usage()
+{
+    print "usage: ${0##*/} [+-h} [--] {segment}"
+}
+
+while getopts :h OPT; do
+    case $OPT in
+	h|+h)
+	    usage
+	    exit 0
+	    ;;
+	*)
+	    usage
+	    exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
+if [ $# != 1 ]; then
+    usage
+    exit 2
+fi
+
+# dump segment:
+segment=$1
+dir=$segment
+mkdir -p $dir
+
+name=${segment#refs/heads/}
+base=$(segment_base $name)
+git format-patch --keep-subject --output-directory $dir $base..$segment
+
+# dump sums:
+
