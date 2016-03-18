@@ -7,7 +7,7 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-hfv] [--] [ {top-ref} {remote} ]
+usage: ${0##*/} [+-hfv] [--] [ {top-ref} ]
 -f  do NOT git fetch origin
 -v  verbose
 EOF
@@ -15,10 +15,9 @@ EOF
 
 DEBUG=n
 fetch=yes
-remote=
 
 # if only debian/changelog -> stash
-while getopts :hfvo: OPT; do
+while getopts :hfv OPT; do
     case $OPT in
 	h|+h)
 	    usage
@@ -29,9 +28,6 @@ while getopts :hfvo: OPT; do
 	    ;;
 	v)
 	    DEBUG=y
-	    ;;
-	o)
-	    remote=$OPTARG
 	    ;;
 	*)
 	    usage
@@ -48,15 +44,6 @@ if [ $# -lt 1 ]; then
     cecho yellow "taking the current $top" >&2
 else
     top=$1
-fi
-
-
-
-
-# todo: remove
-if [[ $fetch = yes && -n "$remote" ]]; then
-    if [ $DEBUG = y ]; then cecho blue "fetching from $remote">&2;fi
-    git fetch $remote
 fi
 
 
