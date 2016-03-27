@@ -10,18 +10,23 @@ usage()
 usage: ${0##*/} [+-hfv] [--] [ {top-ref} ]
 -f  do NOT git fetch origin
 -v  verbose
+-d  dry
 EOF
 }
 
 DEBUG=n
 fetch=yes
+dry_only=no
 
 # if only debian/changelog -> stash
-while getopts :hfv OPT; do
+while getopts :hfvd OPT; do
     case $OPT in
 	h|+h)
 	    usage
 	    exit 0
+	    ;;
+	d)
+	    dry_only=yes
 	    ;;
 	f)
 	    fetch=no
@@ -69,5 +74,7 @@ foreach base ($bases)
 }
 #$2
 # origin/$base
-git-rebase-poset $top
+if [ $dry_only = no ]; then
+    git-rebase-poset $top
+fi
 
