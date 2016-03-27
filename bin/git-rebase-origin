@@ -62,15 +62,34 @@ git checkout HEAD
 bases=($(git-walk-down -r $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
 foreach base ($bases)
 {
-    if [ $fetch = yes ]; then
-	remote=$(git for-each-ref --format='%(upstream:short)' refs/heads/$base)
-	remote=${remote%/*}
-	[ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
-	set -x
-	git fetch $remote
-    fi # manual! todo: understand what error scenarios are possible!
-    git branch -f $base $remote
 
+    # fixme:  refs/heads/
+    if expr match $base 'refs/remotes/'; then
+	remote=${base#refs/remotes/}
+	remote_branch=${remote#*/}
+	remote=${remote%/*}
+    else
+	this_branch=$base
+	remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
+	remote=${remote_branch%/*}
+    fi
+
+    if [ $fetch = yes ]; then
+	[ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
+	if [ $dry_only = no ]; then
+	    set -x
+	    git fetch $remote $remote_branch
+	else
+	    echo "would fetch from $remote $remote_branch"
+	fi
+    fi # manual! todo: understand what error scenarios are possible!
+
+    # sometimes I point the the segment base directly at remote, correct?
+    if [ $dry_only = no ]; then
+	if [ -n "${this_branch-}" ]; then
+	    git branch -f $this_branch $remote_branch
+	fi
+    fi
 }
 #$2
 # origin/$base
