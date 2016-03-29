@@ -52,9 +52,15 @@ dump_ref(){
     # x -> y &  y ->z & z->sha1; then `git symbolic-ref x' will return z.
     #git symbolic-ref $1
 
+
     # note: symbolic refs (i.e. those pointing at other refs ,not direct SHA1), are not included in pack-refs.
     # when that changes, I have to update this tool
-    cat $GIT_DIR/$1
+    # cat $GIT_DIR/$1
+    # fixme: does not work with packed_refs.
+    # git ref-parse $1
+    git symbolic-ref $1
+    # refs/base/mmc-handy
+    # git rev-parse refs/base/debian-unstable
 }
 
 dump_ref_without_ref()
