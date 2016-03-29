@@ -292,7 +292,7 @@ check_git_rebase_hooks()
 	cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
 	# even if the same symlink. we want to remove it... don't we?
-	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-abort" >&2
+	cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
 	# for now we check this too late, so no need for exit:
 	# exit
     fi
@@ -305,7 +305,7 @@ check_git_rebase_hooks()
 	cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
 	# note: this is a problem! see ~10 lines above!
-	cecho red "CRITICAL: $HOOK exists, but we must run ... /usr/share/git-hierarchy/git-rebase-complete" >&2
+	cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
 	# cecho red "cannot proceed: $HOOK exists" >&2
 	# exit
     fi
