@@ -1,3 +1,23 @@
+git-hierarchy (4.6) release; urgency=medium
+
+  * zsh-tab: rename git-poset
+  * current_branch_poset: use instead of missing argument
+  * git-rebase-origin: fetch the remotes followed by bases.
+  * dump_whole_graph: extract from git-tsort
+  * gitk-poset: global version
+  * sq: default dump_format
+  * Suppress space before tab.
+  * ignore if the hook symlinks exist correctly
+  * zsh Tab compeltion for _git-clone-segment
+  * new cmd: git-segment-patches
+  * git-rebase-origin: drop the "-o remote" option to simplify.
+  * git-rebase-origin: dry-only -d option
+  * git-rebase-origin: handle the base as a local & also remote branch
+  * simplify the hook installation warnings
+  * Stop using "cat path" to test/resolve heads. use rev-parse or symbolic-ref
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 30 Mar 2016 01:08:57 +0200
+
 git-hierarchy (4.5) release; urgency=medium
 
   * drop ambiguity between ref & filename (was "debian")
