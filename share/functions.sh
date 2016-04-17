@@ -37,7 +37,7 @@ summands_of()
     ( while read summand;
 	do
 	# echo $summand >&2
-	dump_ref $summand |sed -e 's/^ref:\s\+//';
+	dump_symbolic_ref $summand |sed -e 's/^ref:\s\+//';
 	done)
 }
 
@@ -58,9 +58,15 @@ dump_ref(){
     # cat $GIT_DIR/$1
     # fixme: does not work with packed_refs.
     # git ref-parse $1
-    git symbolic-ref $1
+    # echo "dump_ref $1" >&2
+    # fixme: only symbolic: git symbolic-ref $1
     # refs/base/mmc-handy
-    # git rev-parse refs/base/debian-unstable
+    git rev-parse $1
+    #refs/base/debian-unstable
+}
+
+dump_symbolic_ref(){
+    git symbolic-ref $1
 }
 
 dump_ref_without_ref()
@@ -68,7 +74,7 @@ dump_ref_without_ref()
     if true; then
 	git rev-parse --symbolic-full-name $1
     else
-	a=$(dump_ref $1)
+	a=$(dump_symbolic_ref $1)
 	a=${a#ref:}
 	a=${a# }
 	a=${a#	}
@@ -117,7 +123,7 @@ segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
     # refs/\(heads\|remotes\)
-    dump_ref refs/base/$1 | sed -e 's/ref:\s//'
+    dump_symbolic_ref refs/base/$1 | sed -e 's/ref:\s//'
 }
 
 segment_start()
@@ -262,7 +268,7 @@ dump_sum()
 	    case $dump_format in
 		dot)
 		    echo -n "\"${sum//-/_}\"" "->"
-		    echo "\"${${$(dump_ref $summand |sed -e 's/^ref:\s//')#refs/heads/}//-/_}\""
+		    echo "\"${${$(dump_symbolic_ref $summand |sed -e 's/^ref:\s//')#refs/heads/}//-/_}\""
 		    ;;
 		tsort)
 		    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand

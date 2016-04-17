@@ -63,7 +63,7 @@ describe_segment()
 
     if ref_exists $baseref;
     then
-	local base=$(dump_ref $baseref |\
+	local base=$(dump_symbolic_ref $baseref |\
            sed -e 's/^ref: //;s|^refs/heads/||')
 	echo -n "base is "; cecho green "$base"
 

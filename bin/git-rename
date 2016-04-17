@@ -65,7 +65,7 @@ rename_symbolic_reference()
     # git symbolic-ref -m "renaming Sum"
 
     # rename: create & drop?
-    content=$(dump_ref $ref)
+    content=$(dump_symbolic_ref $ref)
     # fixme: if hash don't prepend "ref:" !!!
 
     set_symbolic_reference $new_name $content
@@ -99,7 +99,7 @@ full_new=$(git-expand-ref $new)
 
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
 while read symref; do
-    if dump_ref $symref|\
+    if dump_symbolic_ref $symref|\
        grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
     then
        set_symbolic_reference $symref "ref: $full_new"

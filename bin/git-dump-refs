@@ -17,8 +17,15 @@ GIT_DIR=$(git_dir)
 ##
 ##
 
-git for-each-ref "refs/sums"  "refs/base" "refs/start" \
+git for-each-ref "refs/sums" "refs/base" \
     --format "%(refname)" |\
+while read ref; do
+    link=$(dump_symbolic_ref $ref)
+    echo -n "$ref\t" ; dump_ref $ref
+done
+
+
+git for-each-ref "refs/start" --format "%(refname)" |\
 while read ref; do
     link=$(dump_ref $ref)
     echo -n "$ref\t" ; dump_ref $ref
