@@ -59,19 +59,22 @@ typeset -a bases
 #todo: have to
 git checkout HEAD
 
-bases=($(git-walk-down -r $top|sed -n -e '/^base:\(.*\)$/{s/^base: //;P}'))
+bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
 foreach base ($bases)
 {
-
-    # fixme:  refs/heads/
     if expr match $base 'refs/remotes/'; then
 	remote=${base#refs/remotes/}
 	remote_branch=${remote#*/}
 	remote=${remote%/*}
     else
+	#fixme:
+	base=refs/heads/$base
 	this_branch=$base
+
 	remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
+
 	remote=${remote_branch%/*}
+	remote_branch=${remote_branch#*/}
     fi
 
     if [ $fetch = yes ]; then
@@ -87,7 +90,7 @@ foreach base ($bases)
     # sometimes I point the the segment base directly at remote, correct?
     if [ $dry_only = no ]; then
 	if [ -n "${this_branch-}" ]; then
-	    git branch -f $this_branch $remote_branch
+	    git branch -f $this_branch $remote/$remote_branch
 	fi
     fi
 }
