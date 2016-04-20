@@ -1,3 +1,10 @@
+git-hierarchy (4.7) release; urgency=medium
+
+  * Fix handling of dump_ref(): Split dump_ref & dump_symbolic_ref
+  * git-rebase-origin: enumerate the upstream branch correctly.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 20 Apr 2016 03:06:23 +0200
+
 git-hierarchy (4.6) release; urgency=medium
 
   * zsh-tab: rename git-poset
