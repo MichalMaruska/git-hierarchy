@@ -72,6 +72,20 @@ rename_symbolic_reference()
     git update-ref --no-deref  -d $ref
 }
 
+rename_reference()
+{
+    ref=$1
+    new_name=$2
+    # git symbolic-ref -m "renaming Sum"
+
+    # rename: create & drop?
+    content=$(dump_ref $ref)
+    # fixme: if hash don't prepend "ref:" !!!
+
+    git update-ref $new_name $content
+    git update-ref --no-deref  -d $ref
+
+}
 
 
 # rename sum:
@@ -88,7 +102,7 @@ fi
 # segment base/start refs.
 if is_segment $from; then
     rename_symbolic_reference refs/base/$from refs/base/$new
-    rename_symbolic_reference refs/start/$from refs/start/$new
+    rename_reference refs/start/$from refs/start/$new
 fi
 
 
