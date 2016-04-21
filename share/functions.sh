@@ -36,8 +36,8 @@ summands_of()
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
     ( while read summand;
 	do
-	# echo $summand >&2
-	dump_symbolic_ref $summand |sed -e 's/^ref:\s\+//';
+	    # echo $summand >&2
+	    dump_symbolic_ref $summand
 	done)
 }
 
@@ -75,9 +75,6 @@ dump_ref_without_ref()
 	git rev-parse --symbolic-full-name $1
     else
 	a=$(dump_symbolic_ref $1)
-	a=${a#ref:}
-	a=${a# }
-	a=${a#	}
 	echo $a
     fi
 }
@@ -123,7 +120,7 @@ segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
     # refs/\(heads\|remotes\)
-    dump_symbolic_ref refs/base/$1 | sed -e 's/ref:\s//'
+    dump_symbolic_ref refs/base/$1
 }
 
 segment_start()
@@ -268,7 +265,7 @@ dump_sum()
 	    case $dump_format in
 		dot)
 		    echo -n "\"${sum//-/_}\"" "->"
-		    echo "\"${${$(dump_symbolic_ref $summand |sed -e 's/^ref:\s//')#refs/heads/}//-/_}\""
+		    echo "\"${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}\""
 		    ;;
 		tsort)
 		    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand

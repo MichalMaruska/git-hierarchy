@@ -114,7 +114,7 @@ full_new=$(git-expand-ref $new)
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
 while read symref; do
     if dump_symbolic_ref $symref|\
-       grep --line-regexp --fixed-strings "ref: $full_from" >/dev/null
+       grep --line-regexp --fixed-strings "$full_from" >/dev/null
     then
        set_symbolic_reference $symref "ref: $full_new"
     fi
