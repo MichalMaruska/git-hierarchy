@@ -65,8 +65,30 @@ dump_ref(){
     #refs/base/debian-unstable
 }
 
+# I bet on always knowing what to expect. for start & base.
+# start is always/has to be (by design) non symbolic.
+# base ... to be useful, should be symbolic.
+# If not, it reduces the segment to a plain branch.
 dump_symbolic_ref(){
-    git symbolic-ref $1
+    # fixme: this drops the "ref: " prefix!
+    # previously with the "cat" it was part of the returned!
+
+    # git symbolic-ref $1
+
+    # fixme: this seems to do more than just 1 step!
+
+    # $ cat .git/refs/base/sest
+    # ref: refs/remotes/m/master
+    # $ git symbolic-ref refs/base/sest
+    # refs/remotes/tt-server/ics-dev
+    #
+    # hence returning:
+    # note: http://permalink.gmane.org/gmane.comp.version-control.git/166818
+    # http://stackoverflow.com/questions/4986000/whats-the-recommended-usage-of-a-git-symbolic-reference
+    # todo: use 'read'
+    local a
+    a=$(cat $GIT_DIR/$1)
+    echo ${a#ref: }
 }
 
 dump_ref_without_ref()
