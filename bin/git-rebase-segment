@@ -1,35 +1,33 @@
 #! /usr/bin/zsh -feu
 
-# rebase  start...segment --onto base
-
+# rebase  (start...segment) --onto base
+#
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 unsetopt FUNCTION_ARGZERO
-
-DEBUG=n
 SILENT=n
-
+onto=""
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [-qv] [--] ARGS...
-
+usage: ${0##*/} [-qv] [-o onto] [--] ARGS...
+-o onto some commit, by default onto its BASE.
 -v verbose
 -q quiet
 EOF
 }
 
-while getopts :hqv OPT; do
+while getopts :hqvo: OPT; do
     case $OPT in
 	h)
 	    usage
 	    exit 0
 	    ;;
+	o)
+	    onto=$OPTARG
+	    ;;
 	q)
 	    SILENT=y
-	    ;;
-	v)
-	    DEBUG=y
 	    ;;
 	*)
 	    usage
@@ -39,22 +37,22 @@ done
 shift OPTIND-1
 OPTIND=1
 
-
 # fixme: canonize!
 branch=${1#refs/heads}
-
-# not needed "ref/
-start="refs/start/$branch"
-base="refs/base/$branch"
-
 if ! git-segment $branch >/dev/null ;
 then
     exit 1
 fi
 
 
+# not needed "ref/
+start="refs/start/$branch"
+if [ -z $onto ]; then
+   # the base
+   onto="refs/base/$branch"
+fi
 
-if test $(commit_id $start) = $(commit_id $base);
+if test $(commit_id $start) = $(commit_id $onto);
 then
     test $SILENT = n && \
 	{echo -n "no need to rebase segment ";cecho cyan $branch} >&2
@@ -67,12 +65,12 @@ fi
 # 1/ save the state, to reinvoke later:
 
 # For now I can do without the hooks. At least in the succesful case.
-if git rebase --onto $base $start $branch;
+if git rebase --onto $onto $start $branch;
 then
     # This is also the content of the rebase-complete hook!
     # although there we need to recover the "state", so `git-reset-segment'
     # and clean it after.
-    git-segment --restart $branch $base
+    git-segment --restart $branch $onto
 else
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
 
