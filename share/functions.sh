@@ -15,6 +15,11 @@ git_dir()
     # echo $(git rev-parse --show-toplevel)/.git
 }
 
+commit_id()
+{
+    #local sha=$(git rev-list  --max-count=1 $commit)
+    git rev-parse $1
+}
 
 git-branch-exists()
 {

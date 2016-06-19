@@ -35,7 +35,7 @@ commit=$1
 branch=$2
 
 # resolve before checkout. if HEAD, it must be the original.
-commit=$(git rev-parse $commit)
+commit=$(commit_id $commit)
 
 
 # current branch?

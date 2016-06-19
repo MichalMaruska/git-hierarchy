@@ -52,11 +52,6 @@ then
     exit 1
 fi
 
-commit_id()
-{
-    #local sha=$(git rev-list  --max-count=1 $commit)
-    git rev-parse $1
-}
 
 
 if test $(commit_id $start) = $(commit_id $base);
