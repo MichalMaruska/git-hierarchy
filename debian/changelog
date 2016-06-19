@@ -1,3 +1,15 @@
+git-hierarchy (4.8) release; urgency=medium
+
+  * rename: distinguish non-"symbolic" start references!
+  * no more need to drop "refs: ". It's never returned from Git(1)
+  * Definitive answer to dump_symbolic_ref (i.e. just 1 step resolution)
+  * fix: git branch -f refs/heads/aa does not work on branch aa
+  * Move commit_id() to functions. And use it.
+  * use --restart (rather than -r).
+  * git-rebase-segment: allow optionaly fixed start.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 19 Jun 2016 20:06:24 +0200
+
 git-hierarchy (4.7) release; urgency=medium
 
   * Fix handling of dump_ref(): Split dump_ref & dump_symbolic_ref
