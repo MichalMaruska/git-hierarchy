@@ -68,8 +68,8 @@ foreach base ($bases)
 	remote=${remote%/*}
     else
 	#fixme:
-	base=refs/heads/$base
 	this_branch=$base
+	base=refs/heads/$base
 
 	remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
 
