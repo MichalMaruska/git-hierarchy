@@ -72,7 +72,7 @@ then
     # This is also the content of the rebase-complete hook!
     # although there we need to recover the "state", so `git-reset-segment'
     # and clean it after.
-    git-segment -r $branch $base
+    git-segment --restart $branch $base
 else
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
 

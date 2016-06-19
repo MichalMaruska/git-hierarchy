@@ -41,7 +41,7 @@ mark=$GIT_DIR/.rebasing-segment
 if [ $# = 1 ]; then
     BRANCH=$1
     BASE="refs/base/${BRANCH#refs/base/}"
-    git-segment -r $BRANCH $BASE
+    git-segment --restart $BRANCH $BASE
 
     if [ -e $mark -a "$BRANCH" = "$(cat $mark)" ]; then
 	echo "### so rebase was completed, moving *start* to the *base*"  >&2
