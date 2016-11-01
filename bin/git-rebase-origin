@@ -7,10 +7,13 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-hfv] [--] [ {top-ref} ]
+usage: ${0##*/} [+-hfv] [--] [top-ref]
 -f  do NOT git fetch origin
 -v  verbose
 -d  dry
+[top-ref]  what to rebase, by default the current branch.
+
+Discover which remote branches to fetch, then rebase ....
 EOF
 }
 
@@ -46,9 +49,11 @@ if [ $# -lt 1 ]; then
     # by default the current-branch-poset
     # by default look at the base ... what it follows:
     top=$(current_branch_poset)
-    cecho yellow "taking the current $top" >&2
-else
+    [ $DEBUG = y ] && cecho yellow "taking the current $top" >&2
+elif [ $# = 1 ]; then
     top=$1
+else
+    die "wrong number of parameters"
 fi
 
 
@@ -60,6 +65,7 @@ typeset -a bases
 git checkout HEAD
 
 bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
+[ $DEBUG = y ] && echo "bases $bases"
 foreach base ($bases)
 {
     if expr match $base 'refs/remotes/'; then
