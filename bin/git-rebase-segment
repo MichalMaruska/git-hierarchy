@@ -7,6 +7,7 @@ GIT_DIR=$(git_dir)
 unsetopt FUNCTION_ARGZERO
 SILENT=n
 onto=""
+STASHED=no
 
 usage()
 {
@@ -15,14 +16,18 @@ usage: ${0##*/} [-qv] [-o onto] [--] ARGS...
 -o onto some commit, by default onto its BASE.
 -v verbose
 -q quiet
+-s stash-if-needed
 EOF
 }
 
-while getopts :hqvo: OPT; do
+while getopts :hqvso: OPT; do
     case $OPT in
         h)
             usage
             exit 0
+            ;;
+        s)
+            stash_if_needed=y
             ;;
         o)
             onto=$OPTARG
@@ -43,6 +48,23 @@ branch=${1#refs/heads}
 if ! git-segment $branch >/dev/null ;
 then
     exit 1
+fi
+
+
+### STASH:
+set +u
+. /usr/lib/git-core/git-sh-setup
+set -u
+
+if require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
+then
+    :
+else
+    cmd=""
+    # todo: orange:
+    cecho yellow "stashing for you..."
+    eval $cmd git stash save "git-sum-branches saving"
+    STASHED=yes
 fi
 
 # not needed "ref/
