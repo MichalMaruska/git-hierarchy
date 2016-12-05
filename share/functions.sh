@@ -111,7 +111,7 @@ is_sum()
 {
     local sum=$1
     local summands="$(summands_of $sum)"
-    [ -n "$summands" ]
+    test -n "$summands"
 }
 
 is_segment()
