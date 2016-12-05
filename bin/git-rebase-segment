@@ -12,11 +12,13 @@ STASHED=no
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [-qv] [-o onto] [--] ARGS...
+usage: ${0##*/} [-qv] [-o onto] [--] [branch]
 -o onto some commit, by default onto its BASE.
 -v verbose
 -q quiet
 -s stash-if-needed
+
+branch ... segment-name, by default the current branch. 
 EOF
 }
 
@@ -43,8 +45,16 @@ done
 shift OPTIND-1
 OPTIND=1
 
-# fixme: canonize!
-branch=${1#refs/heads}
+#fixme:
+if [ $# = 0 ]; then
+    # default is the current branch
+    branch=$(current_branch_poset)
+elif [ $# = 1 ]; then
+    branch=${1}
+fi
+
+branch=${branch#refs/heads/}
+
 if ! git-segment $branch >/dev/null ;
 then
     exit 1
