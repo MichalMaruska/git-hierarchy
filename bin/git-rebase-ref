@@ -49,15 +49,13 @@ verbosity=()
 test "$DEBUG" = y && verbosity+=("-v")
 test "$SILENT" = y && verbosity+=("-q")
 
-if is_sum $branch;
-then
+if is_sum $branch; then
     # shouldn't it be  EVALed?
     $cmd git-sum-branches $verbosity -r $branch
-elif is_segment $branch;
-then
+elif is_segment $branch; then
     $cmd git-rebase-segment $verbosity $branch
 else
-    test "$DEBUG" = y && echo "unknown -- leaving unchanged $ref"
+    if test "$DEBUG" = y; then echo "unknown -- leaving unchanged $ref";fi
 fi
 
 # note that the test && might fail, but that's not what we want to signal
