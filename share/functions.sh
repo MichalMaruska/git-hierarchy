@@ -423,6 +423,18 @@ trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0' ZERR
 #ERR
 # DEBUG
 # trap 'report_error $LINENO $BASH_SOURCE' ERR
+set_branch_to()
+{
+    local branch=$1
+    local commit_id=$2
+
+    if [ $branch = $(current_branch_poset) ]
+    then
+        git reset --hard $commit_id
+    else
+        git branch -f $branch $commit_id
+    fi
+}
 
 
 current_branch_poset()

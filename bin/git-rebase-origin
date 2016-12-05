@@ -96,7 +96,7 @@ foreach base ($bases)
     # sometimes I point the the segment base directly at remote, correct?
     if [ $dry_only = no ]; then
         if [ -n "${this_branch-}" ]; then
-            git branch -f $this_branch $remote/$remote_branch
+            set_branch_to $this_branch $remote/$remote_branch
         fi
     fi
 }
