@@ -17,13 +17,13 @@ EOF
 
 while getopts :h OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	*)
-	    usage
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift $(( OPTIND - 1 ))
@@ -44,10 +44,10 @@ if [ $# = 1 ]; then
     git-segment --restart $BRANCH $BASE
 
     if [ -e $mark -a "$BRANCH" = "$(cat $mark)" ]; then
-	echo "### so rebase was completed, moving *start* to the *base*"  >&2
-	rm -v $mark
+        echo "### so rebase was completed, moving *start* to the *base*"  >&2
+        rm -v $mark
     else
-	    echo "### mismatch!"  >&2
+            echo "### mismatch!"  >&2
     fi
 else
     echo "### so rebase was aborted, forgetting about it: $(cat $mark)"  >&2
@@ -56,4 +56,3 @@ else
 fi
 
 # not needed "ref/
-

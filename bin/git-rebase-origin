@@ -24,22 +24,22 @@ dry_only=no
 # if only debian/changelog -> stash
 while getopts :hfvd OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	d)
-	    dry_only=yes
-	    ;;
-	f)
-	    fetch=no
-	    ;;
-	v)
-	    DEBUG=y
-	    ;;
-	*)
-	    usage
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        d)
+            dry_only=yes
+            ;;
+        f)
+            fetch=no
+            ;;
+        v)
+            DEBUG=y
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift $(( OPTIND - 1 ))
@@ -69,35 +69,35 @@ bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
 foreach base ($bases)
 {
     if expr match $base 'refs/remotes/'; then
-	remote=${base#refs/remotes/}
-	remote_branch=${remote#*/}
-	remote=${remote%/*}
+        remote=${base#refs/remotes/}
+        remote_branch=${remote#*/}
+        remote=${remote%/*}
     else
-	#fixme:
-	this_branch=$base
-	base=refs/heads/$base
+        #fixme:
+        this_branch=$base
+        base=refs/heads/$base
 
-	remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
+        remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
 
-	remote=${remote_branch%/*}
-	remote_branch=${remote_branch#*/}
+        remote=${remote_branch%/*}
+        remote_branch=${remote_branch#*/}
     fi
 
     if [ $fetch = yes ]; then
-	[ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
-	if [ $dry_only = no ]; then
-	    set -x
-	    git fetch $remote $remote_branch
-	else
-	    echo "would fetch from $remote $remote_branch"
-	fi
+        [ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
+        if [ $dry_only = no ]; then
+            set -x
+            git fetch $remote $remote_branch
+        else
+            echo "would fetch from $remote $remote_branch"
+        fi
     fi # manual! todo: understand what error scenarios are possible!
 
     # sometimes I point the the segment base directly at remote, correct?
     if [ $dry_only = no ]; then
-	if [ -n "${this_branch-}" ]; then
-	    git branch -f $this_branch $remote/$remote_branch
-	fi
+        if [ -n "${this_branch-}" ]; then
+            git branch -f $this_branch $remote/$remote_branch
+        fi
     fi
 }
 #$2

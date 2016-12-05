@@ -20,18 +20,18 @@ dry_only=n
 
 while getopts :hdn OPT; do
     case $OPT in
-	d) DEBUG=y
-	   ;;
-	n)
-	    dry_only=y
-	    ;;
-	h|+h)
-	    usage
-	    exit
-	    ;;
-	*)
-	    usage
-	    exit 2
+        d) DEBUG=y
+           ;;
+        n)
+            dry_only=y
+            ;;
+        h|+h)
+            usage
+            exit
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -41,7 +41,7 @@ OPTIND=1
 # check, that no other rebase in progress
 if [ -e $GIT_DIR/.rebasing-segment ]; then
     cecho red "Must first finish rebasing segment " \
-	"$(cat $GIT_DIR/.rebasing-segment)"
+        "$(cat $GIT_DIR/.rebasing-segment)"
     exit -1
 fi
 
@@ -65,23 +65,23 @@ test "$DEBUG" = n && GIT_DEBUG_OPTIONS+=(-q)
 
 foreach ref ($WHAT_TO_REBASE)
 {
-	# todo: create a tag, so that if `git-rebase' fails
-	# at least I see the segment (in gitk).
-	#
+        # todo: create a tag, so that if `git-rebase' fails
+        # at least I see the segment (in gitk).
+        #
     test "$DEBUG" = y && cecho green "rebasing $ref"
 
     if [ $dry_only = y ];
     then
-	echo "git-rebase-ref $ref"
+        echo "git-rebase-ref $ref"
     else
-	if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
-	then
-	    # todo: save continuation!
-	    #problem=$?
-	    problem=1
-	    cecho red "Failure on $ref: $?"
-	    # todo: list the path from .... poset root to this one
-	    exit $problem
-	fi
+        if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
+        then
+            # todo: save continuation!
+            #problem=$?
+            problem=1
+            cecho red "Failure on $ref: $?"
+            # todo: list the path from .... poset root to this one
+            exit $problem
+        fi
     fi
 }

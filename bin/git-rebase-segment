@@ -7,6 +7,7 @@ GIT_DIR=$(git_dir)
 unsetopt FUNCTION_ARGZERO
 SILENT=n
 onto=""
+
 usage()
 {
     cat <<EOF
@@ -19,19 +20,19 @@ EOF
 
 while getopts :hqvo: OPT; do
     case $OPT in
-	h)
-	    usage
-	    exit 0
-	    ;;
-	o)
-	    onto=$OPTARG
-	    ;;
-	q)
-	    SILENT=y
-	    ;;
-	*)
-	    usage
-	    exit 2
+        h)
+            usage
+            exit 0
+            ;;
+        o)
+            onto=$OPTARG
+            ;;
+        q)
+            SILENT=y
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -44,7 +45,6 @@ then
     exit 1
 fi
 
-
 # not needed "ref/
 start="refs/start/$branch"
 if [ -z $onto ]; then
@@ -55,7 +55,7 @@ fi
 if test $(commit_id $start) = $(commit_id $onto);
 then
     test $SILENT = n && \
-	{echo -n "no need to rebase segment ";cecho cyan $branch} >&2
+        {echo -n "no need to rebase segment ";cecho cyan $branch} >&2
     exit 0
 fi
 
@@ -71,12 +71,14 @@ then
     # although there we need to recover the "state", so `git-reset-segment'
     # and clean it after.
     git-segment --restart $branch $onto
+
 else
     if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
-	cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
-	cecho "red" "assuming it didn't start"
-	exit 1
+        cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
+        cecho "red" "assuming it didn't start"
+        exit 1
     fi
+    # show the broken commit:
     cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
 
     # So save the state for `git-reset-segment' -- invoked by the hooks.

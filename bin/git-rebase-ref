@@ -14,21 +14,21 @@ SILENT=n
 
 while getopts :dqh OPT; do
     case $OPT in
-	d|+d)
-	    DEBUG=y
-	    SILENT=n
-	    ;;
-	q)
-	    SILENT=y
-	    ;;
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	*)
-	    usage
-	    exit 2
-	    ;;
+        d|+d)
+            DEBUG=y
+            SILENT=n
+            ;;
+        q)
+            SILENT=y
+            ;;
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage
+            exit 2
+            ;;
     esac
 done
 shift OPTIND-1

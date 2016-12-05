@@ -40,10 +40,10 @@ summands_of()
     # print
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
     ( while read summand;
-	do
-	    # echo $summand >&2
-	    dump_symbolic_ref $summand
-	done)
+        do
+            # echo $summand >&2
+            dump_symbolic_ref $summand
+        done)
 }
 
 
@@ -99,10 +99,10 @@ dump_symbolic_ref(){
 dump_ref_without_ref()
 {
     if true; then
-	git rev-parse --symbolic-full-name $1
+        git rev-parse --symbolic-full-name $1
     else
-	a=$(dump_symbolic_ref $1)
-	echo $a
+        a=$(dump_symbolic_ref $1)
+        echo $a
     fi
 }
 
@@ -137,9 +137,9 @@ delete_sum_definition()
     local name=$1
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     (while read ref;
-	do
-	drop_symbolic_ref $ref
-	done
+        do
+        drop_symbolic_ref $ref
+        done
     )
 }
 
@@ -161,7 +161,7 @@ segment_age()
 {
     local segment=$1
     git rev-list --count --left-right \
-	start/${segment}..base/${segment}| cut -f 2
+        start/${segment}..base/${segment}| cut -f 2
 }
 
 segment_length()
@@ -192,9 +192,9 @@ set_symbolic_reference()
     local content=$2
 
     if expr match $content "^ref:" >/dev/null ; then
-	git symbolic-ref $name ${content#ref: }
+        git symbolic-ref $name ${content#ref: }
     else
-	git update-ref $name $content
+        git update-ref $name $content
     fi
 }
 
@@ -216,58 +216,58 @@ dump_segment()
     # mmc: why not output the full base ref?
     local segment_name=${segment#refs/base/}
     case $dump_format in
-	dot)
-	    # for dot(1) we have to follow some restrictions on symbols:
-	    #  - has a special meaning.
-	    #  and we simplify the names ... as they are directly visible:
-	    #  todo: should be done elsewhere
+        dot)
+            # for dot(1) we have to follow some restrictions on symbols:
+            #  - has a special meaning.
+            #  and we simplify the names ... as they are directly visible:
+            #  todo: should be done elsewhere
 
-	    local dot_name=${segment_name//-/_}
-	    # todo:  #
-	    local slash="/"
-	    local base_name=${$(segment_base $segment_name)#refs/heads/}
+            local dot_name=${segment_name//-/_}
+            # todo:  #
+            local slash="/"
+            local base_name=${$(segment_base $segment_name)#refs/heads/}
             local dot_base_name=${${${base_name#refs/remotes/}//-/_}//$slash/_}
-	    # remotes/debian/master ->  debian_master.
+            # remotes/debian/master ->  debian_master.
 
-	    # the `incidence':
-	    echo "\"$dot_name\" -> \"$dot_base_name\""
+            # the `incidence':
+            echo "\"$dot_name\" -> \"$dot_base_name\""
 
-	    # now the label for the vertex:
-	    local length=$(segment_length $segment_name)
-	    # if needs rebase:
-	    local age=$(segment_age $segment_name)
-	    local color
-	    if [ $age = 0 ];then
-		color=yellow
-	    else
-		color=orange
-	    fi
+            # now the label for the vertex:
+            local length=$(segment_length $segment_name)
+            # if needs rebase:
+            local age=$(segment_age $segment_name)
+            local color
+            if [ $age = 0 ];then
+                color=yellow
+            else
+                color=orange
+            fi
 
-	    # show the vertex
-	    cat <<EOF
+            # show the vertex
+            cat <<EOF
 "$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,
-	    fontname="Palatino-Italic",fontcolor=black,style=filled];
+            fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
         # if the base is `external', dump it:
         # (unfortunately this means multiple times)
         if ! git-segment $base_name &>/dev/null &&
-	    ! git-sum $base_name &>/dev/null; then
-	    cat <<EOF
-	    $dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
-		fontname="Palatino-Italic",fontcolor=black,style=filled];
+            ! git-sum $base_name &>/dev/null; then
+            cat <<EOF
+            $dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
+                fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
-	fi
-	    ;;
-	tsort)
-	    echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
-	    ;;
-	raw)
-	    # dump the start  segment_start_sha
-	    echo segment $segment_name "\t"  $(dump_ref refs/heads/$segment_name) \
-		 "\t" $(segment_base $segment_name) \
-		 "\t" $(segment_start $segment_name)
-	    ;;
-	*)
+        fi
+            ;;
+        tsort)
+            echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
+            ;;
+        raw)
+            # dump the start  segment_start_sha
+            echo segment $segment_name "\t"  $(dump_ref refs/heads/$segment_name) \
+                 "\t" $(segment_base $segment_name) \
+                 "\t" $(segment_start $segment_name)
+            ;;
+        *)
     esac
 }
 
@@ -278,36 +278,36 @@ dump_sum()
     local summand
 
     case $dump_format in
-	raw)
-	    echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
-	    ;;
-	*)
+        raw)
+            echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
+            ;;
+        *)
     esac
 
     # dump the summands:
     git for-each-ref "refs/sums/$sum/" --format "%(refname)" |\
-	{
-	while read summand
-	do
-	    case $dump_format in
-		dot)
-		    echo -n "\"${sum//-/_}\"" "->"
-		    echo "\"${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}\""
-		    ;;
-		tsort)
-		    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand
-		    ;;
-		raw)
-		    echo -n "\t"; dump_ref_without_ref $summand
-		    ;;
-		*)
-	    esac
-	done }
+        {
+        while read summand
+        do
+            case $dump_format in
+                dot)
+                    echo -n "\"${sum//-/_}\"" "->"
+                    echo "\"${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}\""
+                    ;;
+                tsort)
+                    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand
+                    ;;
+                raw)
+                    echo -n "\t"; dump_ref_without_ref $summand
+                    ;;
+                *)
+            esac
+        done }
 
     if [ $dump_format = dot ]; then
         cat <<EOF
 "${sum//-/_}" [label="$sum",color=red,fontsize=14,
-	      fontname="Palatino-Italic",fontcolor=black,style=filled];
+              fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
     fi
 }
@@ -318,32 +318,32 @@ check_git_rebase_hooks()
 {
     local HOOK
     if [ ! -d $GIT_DIR/hooks ]; then
-	mkdir $GIT_DIR/hooks
+        mkdir $GIT_DIR/hooks
     fi
     local master
     master=/usr/share/git-hierarchy/git-rebase-abort
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/rebase-abort} ]; then
-	ln -fs $master $HOOK
+        ln -fs $master $HOOK
     elif [ -L $HOOK -a  "$(readlink $HOOK)" = $master ]; then
-	cecho "yellow" "skipping recreating the necessary hook, it's there"
+        cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
-	# even if the same symlink. we want to remove it... don't we?
-	cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
-	# for now we check this too late, so no need for exit:
-	# exit
+        # even if the same symlink. we want to remove it... don't we?
+        cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
+        # for now we check this too late, so no need for exit:
+        # exit
     fi
 
     master=/usr/share/git-hierarchy/git-rebase-complete
     if [ ! -e ${HOOK::=$GIT_DIR/hooks/post-rebase} ]; then
-	# fixme: this should be renamed: git-complete-segment-rebase
-	ln -fs $master $HOOK
+        # fixme: this should be renamed: git-complete-segment-rebase
+        ln -fs $master $HOOK
     elif [ -L $HOOK -a  "$(readlink $HOOK)" = $master ]; then
-	cecho "yellow" "skipping recreating the necessary hook, it's there"
+        cecho "yellow" "skipping recreating the necessary hook, it's there"
     else
-	# note: this is a problem! see ~10 lines above!
-	cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
-	# cecho red "cannot proceed: $HOOK exists" >&2
-	# exit
+        # note: this is a problem! see ~10 lines above!
+        cecho red "CRITICAL: $HOOK exists, but we must run ... $master" >&2
+        # cecho red "cannot proceed: $HOOK exists" >&2
+        # exit
     fi
 }
 
@@ -357,10 +357,10 @@ try_to_expand()
     # echo "try_to_expand $name" >&2
     # Here the priority
     local expanded=$(
-	{git show-ref heads/$name || \
-	git show-ref remotes/$name || \
-	git show-ref $name } |\
-	    head -n 1|cut -f 2 '-d ')
+        {git show-ref heads/$name || \
+        git show-ref remotes/$name || \
+        git show-ref $name } |\
+            head -n 1|cut -f 2 '-d ')
     # echo "expanded $expanded" >&2
     echo $expanded
 }
@@ -373,25 +373,25 @@ expand_ref()
        my_priority=$2
     fi
     case $name in
-	refs/*)
-	    ;;
-	heads/*)
-	    name=refs/$name
-	    ;;
-	remotes/*)
-	    name=refs/$name
-	    ;;
-	tags/*)
-	    name=refs/$name
-	    ;;
-	*)
-	    if [ ! $my_priority = n ]; then
-		name=$(try_to_expand $name)
-	    else
-		name=$(git rev-parse --symbolic-full-name heads/$name)
-	    fi
-	    # name=refs/heads/$name
-	    # prepend refs/
+        refs/*)
+            ;;
+        heads/*)
+            name=refs/$name
+            ;;
+        remotes/*)
+            name=refs/$name
+            ;;
+        tags/*)
+            name=refs/$name
+            ;;
+        *)
+            if [ ! $my_priority = n ]; then
+                name=$(try_to_expand $name)
+            else
+                name=$(git rev-parse --symbolic-full-name heads/$name)
+            fi
+            # name=refs/heads/$name
+            # prepend refs/
     esac
 
     echo $name
@@ -404,7 +404,7 @@ remove_symlink_to()
     # canonicalize $2
     if [ -L $1 -a "$(readlink $1)" = $2 ]
     then
-	rm -fv $1
+        rm -fv $1
     fi
 }
 
@@ -428,8 +428,8 @@ current_branch_poset()
     head=$(dump_ref_without_ref HEAD)
     head=${head##refs/heads/}
     if [ $head = HEAD ]; then
-	cecho red "currently not on a poset branch" >&2
-	exit 1;
+        cecho red "currently not on a poset branch" >&2
+        exit 1;
     fi
 
     echo "$head"
@@ -448,12 +448,12 @@ dump_whole_graph()
     # this list_segments is also in `git-segment'
     segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
     if [ 0 =  ${#segments} ]; then
-	echo "no segments." >&2
+        echo "no segments." >&2
     else
-	foreach segment ($segments);
-	{
-	    dump_segment $segment
-	}
+        foreach segment ($segments);
+        {
+            dump_segment $segment
+        }
     fi
 
 
@@ -462,11 +462,11 @@ dump_whole_graph()
     sums=($(list_sums))
 
     if [ 0 = ${#sums} ]; then
-	test $debug = y && echo "no sums." >&2
+        test $debug = y && echo "no sums." >&2
     else
-	foreach sum ($sums)
-	{
-	    dump_sum $sum
-	}
+        foreach sum ($sums)
+        {
+            dump_sum $sum
+        }
     fi
 }
