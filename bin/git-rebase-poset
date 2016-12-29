@@ -45,29 +45,7 @@ if [ -e $GIT_DIR/.rebasing-segment ]; then
     exit -1
 fi
 
-
-
-set +u
-. /usr/lib/git-core/git-sh-setup
-set -u
-
-STASHED=no
-## possibly stash:
-# sets the variable STASHED
-stash_if_non_clean()
-{
-    if ! require_clean_work_tree $1 "$(gettext "Please commit or stash them.")"
-    then
-        local cmd=""
-        # todo: orange:
-        cecho yellow "stashing for you..."
-        eval $cmd git stash save $1
-        STASHED=yes
-    fi
-}
-
 stash_if_non_clean "git-rebase-poset"
-
 
 typeset -a WHAT_TO_REBASE
 
@@ -109,7 +87,4 @@ foreach ref ($WHAT_TO_REBASE)
     fi
 }
 
-if [ $STASHED != no ]
-then
-    git stash pop
-fi
+unstash_if_stashed

@@ -65,26 +65,7 @@ done
 shift OPTIND-1
 OPTIND=1
 
-STASHED=no
-
-# fixme: some variable is used-before-defined, in upstream code.
-set +u
-# this is run after processing the command line args. Otherwise -h would be
-# handled by it
-. /usr/lib/git-core/git-sh-setup
-set -u
-# todo:
-# octopus can leave half work, so yes, I prefer:
-if (require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")")
-then
-    :
-    # echo $?
-#    exit 0
-else
-    cecho yellow "stashing for you..."
-    eval $cmd git stash save "git-sum-branches saving"
-    STASHED=yes
-fi
+stash_if_non_clean "git-sum-branches saving"
 
 if [ $# != 1 ]; then
     usage
@@ -209,13 +190,6 @@ test_commit_parents()
 
 }
 
-restore_stash()
-{
-    if [ $STASHED = yes ]; then
-	cecho yellow "unstashing now."
-	eval $cmd git stash pop --quiet
-    fi
-}
 
 equal=n
 # sanity check:
@@ -234,7 +208,7 @@ then
     {echo -n "no need to merge again -- the sum ";
 	cecho magenta -n $sum_name
 	echo " is up-to-date (as defined)." } >&2
-    restore_stash
+    unstash_if_stashed
     exit 0
 fi
 
@@ -281,6 +255,6 @@ else
 	    eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate "'$next'";
 	}
     fi
-    restore_stash
+    unstash_if_stashed
 fi
 exit 0

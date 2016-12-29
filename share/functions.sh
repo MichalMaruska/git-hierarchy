@@ -485,3 +485,39 @@ dump_whole_graph()
         }
     fi
 }
+
+# fixme: protect this:
+GIT_STASHED=no
+## possibly stash:
+# sets the variable STASHED
+stash_if_non_clean()
+{
+    # fixme: some variable is used-before-defined, in upstream code.
+    # this is run after processing the command line args. Otherwise -h would be
+    # handled by it
+    set +u
+    . /usr/lib/git-core/git-sh-setup
+    set -u
+
+    # todo:
+    # octopus can leave half work, so yes, I prefer:
+    if ! require_clean_work_tree $1 "$(gettext "Please commit or stash them.")"
+    then
+        local cmd=""
+        # todo: orange:
+        cecho yellow "stashing for you..."
+        eval $cmd git stash save $1
+        GIT_STASHED=yes
+    fi
+}
+
+
+unstash_if_stashed()
+{
+    if [ "$GIT_STASHED" = "yes" ]
+    then
+        cecho yellow "unstashing now."
+        # eval $cmd
+        git stash pop --quiet
+    fi
+}

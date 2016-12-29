@@ -7,7 +7,6 @@ GIT_DIR=$(git_dir)
 unsetopt FUNCTION_ARGZERO
 SILENT=n
 onto=""
-STASHED=no
 
 usage()
 {
@@ -62,20 +61,7 @@ fi
 
 
 ### STASH:
-set +u
-. /usr/lib/git-core/git-sh-setup
-set -u
-
-if require_clean_work_tree "merge" "$(gettext "Please commit or stash them.")"
-then
-    :
-else
-    cmd=""
-    # todo: orange:
-    cecho yellow "stashing for you..."
-    eval $cmd git stash save "git-sum-branches saving"
-    STASHED=yes
-fi
+stash_if_non_clean "git-rebase-segment saving"
 
 # not needed "ref/
 start="refs/start/$branch"
@@ -126,3 +112,5 @@ else
     echo -e "\tgit-reset-segment $branch"
     exit 1
 fi
+
+unstash_if_stashed
