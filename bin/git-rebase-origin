@@ -17,6 +17,13 @@ Discover which remote branches to fetch, then rebase ....
 EOF
 }
 
+INFO()
+{
+    if [ $DEBUG = y ]; then
+        cecho blue "$#" >&2
+    fi
+}
+
 DEBUG=n
 fetch=yes
 dry_only=no
@@ -49,7 +56,7 @@ if [ $# -lt 1 ]; then
     # by default the current-branch-poset
     # by default look at the base ... what it follows:
     top=$(current_branch_poset)
-    [ $DEBUG = y ] && cecho yellow "taking the current $top" >&2
+    INFO "taking the current $top as top"
 elif [ $# = 1 ]; then
     top=$1
 else
@@ -65,7 +72,8 @@ typeset -a bases
 git checkout HEAD
 
 bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
-[ $DEBUG = y ] && echo "bases $bases"
+
+INFO "bases: $bases"
 foreach base ($bases)
 {
     if expr match $base 'refs/remotes/'; then
@@ -84,7 +92,7 @@ foreach base ($bases)
     fi
 
     if [ $fetch = yes ]; then
-        [ $DEBUG = y ] && cecho blue "Fetching upstream to $base: $remote"
+        INFO "Fetching upstream to $base: $remote"
         if [ $dry_only = no ]; then
             set -x
             git fetch $remote $remote_branch
