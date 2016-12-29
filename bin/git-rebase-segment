@@ -36,6 +36,9 @@ while getopts :hqvso: OPT; do
         q)
             SILENT=y
             ;;
+        v)
+            SILENT=n
+            ;;
         *)
             usage
             exit 2
