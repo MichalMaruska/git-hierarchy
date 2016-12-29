@@ -1,5 +1,8 @@
 #!/bin/zsh -euf
 
+# Create a new git-segment, which contains the same sequence of
+# patches as a given one, starting off new-base.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
@@ -30,6 +33,7 @@ shift OPTIND-1
 OPTIND=1
 
 if [ $# != 3 ]; then
+    echo "missing parameters." >&2
     usage >&2
     exit 2
 fi
@@ -39,12 +43,9 @@ original=$1
 new=$2
 new_base=$3
 
-
+# just clone it, and rebase it:
 git branch $new $original
+git-segment $new $new_base $(segment_start $original)
 
-git-segment $new $(segment_base $original) $(segment_start $original)
-
-git-segment -u $new $new_base
-
+# rebase it at a different point:
 git-rebase-segment $new
-
