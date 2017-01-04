@@ -419,7 +419,7 @@ report_error()
 }
 
 PROGRAM=$0
-trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0' ZERR
+trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 #ERR
 # DEBUG
 # trap 'report_error $LINENO $BASH_SOURCE' ERR
