@@ -123,6 +123,7 @@ drop_segment()
 {
     victim=$1
     drop_symbolic_ref refs/base/$victim
+    # drop_symbolic_ref ??
     git update-ref -d refs/start/$victim
 
     #rm -f $GIT_DIR/$baseref || true
@@ -205,7 +206,7 @@ drop_symbolic_ref()
 {
     ref=$1
     # fixme:
-    git update-ref -d $ref --no-deref
+    git update-ref --no-deref -d $ref
     # ${$(dump_ref $ref)#ref: }
     # With this it was recreating .git/refs/heads/refs/sums/all/10
 }
