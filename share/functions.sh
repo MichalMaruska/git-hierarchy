@@ -502,7 +502,7 @@ stash_if_non_clean()
 
     # todo:
     # octopus can leave half work, so yes, I prefer:
-    if ! require_clean_work_tree $1 "$(gettext "Please commit or stash them.")"
+    if ! ( require_clean_work_tree $1 "$(gettext "Please commit or stash them.")" )
     then
         local cmd=""
         # todo: orange:
