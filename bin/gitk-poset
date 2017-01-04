@@ -45,14 +45,19 @@ OPTIND=1
 
 if [ $all_graph = y ]; then
 
-    GRAPH=xxx
+    GRAPH=$(tempfile)
     dump_whole_graph > $GRAPH
 
-    cat $GRAPH | cut -f 1|sort -u > possible
-    cat $GRAPH | cut -d\  -f 2- | sed -e "s/ /\n/g"| sort -u > covered
-    comm -1  possible covered
-
-    exit 0
+    # Covered are those who are ancestors of others!
+    # but it's not A base B. it must be verified that B is indeed below it! If B has moved, I want to see it!
+    VERTICES=$(tempfile)
+    ANCESTORS=$(tempfile)
+    cat $GRAPH | cut --fields=1 |sort -u > $VERTICES
+    cat $GRAPH | cut -d '	' --fields 2- | sed -e "s/ /\n/g"| sort -u > $ANCESTORS
+    # 3 common, 2 unique to ancestors = base.
+    comm -23  $VERTICES $ANCESTORS
+    rm -f $VERTICES $ANCESTORS $GRAPH
+    # exit 0
 fi
 
 
