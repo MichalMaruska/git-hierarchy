@@ -9,13 +9,13 @@ usage()
 
 while getopts :h OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	*)
-	    usage >&2
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -93,8 +93,8 @@ if is_sum $from; then
     # rename ALL refs
     git for-each-ref "refs/sums/$from/" --format "%(refname)"|\
     while read summand; do
-	index=${summand##*/}
-	rename_symbolic_reference $summand "refs/sums/$new/$index"
+        index=${summand##*/}
+        rename_symbolic_reference $summand "refs/sums/$new/$index"
     done
 fi
 
