@@ -1,10 +1,16 @@
 #! /usr/bin/zsh -fue
-
-# rename a branch: keeps the support ref (base/start/summands) in sync.
+# Rename a branch: keeps the support refs (base, start, summands) in sync.
+# todo: trap & rename back if failure in-flight?
 
 usage()
 {
     print "usage: ${0##*/} [+-h} [--] {from} {new-name}"
+# this renames only branches!
+}
+
+INFO()
+{
+    cecho red "$1" >&2
 }
 
 while getopts :h OPT; do
@@ -27,51 +33,40 @@ then
     exit 1
 fi
 
-from=$1
-new=$2
-
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
-# this renames only branches!
-
-full_from=$(git-expand-ref $from)
-# fixme!
-# or refs/heads/$from
-
-# fixme! it might not exist yet!
-full_new=$new
-# $(git-expand-ref $new)
-# $new
-
+# Extract the segment/branch name:
+full_from=$(git-expand-ref $1)
 from=${full_from#refs/heads/}
-new=${full_new#refs/heads/}
+# The new one probably does not exist, so I cannot use $(git-expand-ref $2)
 
-# fixme: verify that it's a branch name.
+new=$2
+new=${new#refs/heads/}
+# fixme: verify that it's a valid branch name.
 
 # quoted_regexp.
 
 # replace....
-echo renaming $from to $new
+INFO "renaming $from to $new"
 
-git branch -m $from $new || true
-# todo: trap
-
-
+# no native implementation?
 rename_symbolic_reference()
 {
-    ref=$1
-    new_name=$2
+    # the same content for a renamed ref.
+    local ref=$1
+    local new_name=$2
     # git symbolic-ref -m "renaming Sum"
 
     # rename: create & drop?
-    content=$(dump_symbolic_ref $ref)
+    local content=$(dump_symbolic_ref $ref)
     # fixme: if hash don't prepend "ref:" !!!
-
-    set_symbolic_reference $new_name $content
-    git update-ref --no-deref  -d $ref
+    INFO "content $content"
+    set_symbolic_reference $new_name "$content"
+    drop_symbolic_ref $ref
 }
 
+# a non-symbolic reference -- native implementation:
 rename_reference()
 {
     ref=$1
@@ -83,9 +78,9 @@ rename_reference()
     # fixme: if hash don't prepend "ref:" !!!
 
     git update-ref $new_name $content
-    git update-ref --no-deref  -d $ref
-
+    drop_symbolic_ref $ref
 }
+
 
 
 # rename sum:
@@ -94,21 +89,19 @@ if is_sum $from; then
     git for-each-ref "refs/sums/$from/" --format "%(refname)"|\
     while read summand; do
         index=${summand##*/}
+        # I know they are all symbolic:
         rename_symbolic_reference $summand "refs/sums/$new/$index"
     done
 fi
 
-# rename segment:
-# segment base/start refs.
 if is_segment $from; then
+    # segment base/start refs.
     rename_symbolic_reference refs/base/$from refs/base/$new
     rename_reference refs/start/$from refs/start/$new
 fi
 
 
-
-
-# as the destination of a symref.
+# As the destination of a symref.
 full_new=$(git-expand-ref $new)
 
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
@@ -116,13 +109,17 @@ while read symref; do
     if dump_symbolic_ref $symref|\
        grep --line-regexp --fixed-strings "$full_from" >/dev/null
     then
-       set_symbolic_reference $symref "ref: $full_new"
+        INFO "replacing symbolic ref $symref to reference $full_new"
+        set_symbolic_reference $symref "ref: $full_new"
     fi
 done
 
+# If this is done before "git for-each-ref" then the broken ones are skipped!
+# with its reflog!
+git branch --move $from $new
+
 
 exit
-
 # fixme: not remotes!
 QUOTED_REGEXP=$from
 # other bases pointing at this branch.
