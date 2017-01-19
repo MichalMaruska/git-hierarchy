@@ -77,7 +77,7 @@ bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
 DEBUG "bases: $bases"
 foreach base ($bases)
 {
-    if expr match $base 'refs/remotes/'; then
+    if expr match $base 'refs/remotes/' >/dev/null ; then
         remote=${base#refs/remotes/}
         remote_branch=${remote#*/}
         remote=${remote%/*}
