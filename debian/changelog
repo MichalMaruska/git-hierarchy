@@ -1,3 +1,33 @@
+git-hierarchy (4.9) release; urgency=medium
+
+  * Handle  "git rebase" not even starting
+  * git-rebase-origin: clean usage(), check for >1 arguments, conditional verbosity
+  * git-rebase-poset:  -n as dry-only
+  * TABs & lines
+  * git-rebase-segment: stash when needed
+  * git-rebase-poset: stash around
+  * use test(1)
+  * set_symbolic_reference: fix
+  * new function: set_branch_to
+  * Convert && into if/then, to avoid non-zero-status & failure
+  * git-rebase-segment: Use current branch by default.
+  * Share stash_if_non_clean() and unstash_if_stashed() functions
+  * white-space
+  * sq: git-rebase-segment -v option
+  * git-clone-segment: now new-base is obligatory.
+  * git-rebase-origin: use a function for the conditional tracing
+  * rename: tabs
+  * trap: into stderr!
+  * review drop_symbolic_ref
+  * git-rename: clean, document, use drop_symbolic_ref, reorder git ops!
+  * require_clean_work_tree: can call exit, so use it as a sub-command?
+  * gitk-poset: -g option still very broken. But at least it removes its temp files.
+  * request color during 'git rebase'
+  * git-rebase-origin: do inform on fall-back choices!
+  * git-rebase-origin: suppress expr(1) output.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sat, 28 Jan 2017 01:58:59 +0100
+
 git-hierarchy (4.8) release; urgency=medium
 
   * rename: distinguish non-"symbolic" start references!

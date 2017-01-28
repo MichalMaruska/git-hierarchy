@@ -17,7 +17,7 @@ usage: ${0##*/} [-qv] [-o onto] [--] [branch]
 -q quiet
 -s stash-if-needed
 
-branch ... segment-name, by default the current branch. 
+branch ... segment-name, by default the current branch.
 EOF
 }
 
