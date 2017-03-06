@@ -101,9 +101,11 @@ if is_segment $from; then
 fi
 
 
-# As the destination of a symref.
-full_new=$(git-expand-ref $new)
+# bug: this fails:
+full_new=$(git-expand-ref $new || echo "refs/heads/$new" )
 
+
+# As the DESTINATION of a symref.
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
 while read symref; do
     if dump_symbolic_ref $symref|\
