@@ -55,7 +55,7 @@ if [ $all_graph = y ]; then
     cat $GRAPH | cut --fields=1 |sort -u > $VERTICES
     cat $GRAPH | cut -d '	' --fields 2- | sed -e "s/ /\n/g"| sort -u > $ANCESTORS
     # 3 common, 2 unique to ancestors = base.
-    comm -23  $VERTICES $ANCESTORS
+    gitk $(comm -23  $VERTICES $ANCESTORS)
     rm -f $VERTICES $ANCESTORS $GRAPH
     # exit 0
 fi
@@ -94,7 +94,7 @@ then
     set -x
     gitk $ranges
 else
-    gitk $bottom...heads/$ref_name
+    gitk ${bottom#refs/}...heads/$ref_name
 fi
 # full_poset:
 # git-walk-down mmc-focus |
