@@ -111,17 +111,22 @@ test $debug = y && echo "Summands: $real_branches"
 test_commit_parents()
 # expects the $summand_branches variable.
 # "returns" the $equal variable
+# $sum_branch
+# $debug
 {
 # take the branches' commit-ids
 # and parent-ids of the sum's head.
 # sort & compare
     local commit_ids_summands
     commit_ids_summands=()
+    local br
     foreach br ($summand_branches) {
         commit_ids_summands+=$(commit_id $br)
     }
 
     test $debug = y && echo "Summands: $commit_ids_summands" >&2
+
+    local commit_ids_sum_parents
     commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
 
 
