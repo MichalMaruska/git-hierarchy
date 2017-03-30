@@ -11,8 +11,7 @@ die()
 
 git_dir()
 {
-    git rev-parse --git-dir
-    # echo $(git rev-parse --show-toplevel)/.git
+    git rev-parse --git-common-dir
 }
 
 commit_id()
@@ -498,6 +497,8 @@ stash_if_non_clean()
     # handled by it
     set +u
     . /usr/lib/git-core/git-sh-setup
+    # git rev-parse --is-inside-work-tree
+    GIT_DIR=$(git_dir)
     set -u
 
     # todo:
