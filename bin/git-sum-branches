@@ -77,7 +77,7 @@ sum_name=$1
 # git-sum
 if ! is_sum $sum_name &>/dev/null ;
 then
-    echo "not a sum branch" >&2
+    echo "$sum_name is not a sum branch (in $GIT_DIR)" >&2
     exit 1
 fi
 
