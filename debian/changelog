@@ -1,3 +1,13 @@
+git-hierarchy (5.0) release; urgency=medium
+
+  * fix GIT_DIR in case of inside work-tree
+  * git-rename: chicken & egg: I cannot ask 'git' to predict the full-name before.
+  * gitk-poset: fix for segments, and start to show something for -g/"all-graph" case
+  * git-sum-branches: document & shell-clean test_commit_parents (equivalent of git-check-sum ?)
+  * git-sum-branches: better diagnostics on error.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 05 Apr 2017 11:31:46 +0200
+
 git-hierarchy (4.9) release; urgency=medium
 
   * Handle  "git rebase" not even starting
