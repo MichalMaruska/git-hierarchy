@@ -86,8 +86,13 @@ fi
 # 1/ save the state, to reinvoke later:
 
 # For now I can do without the hooks. At least in the succesful case.
-if GIT_USE_COLOR=y git rebase --onto $onto $start $branch;
+export GIT_USE_COLOR=y
+if git checkout -b temp $onto && git cherry-pick $start..$branch
+# git rebase --onto $onto $start $branch;
 then
+    git branch -f $branch temp
+    git checkout $branch
+    git branch -d temp
     # This is also the content of the rebase-complete hook!
     # although there we need to recover the "state", so `git-reset-segment'
     # and clean it after.
