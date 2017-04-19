@@ -8,7 +8,7 @@
 
 usage()
 {
-setopt POSIX_ARGZERO
+    setopt POSIX_ARGZERO
     cat <<EOF
 Usage:
 ${0##*/} [+-h]
@@ -25,7 +25,7 @@ ${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
 ${0##*/} [-d] branch
   drop the definition.
 EOF
-unsetopt POSIX_ARGZERO
+    unsetopt POSIX_ARGZERO
 }
 
 source /usr/share/git-hierarchy/functions.sh
@@ -203,5 +203,6 @@ else
                 ((index=index+1))
                 ;;
         esac
+        git-sum-branches $name
     done
 fi
