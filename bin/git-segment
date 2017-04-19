@@ -45,9 +45,9 @@ output_dirty()
     prefix=$2
     local count=$(segment_age $segment)
     if [ $count = 0 ]; then
-	echo
+        echo
     else
-	echo -e $prefix"dirty: $count"
+        echo -e $prefix"dirty: $count"
     fi
 }
 
@@ -63,20 +63,20 @@ describe_segment()
 
     if ref_exists $baseref;
     then
-	local base=$(dump_symbolic_ref $baseref |\
+        local base=$(dump_symbolic_ref $baseref |\
            sed -e 's|^refs/heads/||')
-	echo -n "base is "; cecho green "$base"
+        echo -n "base is "; cecho green "$base"
 
-	output_dirty $name ""
-	git show-ref --hash $startref
+        output_dirty $name ""
+        git show-ref --hash $startref
 
         # how many commits there?
-	local count=$(git log --oneline $startref..heads/$name |wc --lines)
-	echo $count commits:
-	git log --oneline $startref..heads/$name
+        local count=$(git log --oneline $startref..heads/$name |wc --lines)
+        echo $count commits:
+        git log --oneline $startref..heads/$name
     else
-	echo "$name is not a segment -- no 'base' found">&2
-	exit 1
+        echo "$name is not a segment -- no 'base' found">&2
+        exit 1
     fi
 }
 
@@ -87,16 +87,16 @@ list_segments(){
         sed -e 's|^refs/base/||' |\
     while read segment;
     do
-	echo -e -n "$SEGMENT_PREFIX$segment"
+        echo -e -n "$SEGMENT_PREFIX$segment"
 
-	if [ $short_list = n ]; then
-	    echo -en "\t\t";
-	    echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+        if [ $short_list = n ]; then
+            echo -en "\t\t";
+            echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
 
-	    output_dirty $segment "\t"
-	else
-	    echo
-	fi
+            output_dirty $segment "\t"
+        else
+            echo
+        fi
     done
 }
 
@@ -108,44 +108,44 @@ checkout=n
 update=n
 restart=n
 cmd_options=$(getopt --name $0 --shell bash \
-	--longoptions help,short,delete,prune,update:,restart,full,checkout \
+        --longoptions help,short,delete,prune,update:,restart,full,checkout \
         --options     hsdDurfc \
-	-- "$@") || { usage && exit 1 }
+        -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
-	-h | --help)
-	    usage
-	    exit 0
-	    ;;
-	-f | --full)
-	    SEGMENT_PREFIX=ref/head/
-	    ;;
-	-s | --short)
-	    short_list=y
-	    ;;
-	-d | --delete)
-	    delete_segment=y
-	    ;;
-	-D | --prune )
-	    delete_segment=y
-	    delete_branch=y
-	    ;;
-	-u | --update)
-	    update=y
-	    ;;
-	-r | --restart)
-	    restart=y
-	    # new_start=$OPTARG
-	    ;;
-	-c | --checkout)
-	    checkout=y
-	    ;;
-	--)
-	    shift
-	    break
-	;;
+        -h | --help)
+            usage
+            exit 0
+            ;;
+        -f | --full)
+            SEGMENT_PREFIX=ref/head/
+            ;;
+        -s | --short)
+            short_list=y
+            ;;
+        -d | --delete)
+            delete_segment=y
+            ;;
+        -D | --prune )
+            delete_segment=y
+            delete_branch=y
+            ;;
+        -u | --update)
+            update=y
+            ;;
+        -r | --restart)
+            restart=y
+            # new_start=$OPTARG
+            ;;
+        -c | --checkout)
+            checkout=y
+            ;;
+        --)
+            shift
+            break
+        ;;
     esac
     shift
 done
@@ -157,8 +157,8 @@ if [ $# = 0 ]; then
 
     # Dump the starts?
     if false; then
-	echo
-	git for-each-ref 'refs/start/' --format "%(refname)" |\
+        echo
+        git for-each-ref 'refs/start/' --format "%(refname)" |\
             sed -e 's|^refs/start/||'
     fi
     exit 0;
@@ -173,17 +173,17 @@ baseref=refs/base/$name
 if [ $# = 1 ]; then
     if [ $delete_segment = y ]; then
 
-	# fixme:
-	describe_segment $name|| true
+        # fixme:
+        describe_segment $name|| true
 
-	# funny: bug!
-	drop_segment $name
+        # funny: bug!
+        drop_segment $name
 
-	if [ $delete_branch = y ];then
-	    git-delete $name
-	fi
+        if [ $delete_branch = y ];then
+            git-delete $name
+        fi
 
-	exit $?
+        exit $?
 
         # git update-ref -d  refs/base/test "refs/heads/master"
         # removes master!
@@ -192,8 +192,8 @@ if [ $# = 1 ]; then
     # cat $basefile
     # could be hash
     # or ref - tag or head.
-	describe_segment $name
-	exit 0
+        describe_segment $name
+        exit 0
     fi
 else
     # 4 options:
@@ -210,26 +210,26 @@ else
     if [ $# = 2 ];
     then
         # moving the `base' or `start'
-	if [ $restart = y ]; then
-	    new_start=$2
-	    start_hash=$(git log $new_start --max-count=1 --format="%H")
-	else
-	    # fixme: use rev-parse
-	    new_base=$(try_to_expand $2)
-	    #possibly remotes/$2
+        if [ $restart = y ]; then
+            new_start=$2
+            start_hash=$(git log $new_start --max-count=1 --format="%H")
+        else
+            # fixme: use rev-parse
+            new_base=$(try_to_expand $2)
+            #possibly remotes/$2
 
-	    if [ $update = n ]; then
-		# in this case ... we create ... we have to provide the
-		# start, so default is the trivial segment (base = start):
-		start_hash=$(git log $new_base --max-count=1 --format="%H")
-	    fi
-	fi
+            if [ $update = n ]; then
+                # in this case ... we create ... we have to provide the
+                # start, so default is the trivial segment (base = start):
+                start_hash=$(git log $new_base --max-count=1 --format="%H")
+            fi
+        fi
     else
-	new_base=$2
-	# only in this case, there is this variable:
-	start=$3
+        new_base=$2
+        # only in this case, there is this variable:
+        start=$3
         # fixme: check that it's an ancestor (of segment's head)
-	start_hash=$(git log $start --max-count=1 --format="%H" --)
+        start_hash=$(git log $start --max-count=1 --format="%H" --)
     fi
 
     # by now we determined the necessary base / start.
@@ -238,19 +238,19 @@ else
 
     # Ensure it exists:
     if [ $update = y -o $restart = y ]; then
-	# check it exists
-	if ! is_segment $name; then
-	    die "unknown segment $name"
-	fi
+        # check it exists
+        if ! is_segment $name; then
+            die "unknown segment $name"
+        fi
     else
-	# no update -> start is defined:
-	if ! git-branch-exists $name; then
-	    git branch $name $start_hash
-	fi
-	# doing in this order intentionally?
-	if is_segment $name; then
-	    die "segment already exists: $name"
-	fi
+        # no update -> start is defined:
+        if ! git-branch-exists $name; then
+            git branch $name $start_hash
+        fi
+        # doing in this order intentionally?
+        if is_segment $name; then
+            die "segment already exists: $name"
+        fi
     fi
 
     # echo "new: base: ${new_base-} start: ${new_start-}"
@@ -258,20 +258,20 @@ else
     # `update/setup' the segment definition
     # fixme: remove ""
     if [ -n "${new_base-}" ]; then
-	new_base=$(git-expand-ref $new_base)
-	# cecho yellow "so the base is ${new_base-}"
+        new_base=$(git-expand-ref $new_base)
+        # cecho yellow "so the base is ${new_base-}"
 
-	cecho yellow "Changing the base to $new_base"
-	git symbolic-ref $baseref $new_base
+        cecho yellow "Changing the base to $new_base"
+        git symbolic-ref $baseref $new_base
     fi
 
     # User specified -> official:
     if [ -n "${start_hash-}" ]; then
-	cecho yellow "pushing the start to $start_hash"
-	git-set-start $name $start_hash
+        cecho yellow "pushing the start to $start_hash"
+        git-set-start $name $start_hash
     fi
 
     if [ $checkout = "y" ]; then
-	git checkout $name
+        git checkout $name
     fi
 fi

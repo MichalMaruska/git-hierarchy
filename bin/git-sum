@@ -38,9 +38,9 @@ find_new_index(){
     typeset -i i=1
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     while read ref; do
-	if [ ${ref##*/} -ge $i ]; then
-	    ((i=${ref##*/}+1))
-	fi
+        if [ ${ref##*/} -ge $i ]; then
+            ((i=${ref##*/}+1))
+        fi
     done
     echo $i
 }
@@ -51,13 +51,13 @@ remove_from_sum() {
     local summand=$2
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     ( while read ref;
-	do
-	if [ "$(dump_ref_without_ref $ref)" = "$summand" ];
-	then
-	    #remove it:
-	    drop_symbolic_ref $ref
-	fi
-	done)
+        do
+        if [ "$(dump_ref_without_ref $ref)" = "$summand" ];
+        then
+            #remove it:
+            drop_symbolic_ref $ref
+        fi
+        done)
 }
 
 add_to_sum()
@@ -80,31 +80,31 @@ show_prune_definition()
 {
     local silent
     if [ $# = 2 ];then
-	silent="y"
+        silent="y"
     else
-	silent="n"
+        silent="n"
     fi
     local summand
 
     if ! test -d $GIT_DIR/refs/sums/$name;
     then
-	echo "$name is not a sum">&2
-	exit 1
+        echo "$name is not a sum">&2
+        exit 1
     fi
 
     git for-each-ref "refs/sums/$name/" --format "%(refname)" | \
     while read summand;do
-	# git-branch-exists
-	local ref="$(git symbolic-ref $summand)"
-	local hash="$(git show-ref $summand)"
-	if [ -n "$hash" ]; then
-	   echo "$ref"
-	else
-	    if [ $silent != "y" ]; then
-		echo NON-existant $ref = $summand
-		# exit 2
-	    fi
-	fi
+        # git-branch-exists
+        local ref="$(git symbolic-ref $summand)"
+        local hash="$(git show-ref $summand)"
+        if [ -n "$hash" ]; then
+           echo "$ref"
+        else
+            if [ $silent != "y" ]; then
+                echo NON-existant $ref = $summand
+                # exit 2
+            fi
+        fi
     done
 }
 
@@ -122,22 +122,22 @@ delete=n
 
 while getopts :hrcd OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	r)
-	    reset="y"
-	    ;;
-	c)
-	    correct="y"
-	    ;;
-	d)
-	    delete="y"
-	    ;;
-	*)
-	    usage
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        r)
+            reset="y"
+            ;;
+        c)
+            correct="y"
+            ;;
+        d)
+            delete="y"
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift $(( OPTIND - 1 ))
@@ -165,12 +165,12 @@ fi
 
 if [ $# = 0 ]; then
     if [ $correct = y ]; then
-	TEMP=$(mktemp)
-	show_prune_definition $name "silent" > $TEMP
-	# todo!
-	# delete those that don't exist.
+        TEMP=$(mktemp)
+        show_prune_definition $name "silent" > $TEMP
+        # todo!
+        # delete those that don't exist.
     else
-	show_prune_definition $name
+        show_prune_definition $name
     fi
 else
 
@@ -183,25 +183,25 @@ else
     index=$(find_new_index $name)
     for br in "$@"
     do
-	case "$br" in
-	    -*)
-		br=${br#-}
-		# I need to `expand' to `Full' ref!
-		br=$(git-expand-ref $br)
+        case "$br" in
+            -*)
+                br=${br#-}
+                # I need to `expand' to `Full' ref!
+                br=$(git-expand-ref $br)
 
-		# remove:
-		# find its index!
-		cecho red $br
-		remove_from_sum $name $br
-		;;
-	    +* | *)
-		br=${br#+}
-		cecho green "addend $br"
-		# add:
-		br=$(git-expand-ref $br)
-		add_to_sum $name $br $index
-		((index=index+1))
-		;;
-	esac
+                # remove:
+                # find its index!
+                cecho red $br
+                remove_from_sum $name $br
+                ;;
+            +* | *)
+                br=${br#+}
+                cecho green "addend $br"
+                # add:
+                br=$(git-expand-ref $br)
+                add_to_sum $name $br $index
+                ((index=index+1))
+                ;;
+        esac
     done
 fi
