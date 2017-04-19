@@ -3,7 +3,7 @@
 usage()
 {
     cat <<EOF
-Remake a git sum/merge.
+Remake a git sum/merge. (akin 'rebase' for segments)
 
 usage: ${0##*/} [-d] [+-r] [-h] [-s] [--] {sum}
 -d  dry
