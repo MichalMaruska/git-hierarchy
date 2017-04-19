@@ -51,6 +51,13 @@ output_dirty()
     fi
 }
 
+diff_segment()
+{
+    local name=$1
+    local startref=refs/start/$name
+    git diff $startref..$name
+}
+
 describe_segment()
 {
     local name=$1
@@ -108,8 +115,8 @@ checkout=n
 update=n
 restart=n
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions help,short,delete,prune,update:,restart,full,checkout \
-        --options     hsdDurfc \
+        --longoptions help,short,delete,prune,update:,restart,full,diff,checkout \
+        --options     hsdDurfpc \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -128,6 +135,10 @@ while (( $# > 0 )); do
         -d | --delete)
             delete_segment=y
             ;;
+        -p | --diff)
+            patch_segment=y
+            ;;
+
         -D | --prune )
             delete_segment=y
             delete_branch=y
@@ -187,6 +198,8 @@ if [ $# = 1 ]; then
 
         # git update-ref -d  refs/base/test "refs/heads/master"
         # removes master!
+    elif [ ${patch_segment-n} = y ]; then
+        diff_segment $name
     else
     ## `Describe' the (given) segment
     # cat $basefile
