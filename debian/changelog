@@ -1,3 +1,16 @@
+git-hierarchy (5.1) release; urgency=medium
+
+  * Use cherry-pick to rebase a segment. Hopefully it's quicker?
+  * whitespace
+  * git-segment-patches: pass args to git-format-patch(1).
+  * git-segment-patches: put the patches in a optionally indicated directory.
+  * git-segment --diff to show the complete diff (with start).
+  * git-sum-branches: docs
+  * "rebase" a created sum immediately
+  * new git-cp-hierarchy: copy between git repos.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 19 Apr 2017 13:15:37 +0200
+
 git-hierarchy (5.0) release; urgency=medium
 
   * fix GIT_DIR in case of inside work-tree
