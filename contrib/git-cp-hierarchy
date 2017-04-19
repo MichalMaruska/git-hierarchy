@@ -1,0 +1,129 @@
+#!/bin/zsh -feu
+
+source /usr/share/git-hierarchy/functions.sh
+
+# Brings git-segments & sum over to another git repository.
+# To be able to resume after a failure, existing segments/sums are not
+# re-created!
+# The copy is done by ... declaring the object anew, and populating
+# the segments via patches.
+# I.e. those a dumped by  git-segment-patches
+# and imported via  "git am".
+
+# Works with `partial' subrepositories -- projections. The patches are
+# limited to a subdirectory, or some subdirectories are ignored/excluded
+# on the target side.
+
+
+# these Git repositories are involved:
+readonly srcdir=~/wave3/p4cns/
+readonly desttop=~/wave3/dgit/deauville-p4cns-main/
+# the poset top:
+readonly TOP="all-skia"
+
+
+readonly navkit_path=Components/NavKit
+readonly skia_path="Framework/ThirdParty/Skia/Implementation"
+
+# This is the projection:
+case projection in
+    top)
+     readonly destdir=$desttop
+     readonly am_parameter="--exclude=$navkit_path/\*"
+     readonly segment_patches_args=()
+     ;;
+    navkit)
+        ## note:  -p3  so Components/NavKit/ is from --exlude=
+        readonly $desttop/$navkit_path
+        readonly am_parameter=("--exclude=$skia_path/\*" '-p3')
+        readonly segment_patches_args=("$navkit_path/")
+        ;;
+    skia)
+        # skia
+        readonly destdir=$desttop/$navkit_path/$skia_path
+        readonly segment_patches_args=("$navkit_path/$skia_path")
+        readonly am_parameter=('-p7')
+        ;;
+    *)
+        exit 2
+esac
+
+
+# todo: Framework.ThirdParty.freetype
+# fixme: make sure the base exists!
+
+
+cd $srcdir
+GIT_DIR=$(git_dir)
+cd $(git rev-parse --show-toplevel)
+
+readonly refs=($(git-walk-down $TOP))
+
+# skip over the base
+foreach f ($refs) {
+    name=${f##*/}
+    cecho yellow "$name"
+
+    if git-sum $name >& /dev/null;
+    then
+        # 
+        components=($(git-sum $name))
+        cecho yellow "recreate the sum $name"
+        set -x
+        summands=($(git-sum $name))
+        sums=()
+        foreach s ($summands) {sums+=(${s#refs/heads/}) }
+
+        cd $destdir
+        if ! git-sum $name;
+        then
+            # echo "summands $summands"
+            git-sum $name $sums
+
+            # immediately:
+            git-sum-branches $name
+        fi
+        
+    elif git-segment $name >& /dev/null;
+    then
+        set -x
+        DIR=tmp_patches
+        rm -rf $DIR
+        git-segment-patches -o $DIR $name $segment_patches_args
+
+        if ls $DIR/*; then
+
+            base=$(segment_base $name)
+            base=${base#refs/heads/}
+            cecho red "create segment $name  on its base: $base"
+
+            cd $destdir
+            if !  git-segment $name >& /dev/null ;
+            then
+                git checkout $base
+                git-segment --checkout $name $base
+                # are they ordered?
+                git am $am_parameter $srcdir/$DIR/*
+                rm -rf $srcdir/$DIR
+            fi
+        fi
+        set +x
+   else
+       # fixme: make sure the base exists!
+       cecho red "skipping $f -- not a segment nor a sum."
+    fi
+    
+    cd $srcdir
+}
+
+
+# foreach s  ( $(git-sum)) {git-delete $s}
+# foreach s  ( $(git-segment -s)) {git-delete $s}
+
+
+# patch -p1    <  .git/rebase-apply/patch
+# git add --update
+# git am --continue
+
+# git-segment-patches -o tmp_patches skia Components/NavKit/
+
