@@ -9,37 +9,47 @@ GIT_DIR=$(git_dir)
 
 usage()
 {
-    print "usage: ${0##*/} [+-h} [--] {segment}"
+    cat <<EOF
+usage: ${0##*/} [+-h} [--] {segment}  args...
+
+args are passed to:  git-format-patch(1)
+EOF
 }
 
 while getopts :h OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	*)
-	    usage
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift OPTIND-1
 OPTIND=1
 
 
-if [ $# != 1 ]; then
+if [ $# -lt 1 ]; then
     usage
     exit 2
 fi
 
 # dump segment:
-segment=$1
+segment=$1; shift
 dir=$segment
 mkdir -p $dir
 
 name=${segment#refs/heads/}
 base=$(segment_base $name)
-git format-patch --keep-subject --output-directory $dir $base..$segment
+git format-patch --keep-subject --output-directory $dir $base..$segment "$@"
 
 # dump sums:
 
+
+
+# foreach segment ($(git-tsort)) {~/repo/git-hierarchy/bin/git-segment-patches $segment Components/NavKit}
+
+
+# foreach segment (refs/heads/new-base  refs/heads/fts refs/heads/tools refs/heads/start refs/heads/navkit-cxx11 refs/heads/tests refs/heads/benchmarks refs/heads/svg refs/heads/telemetry  refs/heads/skia refs/heads/good  refs/heads/wip refs/heads/study refs/heads/skia-investigation refs/heads/skia-fat refs/heads/new refs/heads/navkit-sign-compare refs/heads/ct-devenv refs/heads/benchmarks-verbose ) {~/repo/git-hierarchy/bin/git-segment-patches $segment Components/NavKit}
