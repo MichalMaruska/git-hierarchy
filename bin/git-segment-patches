@@ -10,17 +10,22 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h} [--] {segment}  args...
+usage: ${0##*/} [+-h] [-d outdir] [--] {segment}  args...
 
 args are passed to:  git-format-patch(1)
 EOF
 }
 
-while getopts :h OPT; do
+
+output_dir=""
+while getopts :ho: OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
+            ;;
+        o)
+            output_dir=$OPTARG
             ;;
         *)
             usage
@@ -38,12 +43,15 @@ fi
 
 # dump segment:
 segment=$1; shift
-dir=$segment
-mkdir -p $dir
+if [ -z "$output_dir" ]
+then
+    output_dir=$segment
+fi
+mkdir -p $output_dir
 
 name=${segment#refs/heads/}
 base=$(segment_base $name)
-git format-patch --keep-subject --output-directory $dir $base..$segment "$@"
+git format-patch --keep-subject --output-directory $output_dir $base..$segment "$@"
 
 # dump sums:
 
