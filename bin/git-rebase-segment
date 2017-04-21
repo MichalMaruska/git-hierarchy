@@ -87,16 +87,19 @@ fi
 
 # For now I can do without the hooks. At least in the succesful case.
 export GIT_USE_COLOR=y
-if git checkout -b temp $onto && git cherry-pick $start..$branch
+
+# fixme: this establishes a binding, and one cannot --delete w/o merging into $onto.
+#
+if git checkout --no-track -B temp $onto && git cherry-pick $start..$branch
 # git rebase --onto $onto $start $branch;
 then
-    git branch -f $branch temp
-    git checkout $branch
-    git branch -d temp
+    git branch --force $branch temp
     # This is also the content of the rebase-complete hook!
     # although there we need to recover the "state", so `git-reset-segment'
     # and clean it after.
     git-segment --restart $branch $onto
+    git checkout $branch
+    git branch --delete temp
 
 else
     if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
