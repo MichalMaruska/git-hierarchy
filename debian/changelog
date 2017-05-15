@@ -1,3 +1,10 @@
+git-hierarchy (5.2) release; urgency=medium
+
+  * rebase-segment: do not bind "temp" to track, we discard it immediately.
+  * git-done-segment: new in place of the post-rebase hook. Now after cherry-pick
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 15 May 2017 12:52:58 +0200
+
 git-hierarchy (5.1) release; urgency=medium
 
   * Use cherry-pick to rebase a segment. Hopefully it's quicker?
