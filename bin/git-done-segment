@@ -1,0 +1,14 @@
+#!/bin/zsh -feu
+
+readonly branch=$1
+readonly TEMP="temp"
+
+git branch --force $branch $TEMP
+git checkout $branch
+
+# This is also the content of the rebase-complete hook!
+# although there we need to recover the "state", so `git-reset-segment'
+# and clean it after.
+#    git-segment --restart $branch $onto
+git-reset-segment $branch
+git branch --delete $TEMP
