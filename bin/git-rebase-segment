@@ -73,10 +73,23 @@ if [ -z $onto ]; then
    onto="refs/base/$branch"
 fi
 
+rebase_empty_segment()
+{
+    local -r name=$1
+    local -r base=$2
+
+    git branch --force $name $base
+    git-reset-segment $name
+}
+
 if test $(commit_id $start) = $(commit_id $onto);
 then
     test $SILENT = n && \
         {echo -n "no need to rebase segment ";cecho cyan $branch} >&2
+    exit 0
+elif test $(commit_id $start) = $(commit_id $branch);
+then
+    rebase_empty_segment $name $onto
     exit 0
 fi
 
