@@ -10,19 +10,24 @@ GIT_DIR=$(git_dir)
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [-d outdir] [--] {segment}  args...
+usage: ${0##*/} [-p] [+-h] [-o outdir] [--] {segment}  args...
 
+-p  ... dump the patch-ids.
 args are passed to:  git-format-patch(1)
 EOF
 }
 
 
 output_dir=""
-while getopts :ho: OPT; do
+dump_ids="n"
+while getopts :ho:p OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
+            ;;
+        p)
+            dump_ids="y"
             ;;
         o)
             output_dir=$OPTARG
@@ -50,7 +55,15 @@ fi
 mkdir -p $output_dir
 
 name=${segment#refs/heads/}
+start=$(segment_start $name)
+
+if [ $dump_ids = "y" ]; then
+    foreach commit ($(git rev-list  $start..$segment)) {
+        git show $commit| git patch-id
+    }
+else
     git format-patch --keep-subject --output-directory $output_dir $start..$segment "$@"
+fi
 
 # dump sums:
 
