@@ -1,3 +1,12 @@
+git-hierarchy (5.3) release; urgency=medium
+
+  * git-rebase-origin: support for P4 (remote) sources/branches
+  * rebase: Support special case of empty segment -- cherry-pick cannot handle it.
+  * git-segment-patches: correctly from start (not base)
+  * git-segment-patches: new -p option to dump the patch-ids instead.
+
+ -- Michal Maruska <michal@ubuntu>  Tue, 23 May 2017 08:53:54 +0200
+
 git-hierarchy (5.2) release; urgency=medium
 
   * rebase-segment: do not bind "temp" to track, we discard it immediately.
