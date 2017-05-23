@@ -50,8 +50,7 @@ fi
 mkdir -p $output_dir
 
 name=${segment#refs/heads/}
-base=$(segment_base $name)
-git format-patch --keep-subject --output-directory $output_dir $base..$segment "$@"
+    git format-patch --keep-subject --output-directory $output_dir $start..$segment "$@"
 
 # dump sums:
 
