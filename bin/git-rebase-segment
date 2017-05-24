@@ -89,7 +89,7 @@ then
     exit 0
 elif test $(commit_id $start) = $(commit_id $branch);
 then
-    rebase_empty_segment $name $onto
+    rebase_empty_segment $branch $onto
     exit 0
 fi
 
