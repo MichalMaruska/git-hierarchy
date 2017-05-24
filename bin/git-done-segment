@@ -1,7 +1,16 @@
 #!/bin/zsh -feu
 
-readonly branch=$1
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+
 readonly TEMP="temp"
+
+if [ $# -gt 0 ]; then
+    readonly branch=$1
+else
+    readonly branch=$(cat $GIT_DIR/.segment-cherry-pick)
+fi
 
 git branch --force $branch $TEMP
 git checkout $branch

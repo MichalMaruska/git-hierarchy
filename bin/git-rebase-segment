@@ -109,6 +109,8 @@ if git checkout --no-track -B temp $onto &&
 then
     git-done-segment $branch "temp"
 else
+    echo "$branch" >! $GIT_DIR/.segment-cherry-pick
+
     if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
         cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
         cecho "red" "assuming it didn't start"
