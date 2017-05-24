@@ -105,32 +105,38 @@ export GIT_USE_COLOR=y
 #
 if git checkout --no-track -B temp $onto &&
         git cherry-pick $start..$branch
+
+## the alternative way:
 # git rebase --onto $onto $start $branch;
 then
     git-done-segment $branch "temp"
 else
     echo "$branch" >! $GIT_DIR/.segment-cherry-pick
 
-    if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
-        cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
-        cecho "red" "assuming it didn't start"
+    if false;
+    then
+        # todo: remove the below:
+        if [ ! -e $GIT_DIR/rebase-apply/final-commit ]; then
+            cecho "red" "rebase didn't even start -- perhaps 'stash' is needed?"
+            cecho "red" "assuming it didn't start"
+            exit 1
+        fi
+        # show the broken commit:
+        cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
+
+        # So save the state for `git-reset-segment' -- invoked by the hooks.
+        echo "$branch" > $GIT_DIR/.rebasing-segment
+
+        # here the user *will* use git --continue --skip --abort.
+        # so register hooks to resume our work:
+        check_git_rebase_hooks
+
+        cecho red "** ERROR: Rebase failed."
+        echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
+        cecho green "then run:"
+        echo -e "\tgit-reset-segment $branch"
         exit 1
     fi
-    # show the broken commit:
-    cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
-
-    # So save the state for `git-reset-segment' -- invoked by the hooks.
-    echo "$branch" > $GIT_DIR/.rebasing-segment
-
-    # here the user *will* use git --continue --skip --abort.
-    # so register hooks to resume our work:
-    check_git_rebase_hooks
-
-    cecho red "** ERROR: Rebase failed."
-    echo "Finish the rebase manually (resolve conflicts, and git rebase --continue or --skip"
-    cecho green "then run:"
-    echo -e "\tgit-reset-segment $branch"
-    exit 1
 fi
 
 unstash_if_stashed
