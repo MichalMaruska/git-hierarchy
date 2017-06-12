@@ -79,14 +79,16 @@ GIT_P4=~/git/git-core/git-p4.py
 DEBUG "bases: $bases"
 foreach base ($bases)
 {
-    if expr match $base 'refs/remotes/p4/' >/dev/null ; then
+    if expr match $base 'refs/remotes/p4/' >/dev/null ;
+    then
         remote=${base#refs/remotes/p4/}
         REMOTE_BRANCH=${remote}
         if [ $dry_only = no ]; then
             $GIT_P4 sync --branch $REMOTE_BRANCH
         fi
         fetch=no
-    elif expr match $base 'refs/remotes/' >/dev/null ; then
+    elif expr match $base 'refs/remotes/' >/dev/null ;
+    then
         remote=${base#refs/remotes/}
         remote_branch=${remote#*/}
         remote=${remote%/*}
