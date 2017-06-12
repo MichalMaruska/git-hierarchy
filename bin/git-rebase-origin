@@ -108,7 +108,9 @@ foreach base ($bases)
     if [ $fetch = yes ]; then
         INFO "Fetching upstream to $base: $remote"
         if [ $dry_only = no ]; then
+            local -r old=$(git rev-parse $remote/$remote_branch)
             git fetch $remote $remote_branch
+            git $log..FETCH_HEAD
         else
             echo "would fetch from $remote $remote_branch"
         fi
