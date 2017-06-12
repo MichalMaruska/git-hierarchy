@@ -84,7 +84,9 @@ foreach base ($bases)
         remote=${base#refs/remotes/p4/}
         REMOTE_BRANCH=${remote}
         if [ $dry_only = no ]; then
+            local -r old=$(git rev-parse ${base#refs/})
             $GIT_P4 sync --branch $REMOTE_BRANCH
+            git log $old..${base#refs/}
         fi
         fetch=no
     elif expr match $base 'refs/remotes/' >/dev/null ;
