@@ -11,7 +11,7 @@ die()
 
 git_dir()
 {
-    git rev-parse --git-common-dir
+    git rev-parse --git-dir
 }
 
 commit_id()
