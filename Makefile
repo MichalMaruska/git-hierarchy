@@ -1,14 +1,14 @@
 
+INSTALL		:= install
+PREFIX := /usr/
+BIN_INSTALL_DIR := $(PREFIX)bin
 
-INSTALL=install
-BIN_INSTALL_DIR = /usr/bin
-SHARED_INSTALL_DIR = /usr/share/git-hierarchy/
+SHARED_INSTALL_DIR := $(PREFIX)share/git-hierarchy/
+ZSH_COMPLETION_DIR := $(PREFIX)share/zsh/vendor-completions/
 
-ZSH_COMPLETION_DIR=/usr/share/zsh/vendor-completions/
+BINFILES := $(wildcard bin/*)
 
-BINFILES=$(wildcard bin/*)
-
-COMPLETION_FILES= $(wildcard zsh/_*)
+COMPLETION_FILES := $(wildcard zsh/_*)
 
 all:
 	@echo "No compilation"
@@ -38,4 +38,3 @@ clean:
 
 git-clean:
 	git clean -f -d -x
-
