@@ -1,3 +1,18 @@
+git-hierarchy (5.4) release; urgency=medium
+
+  * fixlet
+  * Save the cherry-picked segment-name, to use it when done.
+  * disable the rebase-by-rebase part.
+  * shell style
+  * Show the git-p4 fetched commits.
+  * and also "git fetch"ed.
+  * More care to avoid using inexistent .rebasing-segment
+  * cd to the top of git repo directory, as MY code assumes it.
+  * solve it differently.
+  * dubious improvement of Makefile
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 22 Jun 2017 20:20:12 +0200
+
 git-hierarchy (5.3) release; urgency=medium
 
   * git-rebase-origin: support for P4 (remote) sources/branches
