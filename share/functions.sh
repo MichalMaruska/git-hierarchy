@@ -47,7 +47,7 @@ summands_of()
 
 
 ref_exists(){
-    test -e $GIT_DIR/$1
+    test -e "$(git rev-parse --git-path $1)"
 }
 
 # expand by just 1 level:
@@ -91,7 +91,7 @@ dump_symbolic_ref(){
     # http://stackoverflow.com/questions/4986000/whats-the-recommended-usage-of-a-git-symbolic-reference
     # todo: use 'read'
     local a
-    a=$(cat $GIT_DIR/$1)
+    a=$(cat $(git rev-parse --git-path $1))
     echo ${a#ref: }
 }
 
