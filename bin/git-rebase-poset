@@ -4,6 +4,7 @@
 # in future possibly "git fetch".
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+cd "$(git rev-parse --show-toplevel)"
 
 usage()
 {

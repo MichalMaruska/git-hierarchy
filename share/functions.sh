@@ -8,9 +8,9 @@ die()
     exit -1;
 }
 
-
 git_dir()
 {
+    ## --git-common-dir would be global to all worktrees.
     git rev-parse --git-dir
 }
 

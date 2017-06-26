@@ -2,7 +2,7 @@
 
 # export a segment as patches, into separate subdirectory
 
-set -x
+# set -x
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
