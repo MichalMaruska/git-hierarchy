@@ -1,3 +1,11 @@
+git-hierarchy (5.5) release; urgency=medium
+
+  * git-rebase-origin fix: for each cycle & git log
+  * worktrees: fix ref_exists() and dump_symbolic_ref()
+  * cd to toplevel  to rebase-poset. Document --git-common-dir
+
+ -- Michal Maruska <michal@ubuntu>  Mon, 26 Jun 2017 11:47:52 +0200
+
 git-hierarchy (5.4) release; urgency=medium
 
   * fixlet
