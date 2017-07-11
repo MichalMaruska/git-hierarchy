@@ -9,7 +9,7 @@ readonly TEMP="temp"
 if [ $# -gt 0 ]; then
     readonly branch=$1
 else
-    readonly branch=$(cat $GIT_DIR/.segment-cherry-pick)
+    readonly branch=$(marked_segment)
 fi
 
 git branch --force $branch $TEMP

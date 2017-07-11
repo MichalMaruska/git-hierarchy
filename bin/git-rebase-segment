@@ -111,7 +111,7 @@ if git checkout --no-track -B temp $onto &&
 then
     git-done-segment $branch "temp"
 else
-    echo "$branch" >! $GIT_DIR/.segment-cherry-pick
+    mark_rebase_segment $branch
 
     if false;
     then
@@ -125,7 +125,7 @@ else
         cecho hiyellow $(cat $GIT_DIR/rebase-apply/final-commit)
 
         # So save the state for `git-reset-segment' -- invoked by the hooks.
-        echo "$branch" > $GIT_DIR/.rebasing-segment
+        mark_rebase_segment $branch
 
         # here the user *will* use git --continue --skip --abort.
         # so register hooks to resume our work:

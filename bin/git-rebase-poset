@@ -46,6 +46,7 @@ if [ -e $GIT_DIR/.rebasing-segment ]; then
     exit -1
 fi
 
+
 stash_if_non_clean "git-rebase-poset"
 
 typeset -a WHAT_TO_REBASE
@@ -56,6 +57,8 @@ if [ $# -gt 0 ]; then
 else
     WHAT_TO_REBASE=($(git-tsort))
 fi
+
+mark_rebase_poset $WHAT_TO_REBASE
 
 
 typeset -a GIT_DEBUG_OPTIONS

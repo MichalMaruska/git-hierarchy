@@ -523,3 +523,40 @@ unstash_if_stashed()
         git stash pop --quiet
     fi
 }
+
+# todo: static variables!
+GIT_DIR=$(git_dir)
+git_segment_mark=$GIT_DIR/.segment-cherry-pick
+git_poset_mark=$GIT_DIR/.poset-rebased
+#$GIT_DIR/.rebasing-segment
+mark_rebase_segment()
+{
+    echo "$1" >! $git_segment_mark
+    # the old version:
+    # echo "$1" > $GIT_DIR/.rebasing-segment
+}
+
+# $1
+unmark_rebase_segment()
+{
+    if [ -e $git_segment_mark ]; then
+        if [ "$1" = "$(cat $git_segment_mark)" ]; then
+            echo "### so rebase was completed, moving *start* to the *base*"  >&2
+            rm -v $git_segment_mark
+        else
+            echo "### mismatch!"  >&2
+        fi
+    fi
+}
+
+#
+marked_segment()
+{
+    cat $GIT_DIR/.segment-cherry-pick
+}
+
+
+mark_rebase_poset()
+{
+    echo "$@" > $git_poset_mark
+}

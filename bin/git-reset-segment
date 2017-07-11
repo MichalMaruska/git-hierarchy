@@ -31,7 +31,6 @@ OPTIND=1
 
 GIT_DIR=$(git_dir)
 
-mark=$GIT_DIR/.rebasing-segment
 # state_dir=$GIT_DIR"/rebase-apply/
 # head_name=$(cat "$state_dir"/head-name) &&
 
@@ -43,14 +42,7 @@ if [ $# = 1 ]; then
     BASE="refs/base/${BRANCH#refs/base/}"
     git-segment --restart $BRANCH $BASE
 
-    if [ -e $mark ]; then
-        if [ "$BRANCH" = "$(cat $mark)" ]; then
-            echo "### so rebase was completed, moving *start* to the *base*"  >&2
-            rm -v $mark
-        else
-            echo "### mismatch!"  >&2
-        fi
-    fi
+    unmark_rebase_segment $BRANCH
 else
     echo "### so rebase was aborted, forgetting about it: $(cat $mark)"  >&2
     rm -vf $mark
