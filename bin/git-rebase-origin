@@ -88,7 +88,7 @@ foreach base ($bases)
         REMOTE_BRANCH=${remote}
         if [ $dry_only = no ]; then
             local -r old=$(git rev-parse ${base#refs/})
-            $GIT_P4 sync --branch $REMOTE_BRANCH
+            $GIT_P4 sync --branch $REMOTE_BRANCH --git-dir $(git rev-parse --git-common-dir)
             git log $old..${base#refs/}
         fi
         git_fetch=no
