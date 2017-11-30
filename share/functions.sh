@@ -1,6 +1,8 @@
 #! /usr/bin/zsh -feu
 
 # todo: enforce ZSH!
+PROGRAM=$0
+trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 
 die()
 {
@@ -13,6 +15,10 @@ git_dir()
     ## --git-common-dir would be global to all worktrees.
     git rev-parse --git-dir
 }
+
+# todo: static variables!
+GIT_DIR=$(git_dir)
+
 
 commit_id()
 {
@@ -418,8 +424,6 @@ report_error()
     exit -1
 }
 
-PROGRAM=$0
-trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 #ERR
 # DEBUG
 # trap 'report_error $LINENO $BASH_SOURCE' ERR
@@ -524,8 +528,6 @@ unstash_if_stashed()
     fi
 }
 
-# todo: static variables!
-GIT_DIR=$(git_dir)
 git_segment_mark=$GIT_DIR/.segment-cherry-pick
 git_poset_mark=$GIT_DIR/.poset-rebased
 #$GIT_DIR/.rebasing-segment
