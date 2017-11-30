@@ -79,14 +79,22 @@ bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
 GIT_P4=~/git/git-core/git-p4.py
 
 DEBUG "bases: $bases"
-foreach base ($bases)
+
+# uses $dry_only, $fetch, $GIT_P4
+function rebase_one()
 {
-    git_fetch=$fetch
+    local -r base=$1
+    local remote
+    local git_fetch=$fetch
+    local REMOTE_BRANCH
+
     if expr match $base 'refs/remotes/p4/' >/dev/null ;
     then
         remote=${base#refs/remotes/p4/}
         REMOTE_BRANCH=${remote}
         if [ $dry_only = no ]; then
+            # readonly
+            set -x
             local -r old=$(git rev-parse ${base#refs/})
             $GIT_P4 sync --branch $REMOTE_BRANCH --git-dir $(git rev-parse --git-common-dir)
             git log $old..${base#refs/}
@@ -111,9 +119,9 @@ foreach base ($bases)
     if [ $git_fetch = yes ]; then
         INFO "Fetching upstream to $base: $remote"
         if [ $dry_only = no ]; then
-            local -r old=$(git rev-parse $remote/$remote_branch)
+            local -r old1=$(git rev-parse $remote/$remote_branch)
             git fetch $remote $remote_branch
-            git log $old..FETCH_HEAD
+            git log $old1..FETCH_HEAD
         else
             echo "would fetch from $remote $remote_branch"
         fi
@@ -125,6 +133,12 @@ foreach base ($bases)
             set_branch_to $this_branch $remote/$remote_branch
         fi
     fi
+}
+
+
+foreach base ($bases)
+{
+    rebase_one $base
 }
 #$2
 # origin/$base
