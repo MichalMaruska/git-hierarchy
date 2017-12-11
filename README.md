@@ -1,11 +1,9 @@
-
-
-* Sample session:
+### Sample session:
 
 
 you somehow have "master" to point at some base upstream commit.
 
-$ git-segment bgnone master
+    $ git-segment bgnone master
 
 will create branch-segment  "bgnone". You can see with  gitk(1),
 that 2 references accompany this: start & base.
@@ -14,23 +12,17 @@ that 2 references accompany this: start & base.
 "base" is pointing at the head "master".
 
 That means, that when we "git pull", and "master" will move to follow
-upstream "base" will move along with "master", but "start" will
+upstream, "base" will move along with "master", but "start" will
 remain.
 
-... Commit something on bgnone
+Then commit something on bgnone.
 
-$  git-segment misc master
+Create another segment:
+       $  git-segment misc master
 ...  commit something on misc
 
+Now, create a sum of the 2 segments. For example you want to make a feature
+branch which relies on the 2 features. Or just to build the SW.
 
 $ git-sum all  bgnone misc
 This declares the "sum" of the 2 features.
-
-Now re-create the sum:
-
-
-
-* issues:
-
-git show-ref --hash $base
-only if $base is full -- unique! otherwise expands to all refs & dumps all of them.
