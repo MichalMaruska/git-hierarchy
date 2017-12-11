@@ -12,6 +12,12 @@ else
     readonly branch=$(marked_segment)
 fi
 
+if [ -z $branch ];
+then
+    echo "no marked segment" >&2
+    exit 0
+fi
+
 git branch --force $branch $TEMP
 git checkout $branch
 
