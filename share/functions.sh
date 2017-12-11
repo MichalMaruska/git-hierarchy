@@ -191,7 +191,6 @@ git-set-start()
     git update-ref $start $sha
 }
 
-
 # fixme:
 # reverse of:
 # symbolic-ref
