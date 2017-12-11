@@ -17,7 +17,6 @@
 
 # fixme: this does not dump the TYPE of the relationship. (sum vs segment-base)
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
 
 # segment_base ${segment#refs/base/}
 
