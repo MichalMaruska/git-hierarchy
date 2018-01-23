@@ -1,0 +1,76 @@
+#!/bin/zsh -feu
+
+# to be invoked with correct cwd! ... below $TOP
+
+# based on ../bin/git-segment-patches
+
+# port changes between Git repos, which don't share commits.
+# so by patches!
+
+usage()
+{
+cat <<EOF
+usage: ${0##*/} [+-h] [-n] [-b base] [--] {source} {dest} {segment-name}
+
+-n ... don't re-define the segment
+-b base  ... by default the same name is used.
+
+EOF
+}
+
+CREATE_SEGMENT=y
+while getopts :hb:n OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        n)
+            CREATE_SEGMENT=no
+            ;;
+        b)
+            SEGMENT_BASE="$OPTARG"
+            # shift
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [ $# -lt 3 ]; then
+   usage
+fi
+
+SOURCE_DIR=$1
+DESTDIR=$2
+SEGMENT_NAME=$3
+
+relative=$(get_local_path $TOP)
+
+tempdir=$(mktemp ${TMP-/tmp}/$SEGMENT_NAME)
+
+: ${remote_dir::=$SOURCE_DIR/$relative}
+(
+    cd $remote_dir
+    git-segment-patches -o $tempdir
+)
+
+cd $DESTDIR
+
+# create:
+if [ $CREATE_SEGMENT = y ]; then
+    git-segment --checkout $SEGMENT_NAME $SEGMENT_BASE
+fi
+
+# populate
+foreach patch ($tempdir/*.patch) {
+    # fixme: so here we even change the path: the DEST is bigger.
+    sed -e 's|^--- a/|--- a/NavKit/|;s|^+++ b/|+++ b/NavKit/|' |\
+        git am
+}
+
+# fixme: trap
+echo "now remove the patches in $tempdir"
