@@ -17,7 +17,7 @@ git_dir()
 }
 
 # todo: static variables!
-GIT_DIR=$(git_dir)
+# GIT_DIR=$(git_dir)
 
 
 commit_id()
@@ -527,12 +527,12 @@ unstash_if_stashed()
     fi
 }
 
-git_segment_mark=$GIT_DIR/.segment-cherry-pick
-git_poset_mark=$GIT_DIR/.poset-rebased
+git_segment_mark=".segment-cherry-pick"
+git_poset_mark=".poset-rebased"
 #$GIT_DIR/.rebasing-segment
 mark_rebase_segment()
 {
-    echo "$1" >! $git_segment_mark
+    echo "$1" >! $GIT_DIR/$git_segment_mark
     # the old version:
     # echo "$1" > $GIT_DIR/.rebasing-segment
 }
@@ -540,10 +540,10 @@ mark_rebase_segment()
 # $1
 unmark_rebase_segment()
 {
-    if [ -e $git_segment_mark ]; then
-        if [ "$1" = "$(cat $git_segment_mark)" ]; then
+    if [ -e $GIT_DIR/$git_segment_mark ]; then
+        if [ "$1" = "$(cat $GIT_DIR/$git_segment_mark)" ]; then
             echo "### so rebase was completed, moving *start* to the *base*"  >&2
-            rm -v $git_segment_mark
+            rm -v $GIT_DIR/$git_segment_mark
         else
             echo "### mismatch!"  >&2
         fi
@@ -559,5 +559,5 @@ marked_segment()
 
 mark_rebase_poset()
 {
-    echo "$@" > $git_poset_mark
+    echo "$@" > $GIT_DIR/$git_poset_mark
 }
