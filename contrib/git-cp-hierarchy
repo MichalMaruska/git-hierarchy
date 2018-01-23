@@ -5,19 +5,50 @@ source /usr/share/git-hierarchy/functions.sh
 # Brings git-segments & sum over to another git repository.
 # To be able to resume after a failure, existing segments/sums are not
 # re-created!
-# The copy is done by ... declaring the object anew, and populating
+
+# The `copy' is done by ... declaring the object anew, and populating
 # the segments via patches.
-# I.e. those a dumped by  git-segment-patches
-# and imported via  "git am".
+# I.e. dumped by git-segment-patches and imported via  "git am".
 
 # Works with `partial' subrepositories -- projections. The patches are
 # limited to a subdirectory, or some subdirectories are ignored/excluded
 # on the target side.
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h] [--] {source-repo}  {dest-repo}
 
+both {source-repo} {dest-repo} are git repositories.
+
+EOF
+}
+
+while getopts :h OPT; do
+    case $OPT in
+        h|+h)
+            
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [ $# -lt 2 ]
+then
+    usage
+    exit 1
+fi
 
 # these Git repositories are involved:
-readonly srcdir=~/wave3/p4cns/
-readonly desttop=~/wave3/dgit/deauville-p4cns-main/
+readonly srcdir=$1
+#~/wave3/p4cns/
+readonly desttop=$2
+#~/wave3/dgit/deauville-p4cns-main/
+
+
 # the poset top:
 readonly TOP="all-skia"
 
