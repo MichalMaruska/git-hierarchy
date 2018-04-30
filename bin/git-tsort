@@ -29,22 +29,22 @@ EOF
 
 while getopts :kgxd OPT; do
     case $OPT in
-	k|+k)
-	    keep_graph_file=y
-	    draw_options+=(-k)
-	    ;;
-	g)
-	    just_graph=y
-	    ;;
-	d)
-	    debug=y
-	    ;;
-	x)
-	    dump_format=dot
-	    ;;
-	*)
-	    usage
-	    exit 2
+        k|+k)
+            keep_graph_file=y
+            draw_options+=(-k)
+            ;;
+        g)
+            just_graph=y
+            ;;
+        d)
+            debug=y
+            ;;
+        x)
+            dump_format=dot
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -84,8 +84,8 @@ elif [ $just_graph = y ]; then
     # while read
     for  a in $(tsort $GRAPH)
     do
-	cecho green $a
-	grep -e "^$a" $GRAPH || true
+        cecho green $a
+        grep -e "^$a" $GRAPH || true
     done
 else
     tsort $GRAPH | tac

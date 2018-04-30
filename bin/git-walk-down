@@ -46,26 +46,26 @@ typeset -a draw_options
 
 while getopts :dghxr OPT; do
     case $OPT in
-	x|+x)
-	    display_gui=y
-	    dump_format=dot
-	    ;;
-	g|+g)
-	    dump_format=tsort
-	    ;;
-	r|+r)
-	    dump_format=raw
-	    ;;
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	d)
-	    DEBUG=y
-	    ;;
-	*)
-	    usage
-	    exit 2
+        x|+x)
+            display_gui=y
+            dump_format=dot
+            ;;
+        g|+g)
+            dump_format=tsort
+            ;;
+        r|+r)
+            dump_format=raw
+            ;;
+        h|+h)
+            usage
+            exit 0
+            ;;
+        d)
+            DEBUG=y
+            ;;
+        *)
+            usage
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -112,28 +112,28 @@ do
     # also remove "first" if it's repeated.
 
     test "$DEBUG" = y && \
-	cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
+        cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
 
     # append the base(s), or summands:
     name=${this#refs/heads/}
     if is_sum $name; then
-	# note these functions need the variables: dump_format etc.
-	dump_sum $name
-	queue+=($(summands_of $name))
+        # note these functions need the variables: dump_format etc.
+        dump_sum $name
+        queue+=($(summands_of $name))
     elif is_segment $name; then
-	dump_segment $name
-	queue+=($(segment_base $name))
+        dump_segment $name
+        queue+=($(segment_base $name))
     else
-	if test "$DEBUG" = y; then
-	    cecho red "stopping @ $name" >&2
-	fi
-	if [ $dump_format = raw ]; then
-	    echo "base: $name"
-	fi
+        if test "$DEBUG" = y; then
+            cecho red "stopping @ $name" >&2
+        fi
+        if [ $dump_format = raw ]; then
+            echo "base: $name"
+        fi
     fi
 
     if test "$DEBUG" = y; then
-	cecho green "iterate $queue -- ${#queue}" >&2
+        cecho green "iterate $queue -- ${#queue}" >&2
     fi
 done  > $GRAPH
 
@@ -143,19 +143,19 @@ done  > $GRAPH
 # same as git-tsort:
 case $dump_format in
     dot)
-	draw-tsort-graph $draw_options -F png $GRAPH | display -
-	;;
+        draw-tsort-graph $draw_options -F png $GRAPH | display -
+        ;;
     raw)
-	cat $GRAPH
-	;;
+        cat $GRAPH
+        ;;
     tsort)
-	tsort $GRAPH | tac
-	;;
+        tsort $GRAPH | tac
+        ;;
     *)
-	for  a in $(tsort $GRAPH)
-	do
-	    cecho green $a
-	    grep -e "^$a" $GRAPH || :
-	done
+        for  a in $(tsort $GRAPH)
+        do
+            cecho green $a
+            grep -e "^$a" $GRAPH || :
+        done
 
 esac
