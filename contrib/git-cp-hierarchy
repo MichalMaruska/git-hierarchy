@@ -1,6 +1,7 @@
 #!/bin/zsh -feu
 
 source /usr/share/git-hierarchy/functions.sh
+RM=/bin/rm
 
 # Brings git-segments & sum over to another git repository.
 # To be able to resume after a failure, existing segments/sums are not
@@ -16,17 +17,21 @@ source /usr/share/git-hierarchy/functions.sh
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [--] {source-repo}  {dest-repo}
+usage: ${0##*/} [+-h] [--] {source-repo} {dest-repo} [ top ]
 
 both {source-repo} {dest-repo} are git repositories.
 
+TOP may indicate the top ref. Othwerwise all hierarchy refs are cloned.
 EOF
 }
+
+typeset -A base_mapping
+base_mapping=(refs/remotes/p4/master remotes/origin/master)
+
 
 while getopts :h OPT; do
     case $OPT in
         h|+h)
-            
             ;;
         *)
             usage >&2
@@ -42,30 +47,53 @@ then
     exit 1
 fi
 
+
 # these Git repositories are involved:
-readonly srcdir=$1
+readonly srcdir=$(realpath $1)
 #~/wave3/p4cns/
-readonly desttop=$2
+readonly desttop=$(realpath $2)
 #~/wave3/dgit/deauville-p4cns-main/
 
+# todo: Framework.ThirdParty.freetype
+# fixme: make sure the base exists!
 
+cd $srcdir
+GIT_DIR=$(git_dir)
+cd $(git rev-parse --show-toplevel)
+
+
+typeset -a refs
 # the poset top:
-readonly TOP="all-skia"
+if [ $# -ge 3 ]
+then
+    readonly TOP=$3 # "all-skia"
+    readonly refs=($(git-walk-down $TOP))
+else
+    readonly refs=( $(git-tsort ) )
+fi
 
+am_parameter=()
+segment_patches_args=()
+destdir=$desttop
 
+# input: $projection
+# output: segment_patches_args am_parameter
+prepare_am_parameter()
+{
 readonly navkit_path=Components/NavKit
 readonly skia_path="Framework/ThirdParty/Skia/Implementation"
 
 # This is the projection:
-case projection in
+case $projection in
     top)
-     readonly destdir=$desttop
-     readonly am_parameter="--exclude=$navkit_path/\*"
-     readonly segment_patches_args=()
-     ;;
+     # fixme: wrong var declaration?
+        readonly destdir=$desttop
+        readonly am_parameter="--exclude=$navkit_path/\*"
+        readonly segment_patches_args=()
+        ;;
     navkit)
         ## note:  -p3  so Components/NavKit/ is from --exlude=
-        readonly $desttop/$navkit_path
+        readonly destdir=$desttop/$navkit_path
         readonly am_parameter=("--exclude=$skia_path/\*" '-p3')
         readonly segment_patches_args=("$navkit_path/")
         ;;
@@ -77,71 +105,94 @@ case projection in
         ;;
     *)
         exit 2
+        ;;
 esac
+}
 
 
-# todo: Framework.ThirdParty.freetype
-# fixme: make sure the base exists!
+function INFO()
+{
+    cecho yellow "$@"
+}
 
+function WARN()
+{
+    cecho red "$@"
+}
 
-cd $srcdir
-GIT_DIR=$(git_dir)
-cd $(git rev-parse --show-toplevel)
-
-readonly refs=($(git-walk-down $TOP))
+WARN "will port $refs"
 
 # skip over the base
 foreach f ($refs) {
     name=${f##*/}
-    cecho yellow "$name"
+    cecho blue "$name"
 
     if git-sum $name >& /dev/null;
     then
+        # note: this assumes that the summands are already created!
 
-        components=($(git-sum $name))
-        cecho yellow "recreate the sum $name"
+        INFO "recreate the sum $name"
+
         set -x
-        summands=($(git-sum $name))
+        summands=( $(git-sum $name) )
         sums=()
         foreach s ($summands) {sums+=(${s#refs/heads/}) }
 
         cd $destdir
+        # is this check that it does not exist yet?
         if ! git-sum $name;
         then
             # echo "summands $summands"
+            # set -x
             git-sum $name $sums
-
-            # immediately:
+            # immediately, but that is already done?
             git-sum-branches $name
         fi
 
     elif git-segment $name >& /dev/null;
     then
         set -x
-        DIR=tmp_patches
-        rm -rf $DIR
-        git-segment-patches -o $DIR $name $segment_patches_args
+        # now inside $srcdir/ -- could be outside the cycle.
+        PATCHES_DIR=$(realpath "tmp_patches")
+        $RM -rf $PATCHES_DIR
+        mkdir $PATCHES_DIR
+        git-segment-patches -o $PATCHES_DIR $name $segment_patches_args
 
-        if ls $DIR/*; then
+        # how to test existence?
+        # test -n "$PATCHES_DIR/*"
+        # if this wildcard does not match it will stay as is. so ls(1) will attempt /\* file.
+        if ls $PATCHES_DIR/* > /dev/null ; then
 
             base=$(segment_base $name)
             base=${base#refs/heads/}
-            cecho red "create segment $name  on its base: $base"
+            INFO "create segment $name on its base: $base"
 
             cd $destdir
-            if !  git-segment $name >& /dev/null ;
+            if ! git-segment $name >& /dev/null ;
             then
+
+                if [ -n "${base_mapping[$base]-}" ]
+                then
+                    base=$base_mapping[$base]
+                    WARN "changing the base of $name to $base"
+                fi
+
                 git checkout $base
+                # mmc: doesn't this do it?
                 git-segment --checkout $name $base
                 # are they ordered?
-                git am $am_parameter $srcdir/$DIR/*
-                rm -rf $srcdir/$DIR
+
+                # cherry-pick them:
+                git am $am_parameter $PATCHES_DIR/*
+                $RM -rf $PATCHES_DIR
+            else
+                cecho green "already exists"
             fi
         fi
         set +x
    else
        # fixme: make sure the base exists!
-       cecho red "skipping $f -- not a segment nor a sum."
+       WARN "skipping $f -- not a segment nor a sum."
     fi
 
     cd $srcdir
