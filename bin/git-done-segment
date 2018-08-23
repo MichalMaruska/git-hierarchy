@@ -6,6 +6,22 @@ GIT_DIR=$(git_dir)
 
 readonly TEMP="temp"
 
+while getopts :ha OPT; do
+    case $OPT in
+        h|+h)
+
+            ;;
+        a|+a)
+            # abort
+            ;;
+        *)
+            print "usage: ${0##*/} [+-ha] [--] ARGS..."
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
 if [ $# -gt 0 ]; then
     readonly branch=$1
 else
