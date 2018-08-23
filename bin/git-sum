@@ -175,8 +175,7 @@ if [ $# = 0 ]; then
 else
 
     # create the branch:
-    # bug: packed-refs
-    git rev-parse heads/$name || git branch $name
+    git rev-parse heads/$name -- || git branch $name
 
     # now creation:
     # find minimal number:
