@@ -2,6 +2,11 @@
 
 # this tool invokes linearily (in sequence) rebasing operations (or merging),
 # in future possibly "git fetch".
+
+# IOW: iterates in topological order over
+#         segments
+#         sums.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 cd "$(git rev-parse --show-toplevel)"
@@ -41,6 +46,7 @@ OPTIND=1
 
 
 # check, that no other rebase in progress
+# check consistency:
 if [ -e $GIT_DIR/.rebasing-segment ]; then
     cecho red "Must first finish rebasing segment " \
         "$(cat $GIT_DIR/.rebasing-segment)"
@@ -59,6 +65,7 @@ else
     WHAT_TO_REBASE=($(git-tsort))
 fi
 
+# Log in .git/
 mark_rebase_poset $WHAT_TO_REBASE
 
 
