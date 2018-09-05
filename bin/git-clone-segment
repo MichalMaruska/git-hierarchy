@@ -48,7 +48,10 @@ new=$2
 new_base=$3
 
 set -x
-# just clone it, and rebase it:
+
+# Just clone it, and rebase it:
+# alternatively create it, and then "git branch -f new orig"
+# but this way it might error if already existing, which is good.
 git branch $new $original
 git-segment $new $new_base $(segment_start $original)
 
