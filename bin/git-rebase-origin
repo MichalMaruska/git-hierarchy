@@ -1,5 +1,9 @@
 #!/bin/zsh -feu
 
+GIT_P4=~/git/git-core/git-p4.py
+
+# update the Bases by `fetch' and rebase.
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 cd "$(git rev-parse --show-toplevel)"
@@ -75,9 +79,8 @@ typeset -a bases
 #todo: have to
 git checkout HEAD
 
-bases=($(git-walk-down -r $top|sed -n -e '/^base: /s///p'))
-
-GIT_P4=~/git/git-core/git-p4.py
+# note: grep & drop = sed -n
+bases=($(git-walk-down -r $top|sed --silent -e '/^base: /s///p'))
 
 DEBUG "bases: $bases"
 
@@ -106,13 +109,14 @@ function rebase_one()
         remote=${base#refs/remotes/}
         remote_branch=${remote#*/}
         remote=${remote%/*}
+        echo "the base is remote: $remote/$remote_branch"
     else
         #fixme:
         this_branch=$base
         base=refs/heads/$base
 
         remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
-
+        echo "upstream: $remote_branch"
         remote=${remote_branch%/*}
         remote_branch=${remote_branch#*/}
     fi
@@ -121,9 +125,9 @@ function rebase_one()
         INFO "Fetching upstream to $base: $remote"
         set -x
         if [ $dry_only = no ]; then
-            local -r old1=$(git rev-parse $remote/$remote_branch)
+            local old_head=$(git rev-parse $remote/$remote_branch)
             git fetch $remote $remote_branch
-            git log $old1..FETCH_HEAD
+            git log $old_head..FETCH_HEAD
         else
             echo "would fetch from $remote $remote_branch"
         fi
