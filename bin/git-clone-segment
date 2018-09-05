@@ -10,7 +10,12 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-h} [--] original new new-base
+usage: ${0##*/} [+-h] [--] {original} {clone-name} {new-base}
+
+original ... an existing segment
+clone-name ... non-existing ref name.
+new-base ... existing commit-id/ref/tag.
+
 EOF
     unsetopt POSIX_ARGZERO
 }
@@ -28,12 +33,11 @@ while getopts :h OPT; do
             ;;
     esac
 done
-
 shift OPTIND-1
 OPTIND=1
 
 if [ $# != 3 ]; then
-    echo "missing parameters." >&2
+    echo "missing parameters" >&2
     usage >&2
     exit 2
 fi
