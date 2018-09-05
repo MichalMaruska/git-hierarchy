@@ -18,11 +18,17 @@ remain.
 Then commit something on bgnone.
 
 Create another segment:
-       $  git-segment misc master
+
+    $ git-segment misc master
 ...  commit something on misc
 
 Now, create a sum of the 2 segments. For example you want to make a feature
 branch which relies on the 2 features. Or just to build the SW.
 
-$ git-sum all  bgnone misc
-This declares the "sum" of the 2 features.
+    $ git-sum all  bgnone misc
+
+
+## issues:
+
+git show-ref --hash $base
+only if $base is full -- unique! otherwise expands to all refs & dumps all of them.
