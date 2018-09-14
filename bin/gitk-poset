@@ -7,11 +7,13 @@ usage()
 {
 setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-f|g] [--] REF...
+usage: ${0##*/} [+-f|g] [-v] [--] REF...
 
 REF is segment or sum
 -f  show the whole poset! (uses git-tsort to get the base).
 -g  the whole graphs (segments, sums)
+
+-v  verbose
 
 # to be used:
 # $0 mmc-segment
@@ -25,17 +27,21 @@ unsetopt POSIX_ARGZERO
 
 full_poset=n
 all_graph=n
-while getopts :fg OPT; do
+verbose=n
+while getopts :fgv OPT; do
     case $OPT in
-	f|+f)
-	    full_poset=y
-	    ;;
-	g)
-	    all_graph=y
-	    ;;
-	*)
-	    usage >&2
-	    exit 2
+        f|+f)
+            full_poset=y
+            ;;
+        g)
+            all_graph=y
+            ;;
+        v)
+            verbose=y
+            ;;
+        *)
+            usage >&2
+            exit 2
     esac
 done
 
