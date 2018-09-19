@@ -1,0 +1,39 @@
+#!/bin/zsh -feu
+
+# must be regexp-quoted!
+prefix="NavKit/"
+prefix="Michi/michi/"
+
+VERBOSE=n
+
+while getopts :vh OPT; do
+    case $OPT in
+        v|+v)
+            VERBOSE=y
+            ;;
+        h|+h)
+
+            ;;
+        *)
+            print "usage: ${0##*/} [+-vh} [--] ARGS..."
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+tempdir=$1
+
+
+# populate
+foreach patch ($tempdir/*.patch) {
+    # fixme: so here we even change the path: the DEST is bigger.
+    # eval cat
+    if [ $VERBOSE = "y" ]; then set -x;fi
+    # if [ -n $prefix ]; then cat ; else
+    # fixme: diff --git a/.gitignore b/Michi/michi/.gitignore
+    # still needed                     ^^^^^^^^^^^
+    sed -e "s|^--- a/|--- a/${prefix}|;s|^+++ b/|+++ b/${prefix}|" $patch |\
+        git am
+    # git am --abort
+}

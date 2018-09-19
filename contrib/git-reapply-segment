@@ -10,11 +10,14 @@
 usage()
 {
 cat <<EOF
-usage: ${0##*/} [+-h] [-n] [-b base] [--] {source} {dest} {segment-name}
+usage: ${0##*/} [+-h] [-n] [-b base] [--] {source} {segment-name} {dest}
 
 -n ... don't re-define the segment
 -b base  ... by default the same name is used.
 
+source ... the git-repository which contains:
+segment-name ... the name
+dest  .... the destination git-repository
 EOF
 }
 
@@ -40,37 +43,38 @@ done
 shift OPTIND-1
 OPTIND=1
 
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
    usage
 fi
 
-SOURCE_DIR=$1
-DESTDIR=$2
-SEGMENT_NAME=$3
+SOURCE_DIR=$(realpath $1)
+SEGMENT_NAME=$2
+# see below for $3
 
-relative=$(get_local_path $TOP)
 
-tempdir=$(mktemp ${TMP-/tmp}/$SEGMENT_NAME)
+tempdir=$(mktemp --directory ${TMP-/tmp}/$SEGMENT_NAME-XXX)
 
-: ${remote_dir::=$SOURCE_DIR/$relative}
+: ${remote_dir::=$SOURCE_DIR}
 (
     cd $remote_dir
-    git-segment-patches -o $tempdir
+    git-segment-patches -o $tempdir $SEGMENT_NAME
 )
 
-cd $DESTDIR
+# I could provide a directory instead!
+
+
+if [ $# -gt 2 ]; then
+    DESTDIR=$3
+    cd $DESTDIR
+fi
+
 
 # create:
 if [ $CREATE_SEGMENT = y ]; then
     git-segment --checkout $SEGMENT_NAME $SEGMENT_BASE
 fi
 
-# populate
-foreach patch ($tempdir/*.patch) {
-    # fixme: so here we even change the path: the DEST is bigger.
-    sed -e 's|^--- a/|--- a/NavKit/|;s|^+++ b/|+++ b/NavKit/|' |\
-        git am
-}
+apply_patches_from $tempdir
 
 # fixme: trap
 echo "now remove the patches in $tempdir"
