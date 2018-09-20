@@ -63,6 +63,7 @@ fi
 
 #### local version:
 
+# only 1?
 if [ $# -gt 1 ]; then
     usage >&2
     exit 1
@@ -73,7 +74,6 @@ else
     ref_name=$1
 fi
 ref_name=${ref_name#refs/heads/}
-
 
 
 
@@ -94,6 +94,7 @@ then
     set -x
     gitk $ranges
 else
+    set -x
     gitk ${bottom#refs/}...heads/$ref_name
 fi
 # full_poset:

@@ -1,7 +1,7 @@
 #!/bin/zsh -euf
 
 # Create a new git-segment, which contains the same sequence of
-# patches as a given one, starting off new-base.
+# patches as a given one, starting off a new-base.
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)

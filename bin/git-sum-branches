@@ -78,6 +78,7 @@ sum_name=$1
 if ! is_sum $sum_name &>/dev/null ;
 then
     echo "$sum_name is not a sum branch (in $GIT_DIR)" >&2
+    summands_of $sum_name >&2
     exit 1
 fi
 

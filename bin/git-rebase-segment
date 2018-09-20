@@ -4,6 +4,7 @@
 #
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+# necessary?
 unsetopt FUNCTION_ARGZERO
 SILENT=n
 onto=""

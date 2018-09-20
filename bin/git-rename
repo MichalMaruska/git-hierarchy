@@ -5,7 +5,7 @@
 usage()
 {
     print "usage: ${0##*/} [+-h} [--] {from} {new-name}"
-# this renames only branches!
+    # this renames only branches!
 }
 
 INFO()
@@ -36,6 +36,7 @@ fi
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+set -x
 # Extract the segment/branch name:
 full_from=$(git-expand-ref $1)
 from=${full_from#refs/heads/}

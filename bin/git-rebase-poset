@@ -22,6 +22,7 @@ dry_only=n
 while getopts :hdn OPT; do
     case $OPT in
         d) DEBUG=y
+           set -x
            ;;
         n)
             dry_only=y

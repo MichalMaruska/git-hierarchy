@@ -140,8 +140,7 @@ foreach base ($bases)
 {
     rebase_one $base
 }
-#$2
-# origin/$base
+
 if [ $dry_only = no ]; then
     git-rebase-poset $top
 fi

@@ -1,4 +1,5 @@
 #! /bin/zsh -feu
+# todo: rename to  finish-segment-rebase
 
 source /usr/share/git-hierarchy/functions.sh
 

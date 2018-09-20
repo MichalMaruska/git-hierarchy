@@ -37,6 +37,7 @@ list_sums()
         sed -e 's|^refs/sums/\([^/]*\)/[^/]*$|\1|' | sort -u
 }
 
+# full
 summands_of()
 {
     # the sum is just the name!
@@ -58,21 +59,23 @@ ref_exists(){
 
 # expand by just 1 level:
 dump_ref(){
+    # echo "dump_ref $1" >&2
+
     # does not work:
     # x -> y &  y ->z & z->sha1; then `git symbolic-ref x' will return z.
     #git symbolic-ref $1
 
 
-    # note: symbolic refs (i.e. those pointing at other refs ,not direct SHA1), are not included in pack-refs.
-    # when that changes, I have to update this tool
-    # cat $GIT_DIR/$1
+    # note: symbolic refs (i.e. those pointing at other refs ,not direct SHA1),
+    # are not included in pack-refs.
     # fixme: does not work with packed_refs.
+    # cat $GIT_DIR/$1
+
+    # fully resolves:
     # git ref-parse $1
-    # echo "dump_ref $1" >&2
+
     # fixme: only symbolic: git symbolic-ref $1
-    # refs/base/mmc-handy
     git rev-parse $1
-    #refs/base/debian-unstable
 }
 
 # I bet on always knowing what to expect. for start & base.
@@ -396,6 +399,7 @@ expand_ref()
             if [ ! $my_priority = n ]; then
                 name=$(try_to_expand $name)
             else
+                # this can fail, if does not exist.
                 name=$(git rev-parse --symbolic-full-name heads/$name)
             fi
             # name=refs/heads/$name
