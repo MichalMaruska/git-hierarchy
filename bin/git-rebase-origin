@@ -58,6 +58,7 @@ while getopts :hfvd OPT; do
 done
 shift $(( OPTIND - 1 ))
 OPTIND=1
+# set -x
 if [ $# -lt 1 ]; then
     # by default the current-branch-poset
     # by default look at the base ... what it follows:
@@ -118,6 +119,7 @@ function rebase_one()
 
     if [ $git_fetch = yes ]; then
         INFO "Fetching upstream to $base: $remote"
+        set -x
         if [ $dry_only = no ]; then
             local -r old1=$(git rev-parse $remote/$remote_branch)
             git fetch $remote $remote_branch

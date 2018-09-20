@@ -43,6 +43,7 @@ original=$1
 new=$2
 new_base=$3
 
+set -x
 # just clone it, and rebase it:
 git branch $new $original
 git-segment $new $new_base $(segment_start $original)
