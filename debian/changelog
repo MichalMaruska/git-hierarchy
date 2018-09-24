@@ -1,3 +1,35 @@
+git-hierarchy (5.6) release; urgency=medium
+
+  * formalize the marking files -- segment & poset being rebased.
+  * Tell git-p4.py about the --git-dir=
+  * git-done-segment: verbose on NO-OP
+  * git-rebase-origin: Use a function so we can use readonly variables.
+  * functions.sh: move trap & variables to the top.
+  * Add markdown version of README
+  * sq: GIT_DIR is calculated implicitly
+  * format fixes
+  * Don't search for GIT_DIR before processing "-h"
+  * contrib/git-reapply-segment  import whole segment into external repo, under a subpath.
+  * git-cp-hierarchy: generalize, but not finished?
+  * Be more careful when testing for existance of non-existing. Avoid useless git warning
+  * git-cp-hierarchy: make it generic, for complete hierarchy, change the Base ref.
+  * git-done-segment: add -h option
+  * comments & verbosity.
+  * stupid verbosity
+  * update readme
+  * tabs
+  * cherry_pick_in_progress: new function
+  * clean: comments, reshuffle, rename var
+  * comments
+  * git-clone-segment: improve usage.
+  * comments
+  * Add -v as verbose.
+  * On -g include commits down to bases including. + MAX to limit
+  * comments Wip
+  * rebase_one: drop the -r (readonly) modifier from variable
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 24 Sep 2018 22:31:13 +0200
+
 git-hierarchy (5.5) release; urgency=medium
 
   * git-rebase-origin fix: for each cycle & git log
