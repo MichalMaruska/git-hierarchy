@@ -87,7 +87,7 @@ DEBUG "bases: $bases"
 # uses $dry_only, $fetch, $GIT_P4
 function rebase_one()
 {
-    local -r base=$1
+    local base=$1
     local remote
     local git_fetch=$fetch
     local REMOTE_BRANCH
