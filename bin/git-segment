@@ -16,15 +16,15 @@ usage()
     cat <<EOF
 usage:
 $PROGRAM [-s| --short] [-f | --full]
-  List the segments, -s short-format
+  LIST the segments, -s short-format
   Full implies output ref/heads/XXX instead of XXX
 
 $PROGRAM {segment-name}
-  Show the definition & dump the commits/history
+  SHOW the definition & dump the commits/history
   Exit with non-zero, if the segment-name is not a segment.
 
 $PROGRAM [-d | --delete | -D | -prune] name
-  Delete the definition, and even the branch itself.
+  DELETE the definition, and even the branch itself.
 
 $PROGRAM -r {segment} {start}
   set the start
@@ -32,8 +32,9 @@ $PROGRAM -r {segment} {start}
 $PROGRAM [-u | --update ] {segment} symbolic-base [start]
   update
 
-$PROGRAM [-c | --checkout] {segment} symbolic-base [start]
-  define
+
+$PROGRAM [-c | --checkout] {segment} symbolic-base [start] [head]
+  DEFINE
 
 EOF
 }
