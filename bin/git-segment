@@ -285,6 +285,10 @@ else
         git-set-start $name $start_hash
     fi
 
+    if [ $# = 4 ]; then
+        git branch --force $name $4
+    fi
+
     if [ $checkout = "y" ]; then
         git checkout $name
     fi
