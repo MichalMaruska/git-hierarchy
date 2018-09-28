@@ -1,3 +1,13 @@
+git-hierarchy (5.7) release; urgency=medium
+
+  * git-cp-hierarchy: apply correctly the patches. comment: Maybe first should check
+  * git-reapply-segment: usage & possibly destdir.
+  * new: git-segment-compare
+  * git-segment: update the usage() to highlight the modes of operation
+  * git-segment: enable defining the tip of the created segment.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sat, 29 Sep 2018 00:49:39 +0200
+
 git-hierarchy (5.6) release; urgency=medium
 
   * formalize the marking files -- segment & poset being rebased.
