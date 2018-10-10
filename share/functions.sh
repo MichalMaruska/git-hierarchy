@@ -2,6 +2,7 @@
 
 # todo: enforce ZSH!
 PROGRAM=$0
+debug=n
 trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 
 cherry_pick_in_progress()
