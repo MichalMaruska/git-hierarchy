@@ -4,6 +4,10 @@
 #
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+if cherry_pick_in_progress;then
+   exit 1
+fi
+
 # necessary?
 unsetopt FUNCTION_ARGZERO
 SILENT=n
