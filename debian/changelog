@@ -1,3 +1,11 @@
+git-hierarchy (5.8) release; urgency=medium
+
+  * Global variable debug
+  * gitk-poset: use the --title option of gitk(1)
+  * cd to the top for segment-rebase
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 19 Nov 2018 14:37:34 +0100
+
 git-hierarchy (5.7) release; urgency=medium
 
   * git-cp-hierarchy: apply correctly the patches. comment: Maybe first should check
