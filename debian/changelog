@@ -1,3 +1,11 @@
+git-hierarchy (5.9) release; urgency=medium
+
+  * don't 'rebase' a segment, if a cherry-pick is in progress.
+  * expand_ref: Signal error if Git cannot figure it out
+  * More care about local (shell) variables
+
+ -- Michal Maruska <mmaruska@gmail.com>  Fri, 23 Nov 2018 17:33:18 +0100
+
 git-hierarchy (5.8) release; urgency=medium
 
   * Global variable debug
