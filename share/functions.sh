@@ -409,7 +409,7 @@ expand_ref()
             else
                 # this can fail, if does not exist.
                 # then what? mmc: oh it's in a subshell, so?
-                result=$(git rev-parse --symbolic-full-name heads/$name)
+                result=$(git rev-parse --symbolic-full-name heads/$name 2>/dev/null)
                 if [[ $? != 0 ]]; then
                    exit -1
                 fi
