@@ -3,6 +3,7 @@
 # todo: enforce ZSH!
 PROGRAM=$0
 debug=n
+# mmc: so this should EXIT afterwards!
 trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 
 cherry_pick_in_progress()
@@ -384,7 +385,8 @@ try_to_expand()
 
 expand_ref()
 {
-    local name=$1
+    readonly name=$1
+    local result
     local my_priority=n
     if [ $# -gt 1 ]; then
        my_priority=$2
@@ -393,26 +395,31 @@ expand_ref()
         refs/*)
             ;;
         heads/*)
-            name=refs/$name
+            result=refs/$name
             ;;
         remotes/*)
-            name=refs/$name
+            result=refs/$name
             ;;
         tags/*)
-            name=refs/$name
+            result=refs/$name
             ;;
         *)
             if [ ! $my_priority = n ]; then
-                name=$(try_to_expand $name)
+                result=$(try_to_expand $name)
             else
                 # this can fail, if does not exist.
-                name=$(git rev-parse --symbolic-full-name heads/$name)
+                # then what? mmc: oh it's in a subshell, so?
+                result=$(git rev-parse --symbolic-full-name heads/$name)
+                if [[ $? != 0 ]]; then
+                   exit -1
+                fi
             fi
             # name=refs/heads/$name
             # prepend refs/
     esac
 
-    echo $name
+    # mmc: this should abort!
+    echo $result
 }
 
 
