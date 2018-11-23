@@ -34,7 +34,7 @@ then
 fi
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
+readonly GIT_DIR=$(git_dir)
 
 set -x
 # Extract the segment/branch name:
@@ -70,8 +70,8 @@ rename_symbolic_reference()
 # a non-symbolic reference -- native implementation:
 rename_reference()
 {
-    ref=$1
-    new_name=$2
+    local ref=$1
+    local new_name=$2
     # git symbolic-ref -m "renaming Sum"
 
     # rename: create & drop?
@@ -102,9 +102,8 @@ if is_segment $from; then
 fi
 
 
-# bug: this fails:
-full_new=$(git-expand-ref $new || echo "refs/heads/$new" )
-
+# Here Git can fail, so we fallback to:
+readonly full_new=$(git-expand-ref $new || echo "refs/heads/$new")
 
 # As the DESTINATION of a symref.
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
