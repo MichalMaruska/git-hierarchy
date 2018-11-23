@@ -36,7 +36,8 @@ fi
 source /usr/share/git-hierarchy/functions.sh
 readonly GIT_DIR=$(git_dir)
 
-set -x
+# set -x
+
 # Extract the segment/branch name:
 full_from=$(git-expand-ref $1)
 from=${full_from#refs/heads/}
