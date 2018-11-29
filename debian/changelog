@@ -1,3 +1,17 @@
+git-hierarchy (5.10) release; urgency=medium
+
+  * Global variable debug
+  * gitk-poset: use the --title option of gitk(1)
+  * cd to the top for segment-rebase
+  * don't 'rebase' a segment, if a cherry-pick is in progress.
+  * expand_ref: Signal error if Git cannot figure it out
+  * And suppress the Git's error message when trying to resolve.
+  * More care about local (shell) variables
+  * drop -x
+  * gitk-poset: change the default to show the Whole graph.
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 29 Nov 2018 23:27:47 +0100
+
 git-hierarchy (5.7) release; urgency=medium
 
   * git-cp-hierarchy: apply correctly the patches. comment: Maybe first should check
