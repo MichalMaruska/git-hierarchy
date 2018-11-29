@@ -2,6 +2,7 @@
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
+GITK=gitk
 
 usage()
 {
@@ -77,7 +78,7 @@ if [ $all_graph = y ]; then
     # convert:
     #    echo ${#roots}
     #    set -x
-    gitk --max-count=$MAX  $roots $tops HEAD
+    $GITK --title="poset" --max-count=$MAX $roots $tops HEAD
     echo rm -f $VERTICES $ANCESTORS $GRAPH
     exit 0
 fi
@@ -114,10 +115,10 @@ then
     ranges=($bottom..heads/$ref_name)
 
     set -x
-    gitk $ranges
+    $GITK --title="sum $ref_name" $ranges
 else
     set -x
-    gitk ${bottom#refs/}...heads/$ref_name
+    $GITK --title="segment $ref_name" ${bottom#refs/}...heads/$ref_name
 fi
 # full_poset:
 # git-walk-down mmc-focus |
