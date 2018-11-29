@@ -8,11 +8,11 @@ usage()
 {
 setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-f|g] [-v] [--] REF...
+usage: ${0##*/} [+-f|g|l] [-v] [--] REF...
 
 REF is segment or sum
 -f  show the whole poset! (uses git-tsort to get the base).
--g  the whole graphs (segments, sums)
+-l  only the current segment/sum
 
 -v  verbose
 
@@ -28,15 +28,15 @@ unsetopt POSIX_ARGZERO
 MAX=2000
 
 full_poset=n
-all_graph=n
+all_graph=y
 verbose=n
-while getopts :fgv OPT; do
+while getopts :flv OPT; do
     case $OPT in
         f|+f)
             full_poset=y
             ;;
-        g)
-            all_graph=y
+        l)
+            all_graph=n
             ;;
         v)
             verbose=y
