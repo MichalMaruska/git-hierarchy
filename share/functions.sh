@@ -393,6 +393,7 @@ expand_ref()
     fi
     case $name in
         refs/*)
+            result=$name
             ;;
         heads/*)
             result=refs/$name
