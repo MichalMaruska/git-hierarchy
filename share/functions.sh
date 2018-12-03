@@ -594,3 +594,16 @@ function WARN()
 {
     cecho red "$@"
 }
+
+
+# 1 key/value pair per line.
+dump_associative_array()
+{
+    local map=$1
+    local key
+    local val
+
+    for key val in ${(kv)${(P)map}}; do
+        echo "$key $val"
+    done
+}
