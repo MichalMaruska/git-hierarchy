@@ -271,8 +271,8 @@ else
 
     # `update/setup' the segment definition
     # fixme: remove ""
-    if [ -n "${new_base-}" ]; then
-        new_base=$(git-expand-ref $new_base)
+    if [[ -n "${new_base-}" ]]; then
+        new_base=$(expand_ref $new_base)
         # cecho yellow "so the base is ${new_base-}"
 
         cecho yellow "Changing the base to $new_base"
