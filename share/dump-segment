@@ -1,12 +1,13 @@
+# -*-awk-*-
 BEGIN {
     dump=0; #requested="refs/heads/stop"
 }
 
-/^(segment|sum|bottom)/ {dump=0;
+/^(segment|sum|bottom)/ {dump=0;}
+
     # printf("found %s\n", $0);
-    }
-/^segment: / { # printf("found %s\n", $2);
-if ($2 == requested) { dump=1;next}}
+ # printf("found %s\n", $2);
+/^segment: / {if ($2 == requested) { dump=1;next}}
 
 {
     # printf("default %d\n", dump)
