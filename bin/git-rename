@@ -8,11 +8,6 @@ usage()
     # this renames only branches!
 }
 
-INFO()
-{
-    cecho red "$1" >&2
-}
-
 while getopts :h OPT; do
     case $OPT in
         h|+h)

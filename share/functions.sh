@@ -579,3 +579,18 @@ mark_rebase_poset()
 {
     echo "$@" > $GIT_DIR/$git_poset_mark
 }
+
+function INFO()
+{
+    cecho yellow "$@"
+}
+
+function STEP()
+{
+    cecho blue "$@"
+}
+
+function WARN()
+{
+    cecho red "$@"
+}
