@@ -12,6 +12,7 @@ usage()
     cat <<EOF
 usage: ${0##*/} [-p] [+-h] [-o outdir] [--] {segment}  args...
 
+-q  ... quiet
 -p  ... dump the patch-ids.
 args are passed to:  git-format-patch(1)
 EOF
@@ -20,7 +21,8 @@ EOF
 
 output_dir=""
 dump_ids="n"
-while getopts :ho:p OPT; do
+arguments=()
+while getopts :ho:pq OPT; do
     case $OPT in
         h|+h)
             usage
@@ -28,6 +30,9 @@ while getopts :ho:p OPT; do
             ;;
         p)
             dump_ids="y"
+            ;;
+        q)
+            arguments+=(--quiet)
             ;;
         o)
             output_dir=$OPTARG
@@ -62,7 +67,7 @@ if [ $dump_ids = "y" ]; then
         git show $commit| git patch-id
     }
 else
-    git format-patch --keep-subject --output-directory $output_dir $start..$segment "$@"
+    git format-patch $arguments --keep-subject --inline --output-directory $output_dir $start..$segment "$@"
 fi
 
 # dump sums:
