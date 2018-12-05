@@ -1,0 +1,45 @@
+#!/bin/zsh -feu
+
+
+name=$1
+dump=$2
+dump2=$3
+
+GAWK_FILE="/home/git/my/repo/git-hierarchy/contrib/dump-segment"
+
+temp=$(mktemp)
+temp2=$(mktemp)
+
+show_commit()
+{
+    #  commit dir
+    cd $(dirname $2)
+    git show --oneline -s $1
+}
+
+
+gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump | cut -f 1 -d ' ' > $temp
+gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump2 | cut -f 1 -d ' ' > $temp2
+# gawk '/segment refs\/heads\/$name/ {dump=1;}; ' >
+
+# cmp --bytes 86 --verbose $temp $temp2
+#set -x
+diff $temp $temp2 |
+    while read line; do
+        if [[ $line[1] = "<"  ]]
+        then
+            commit=${line#< }
+            commit=$(grep $commit $dump| cut -f 2 -d ' ')
+            show_commit $commit $dump
+        elif [[ $line[1] = ">"  ]]
+        then
+            commit=${line#> }
+            commit=$(grep $commit $dump2| cut -f 2 -d ' ')
+            show_commit $commit $dump2
+        else
+            echo "ignoring $line"
+        fi
+    done
+#comm -2 $temp $temp2
+
+rm -f $temp $temp2
