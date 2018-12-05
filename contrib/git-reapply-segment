@@ -1,32 +1,38 @@
 #!/bin/zsh -feu
 
-# to be invoked with correct cwd! ... below $TOP
+source /usr/share/git-hierarchy/functions.sh
+# Uses ../bin/git-segment-patches and "git am"
 
-# based on ../bin/git-segment-patches
-
-# port changes between Git repos, which don't share commits.
-# so by patches!
-
+VERBOSE="n"
 usage()
 {
 cat <<EOF
-usage: ${0##*/} [+-h] [-n] [-b base] [--] {source} {segment-name} {dest}
+usage: ${0##*/} [+-h] [-n] [-b base] [--] {source-dir} {segment-name} [dest-dir]
 
--n ... don't re-define the segment
--b base  ... by default the same name is used.
+Port segment between Git repos, which don't share commits.
 
-source ... the git-repository which contains:
+-k ....      keep the patches directory
+-n ...       don't re-define the segment, just append the commits.
+-b base  ... Use this reference as a 'base' of the new segment
+             By default the same-named base is expected to exist!
+
+source-dir   ... the git-repository which contains:
 segment-name ... the name
-dest  .... the destination git-repository
+dest-repo    ... the destination git-repository; default is cwd.
 EOF
 }
 
+
 CREATE_SEGMENT=y
-while getopts :hb:n OPT; do
+keep_patches=no
+while getopts :b:hkn OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
+            ;;
+        k)
+            keep_patches=yes
             ;;
         n)
             CREATE_SEGMENT=no
@@ -44,37 +50,60 @@ shift OPTIND-1
 OPTIND=1
 
 if [ $# -lt 2 ]; then
-   usage
+    usage >&2
+    exit 1
 fi
 
-SOURCE_DIR=$(realpath $1)
-SEGMENT_NAME=$2
-# see below for $3
-
-
-tempdir=$(mktemp --directory ${TMP-/tmp}/$SEGMENT_NAME-XXX)
-
-: ${remote_dir::=$SOURCE_DIR}
-(
-    cd $remote_dir
-    git-segment-patches -o $tempdir $SEGMENT_NAME
-)
-
-# I could provide a directory instead!
-
+readonly SOURCE_DIR=$(realpath --canonicalize-existing $1)
+readonly SEGMENT_NAME=$2 # fixme: must be acceptable filename!
 
 if [ $# -gt 2 ]; then
     DESTDIR=$3
     cd $DESTDIR
 fi
 
+clean_up()
+{
+    if [[ $keep_patches = "no" && -d $tempdir ]]; then
+        # INFO "now remove the patches in $tempdir"
+        /bin/rm --recursive $tempdir
+    fi
+}
 
-# create:
-if [ $CREATE_SEGMENT = y ]; then
-    git-segment --checkout $SEGMENT_NAME $SEGMENT_BASE
+# $TMP must be absolute path!
+readonly tempdir=$(mktemp --directory ${TMP-/run/tmp}/segment-patches-$SEGMENT_NAME-XXX)
+
+if [[ $debug = y ]]; then INFO "will use $tempdir" >&2; fi
+# todo: trap to remove the dir!
+trap 'clean_up' ZERR
+
+(
+    cd $SOURCE_DIR
+    git-segment-patches -o $tempdir $SEGMENT_NAME
+)
+
+if [[ $CREATE_SEGMENT = y ]]; then
+    if git-segment $SEGMENT_NAME >& /dev/null ;
+    then
+        cecho green "already exists"
+        exit 1
+    else
+        # set -x
+        if [[ -z ${SEGMENT_BASE-} ]]; then
+           SEGMENT_BASE=$(cd $SOURCE_DIR; echo $(segment_base $SEGMENT_NAME))
+        fi
+
+        # -n non-null --quiet
+        git checkout -b $SEGMENT_NAME $SEGMENT_BASE
+        # mmc: doesn't this do it?
+        git-segment --checkout $SEGMENT_NAME $SEGMENT_BASE
+    fi
+# else  reset-the-segment?
 fi
 
-apply_patches_from $tempdir
+# --keep-non-patch
+if git am --keep $tempdir/*(n); then
+    status=$?
+fi
 
-# fixme: trap
-echo "now remove the patches in $tempdir"
+exit ${status-0}

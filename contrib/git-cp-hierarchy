@@ -1,39 +1,46 @@
 #!/bin/zsh -feu
 
+# todo: trap & clean up!
+
 # fixme: it produces the patches even if it later decides to NOT use them.
 
 source /usr/share/git-hierarchy/functions.sh
-RM=/bin/rm
 
 # Brings git-segments & sum over to another git repository.
 # To be able to resume after a failure, existing segments/sums are not
 # re-created!
 
 # The `copy' is done by ... declaring the object anew, and populating
-# the segments via patches.
-# I.e. dumped by git-segment-patches and imported via  "git am".
+# the segments via git-reapply-segment.
 
-# Works with `partial' subrepositories -- projections. The patches are
-# limited to a subdirectory, or some subdirectories are ignored/excluded
-# on the target side.
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [--] {source-repo} {dest-repo} [ top ]
+usage: ${0##*/} [+-h] [-m from:to] [--] {source-repo} {dest-repo} [ top ]
 
-both {source-repo} {dest-repo} are git repositories.
+-m  map the base FROM to TO
+
+Both {source-repo} {dest-repo} are git repositories.
 
 TOP may indicate the top ref. Othwerwise all hierarchy refs are cloned.
 EOF
 }
 
+
+# some things need manual mapping: the bottom.
 typeset -A base_mapping
-base_mapping=(refs/remotes/p4/master remotes/origin/master)
+base_mapping=()
 
-
-while getopts :h OPT; do
+while getopts :hm: OPT; do
     case $OPT in
         h|+h)
+            usage
+            exit 0
+            ;;
+        m)
+            # set -x
+            # note: the names must not contain ":"!
+            base_mapping[${OPTARG%:*}]=${OPTARG#*:}
             ;;
         *)
             usage >&2
@@ -43,170 +50,103 @@ done
 shift OPTIND-1
 OPTIND=1
 
+
+dump_associative_array base_mapping
+
 if [ $# -lt 2 ]
 then
-    usage
+    usage >&2
     exit 1
 fi
 
-
 # these Git repositories are involved:
-readonly srcdir=$(realpath $1)
-#~/wave3/p4cns/
-readonly desttop=$(realpath $2)
-#~/wave3/dgit/deauville-p4cns-main/
+# we will cd  between them, so need a stable/absolute reference to them:
+readonly srcdir=$(realpath --canonicalize-existing $1)
+readonly destdir=$(realpath --canonicalize-existing $2)
 
-# todo: Framework.ThirdParty.freetype
-# fixme: make sure the base exists!
-
+# fixme: one can use --git-dir instead of cd.
 cd $srcdir
-GIT_DIR=$(git_dir)
 cd $(git rev-parse --show-toplevel)
-
 
 typeset -a refs
 # the poset top:
-if [ $# -ge 3 ]
-then
-    readonly TOP=$3 # "all-skia"
-    readonly refs=($(git-walk-down $TOP))
-else
-    readonly refs=( $(git-tsort ) )
-fi
+readonly refs=( $(if [[ $# -ge 3 ]]; then git-walk-down $3; else git-tsort;fi ))
 
-am_parameter=(-p2)
-segment_patches_args=()
-destdir=$desttop
+# am_parameter=(--keep-non-patch)
 
-# input: $projection
-# output: segment_patches_args am_parameter
-prepare_am_parameter()
+
+git_segment_exists()
 {
-readonly navkit_path=Components/NavKit
-readonly skia_path="Framework/ThirdParty/Skia/Implementation"
-
-# This is the projection:
-case $projection in
-    top)
-     # fixme: wrong var declaration?
-        readonly destdir=$desttop
-        readonly am_parameter="--exclude=$navkit_path/\*"
-        readonly segment_patches_args=()
-        ;;
-    navkit)
-        ## note:  -p3  so Components/NavKit/ is from --exlude=
-        readonly destdir=$desttop/$navkit_path
-        readonly am_parameter=("--exclude=$skia_path/\*" '-p3')
-        readonly segment_patches_args=("$navkit_path/")
-        ;;
-    skia)
-        # skia
-        readonly destdir=$desttop/$navkit_path/$skia_path
-        readonly segment_patches_args=("$navkit_path/$skia_path")
-        readonly am_parameter=('-p7')
-        ;;
-    *)
-        exit 2
-        ;;
-esac
+    readonly dir=$1
+    readonly segment=$2
+    (
+        cd $destdir
+        git-segment $name >& /dev/null
+    )
 }
 
-
-function INFO()
-{
-    cecho yellow "$@"
-}
-
-function WARN()
-{
-    cecho red "$@"
-}
 
 WARN "will port $refs"
 
 # skip over the base
 foreach f ($refs) {
+    #readonly
     name=${f##*/}
-    cecho blue "$name"
+    STEP "$name"
 
     if git-sum $name >& /dev/null;
     then
         # note: this assumes that the summands are already created!
 
-        INFO "recreate the sum $name"
-
-        set -x
-        summands=( $(git-sum $name) )
-        sums=()
-        foreach s ($summands) {sums+=(${s#refs/heads/}) }
-
-        cd $destdir
-        # is this check that it does not exist yet?
-        if ! git-sum $name;
+        # `only' if the sum does not exist yet!
+        if ! (cd $destdir; git-sum $name)
         then
-            # echo "summands $summands"
+            INFO "recreate the sum $name"
+
+            summands=( $(git-sum $name) )
+            new_summands=()
+            # local s
+            foreach s ($summands) {
+                local new_summand=${s#refs/heads/}
+                new_summand=${base_mapping[$new_summand]-$new_summand}
+                new_summands+=($new_summand)
+            }
+
+            cd $destdir
             # set -x
-            git-sum $name $sums
+            git-sum $name $new_summands
             # immediately, but that is already done?
             git-sum-branches $name
         fi
 
     elif git-segment $name >& /dev/null;
     then
-        set -x
-        # now inside $srcdir/ -- could be outside the cycle.
-        PATCHES_DIR=$(realpath "tmp_patches")
-        $RM -rf $PATCHES_DIR
-        mkdir $PATCHES_DIR
-        git-segment-patches -o $PATCHES_DIR $name $segment_patches_args
-
-        # how to test existence?
-        # test -n "$PATCHES_DIR/*"
-        # if this wildcard does not match it will stay as is. so ls(1) will attempt /\* file.
-        if ls $PATCHES_DIR/* > /dev/null ; then
-
-            base=$(segment_base $name)
+        if git_segment_exists $destdir $name;
+        then
+            cecho green "$name already exist"
+        else
+            # this should be a matter of -b option!
+            local base=$(segment_base $name)
             base=${base#refs/heads/}
-            INFO "create segment $name on its base: $base"
 
-            cd $destdir
-            if ! git-segment $name >& /dev/null ;
+            if [[ -n "${base_mapping[$base]-}" ]]
             then
-
-                if [ -n "${base_mapping[$base]-}" ]
+                if [[ $base != ${base_mapping[$base]} ]];
                 then
+                    # rename it:
                     base=$base_mapping[$base]
                     WARN "changing the base of $name to $base"
                 fi
-
-                git checkout $base
-                # mmc: doesn't this do it?
-                git-segment --checkout $name $base
-                # are they ordered?
-
-                # cherry-pick them:
-                git am $am_parameter $PATCHES_DIR/*
-                $RM -rf $PATCHES_DIR
-            else
-                cecho green "already exists"
             fi
+
+            INFO "create segment $name on its base: $base"
+            git-reapply-segment -b $base $srcdir $name $destdir
         fi
-        set +x
-   else
+    else
        # fixme: make sure the base exists!
+       git rev-parse ${base_mapping[$name]-$name} > /dev/null
        WARN "skipping $f -- not a segment nor a sum."
     fi
 
     cd $srcdir
 }
-
-
-# foreach s  ( $(git-sum)) {git-delete $s}
-# foreach s  ( $(git-segment -s)) {git-delete $s}
-
-
-# patch -p1    <  .git/rebase-apply/patch
-# git add --update
-# git am --continue
-
-# git-segment-patches -o tmp_patches skia Components/NavKit/
