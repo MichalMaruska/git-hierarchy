@@ -1,48 +1,51 @@
 #! /usr/bin/zsh -feu
 
 # This is reimplemted in git-sum-branches!
-
-# check that commit0 is a sum of commit1 ... commitN
-
-
-commit0=$1
-# commits=$~
-
-# Resolve commit0 into sha
-sha0=$(git log $commit0 --max-count=1 --format="%H")
-# sort the others
+# check that commit is a sum of commit1 ... commitN
 
 
 # These files will contain the SHA1 of commit1 ... commitN
 # and of the parents of commit0.
-temp1=""
-temp2=""
-
 clean()
 {
-    rm -f $temp1 $temp2
+    rm -f ${temp1-} ${temp2-}
 }
+
+# How to compare
+# 2 arrays are the same?
+# sort & compare.
+# echo $parents
+
+
+dump_parent_shas()
+{
+    #
+    local sha0=$(
+        git rev-parse $1
+        # git log $1 --max-count=1 --format="%H"
+          )
+    git cat-file commit $sha0 | awk '/^parent/ {print $2}'| sort
+}
+
+commit=$1
+
+temp1=$(mktemp)
+dump_parent_shas $commit > $temp1
 
 trap "echo error; clean" ERR
 trap "clean" EXIT
 
-temp1=$(mktemp )
-temp2=$(mktemp )
-
-
-# 2 arrays are the same?
-# sort & compare.
-git cat-file commit $sha0 | awk '/^parent/ {print $2}'| sort > $temp1
-# echo $parents
-
+temp2=$(mktemp)
 
 typeset -a summands
 summands=($(git-sum $1))
 
-# echo "summands $summands"
-(foreach s ($summands) {git log $s --max-count=1 --format="%H"}) |\
+(foreach s ($summands) {
+     git show --no-patch  --format=tformat:"%H"  $s --
+     # git log $s --max-count=1 --format="%H"
+ }) |\
  sort > $temp2
 
-
 # XOR:
+# dump the diff: unique in any of the files:
 comm -3 $temp1 $temp2
