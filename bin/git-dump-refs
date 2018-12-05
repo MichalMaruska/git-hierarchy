@@ -9,24 +9,30 @@ GIT_DIR=$(git_dir)
 # git tag "hierarchy-refs" -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
 # git notes add -f -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
 
-## git cat-file tag hierarchy-refs |skip-header | git-recover-symbolic-refs
-## git cat-file tag hierarchy-refs |tail -n +6 |  git-recover-symbolic-refs
+## git cat-file tag hierarchy-refs | skip-header| git-recover-symbolic-refs
+## git cat-file tag hierarchy-refs | tail -n +6 |  git-recover-symbolic-refs
 
 ## skip-header  tail -f5
 
 ##
+readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort;fi ))
+
 ##
-
-git for-each-ref "refs/sums" "refs/base" \
-    --format "%(refname)" |\
-while read ref; do
-    link=$(dump_symbolic_ref $ref)
-    echo -n "$ref\t" ; dump_ref $ref
-done
-
-
-git for-each-ref "refs/start" --format "%(refname)" |\
-while read ref; do
-    link=$(dump_ref $ref)
-    echo -n "$ref\t" ; dump_ref $ref
-done
+foreach ref ( ${(o)refs} )
+{
+    if git-sum $ref &>/dev/null;
+    then
+        if git-check-sum $ref;
+           then
+               cecho red "sum: $ref"
+               git-sum $ref
+               print
+        fi
+    elif git-segment $ref &>/dev/null;
+    then
+        cecho red "segment: $ref"
+        git-segment-patches -p $ref
+    else
+        cecho red "bottom: $ref" $(git rev-parse $ref)
+    fi
+}
