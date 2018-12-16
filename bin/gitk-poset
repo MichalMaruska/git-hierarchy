@@ -8,9 +8,9 @@ usage()
 {
 setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-f|g|l] [-v] [--] REF...
+usage: ${0##*/} [+-f|l] [-v] [--]    [REF]
 
-REF is segment or sum
+REF is segment or sum. By default HEAD is used.
 -f  show the whole poset! (uses git-tsort to get the base).
 -l  only the current segment/sum
 
@@ -27,8 +27,8 @@ unsetopt POSIX_ARGZERO
 
 MAX=2000
 
-full_poset=n
-all_graph=y
+full_poset=n  # take it full-depth, not just 1 segment/sum
+all_graph=y # take all tops, not just current branch
 verbose=n
 while getopts :flv OPT; do
     case $OPT in
