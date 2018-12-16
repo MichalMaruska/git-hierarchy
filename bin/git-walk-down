@@ -44,6 +44,7 @@ display_gui=n
 dump_format=tsort
 extern_color=pink
 keep_graph=n
+verbose=n
 DEBUG=n
 typeset -a draw_options
 
@@ -76,6 +77,7 @@ while getopts :dghklxr OPT; do
             ;;
         d)
             DEBUG=y
+            verbose=y
             ;;
         *)
             usage
