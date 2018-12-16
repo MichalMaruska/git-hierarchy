@@ -32,6 +32,8 @@ Output or Display the order of segments & sums below REF
 -r  raw format
 -l  log with --graph
 -d  turn on Debugging
+
+-k keep the graph file
 -h  help
 EOF
     unsetopt POSIX_ARGZERO
@@ -41,6 +43,7 @@ EOF
 display_gui=n
 dump_format=tsort
 extern_color=pink
+keep_graph=n
 DEBUG=n
 typeset -a draw_options
 
@@ -100,7 +103,9 @@ GRAPH=
 trap "clean" EXIT
 clean()
 {
-    test -n "$GRAPH" && rm -f $GRAPH
+    if [[ $keep_graph = n ]]; then
+        test -n "$GRAPH" && rm -f $GRAPH
+    fi
 }
 
 GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
