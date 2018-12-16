@@ -507,6 +507,30 @@ dump_whole_graph()
     fi
 }
 
+# use $debug
+# set roots and tops.
+find_roots_and_tops()
+{
+    readonly GRAPH=$1
+
+    # Covered are those who are ancestors of others!
+    # but it's not A base B. it must be verified that B is indeed below it! If B has moved, I want to see it!
+    readonly VERTICES=$(tempfile)
+    readonly ANCESTORS=$(tempfile)
+
+    cat $GRAPH | cut --fields=1 | sort -u > $VERTICES
+    cat $GRAPH | cut -d '	' --fields 2- | sed -e "s/ /\n/g"| sort -u > $ANCESTORS
+    # 3 common, 2 unique to ancestors = base.
+    [ $verbose = "y" ] && { cecho red -n "the maximal bases/summands (ancestors) are "; comm -23  $VERTICES $ANCESTORS }
+
+    # vertices ... roots^1 =  ^root^@ vertices
+    # comm -1 -3 /tmp/fileFDORjK /tmp/fileOgzwpK
+
+    roots=( $(comm -1 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
+    tops=( $(comm -2 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
+    rm -f $VERTICES $ANCESTORS
+}
+
 # fixme: protect this:
 GIT_STASHED=no
 ## possibly stash:
