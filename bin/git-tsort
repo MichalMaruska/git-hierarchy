@@ -100,7 +100,7 @@ elif [ $just_graph = y ]; then
     # sort:
 
     # while read
-    for  a in $(tsort $GRAPH)
+    for a in $(tsort $GRAPH)
     do
         cecho green $a
         grep -e "^$a" $GRAPH || true
