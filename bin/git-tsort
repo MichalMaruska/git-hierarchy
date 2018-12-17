@@ -11,7 +11,7 @@ GIT_DIR=$(git_dir)
 keep_graph_file="n"
 just_graph=n
 dump_format=tsort
-debug=n
+verbose=n
 typeset -a draw_options
 
 usage()
@@ -27,8 +27,8 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-while getopts :kgxd OPT; do
 segment_format=tsort
+while getopts :dgklx OPT; do
     case $OPT in
         k|+k)
             keep_graph_file=y
@@ -38,11 +38,16 @@ segment_format=tsort
             just_graph=y
             ;;
         d)
-            debug=y
+            verbose=y
             ;;
         x)
             dump_format=dot
             ;;
+        l)
+            dump_format=log
+            segment_format=tsort
+            ;;
+
         *)
             usage
             exit 2
@@ -80,6 +85,17 @@ if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
+elif [ $dump_format = log ]; then
+    find_roots_and_tops $GRAPH
+
+    for ((i=1; i<= ${#roots}; i++))
+        {
+            echo $i $roots[$i];
+            roots[$i]="$roots[$i]^!";
+            echo $roots[$i]
+        };
+
+    git log --graph --oneline --decorate $roots $tops
 elif [ $just_graph = y ]; then
     # sort:
 
