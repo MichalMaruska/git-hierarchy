@@ -225,11 +225,11 @@ drop_symbolic_ref()
     # With this it was recreating .git/refs/heads/refs/sums/all/10
 }
 
-dump_format=tsort
-# needed:  dump_format, extern_color
+# needed: extern_color
 dump_segment()
 {
-    local segment=$1
+    readonly dump_format=$1
+    readonly segment=$2
 
     # mmc: why not output the full base ref?
     local segment_name=${segment#refs/base/}
@@ -478,6 +478,7 @@ current_branch_poset()
 # input: $debug, dump_format (see dump_segment()!)
 dump_whole_graph()
 {
+    readonly segment_format=$1
 
     local segments
     typeset -a segments
@@ -488,7 +489,7 @@ dump_whole_graph()
     else
         foreach segment ($segments);
         {
-            dump_segment $segment
+            dump_segment $segment_format $segment
         }
     fi
 
