@@ -49,13 +49,20 @@ while getopts :dghxr OPT; do
         x|+x)
             display_gui=y
             dump_format=dot
+            segment_format=$dump_format
+            ;;
+        k)
+            keep_graph=y
             ;;
         g|+g)
             dump_format=tsort
+            segment_format=$dump_format
             ;;
         r|+r)
             dump_format=raw
+            segment_format=$dump_format
             ;;
+
         h|+h)
             usage
             exit 0
@@ -121,7 +128,7 @@ do
         dump_sum $name
         queue+=($(summands_of $name))
     elif is_segment $name; then
-        dump_segment $name
+        dump_segment $segment_format $name
         queue+=($(segment_base $name))
     else
         if test "$DEBUG" = y; then
