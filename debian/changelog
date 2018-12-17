@@ -1,3 +1,31 @@
+git-hierarchy (5.11.2) release; urgency=medium
+
+  * fix expand_ref for ref/*
+  * Include INFO & WARN & STEP in functions.sh
+  * new dump_associative_array() in functions.sh
+  * integrate git-cp-hierarchy git-reapply-segment together.
+  * git-segment-patches new option -q to not list the generated files.
+  * git-check-sum: simplify?
+  * git-dump-refs: fail if not "clean"
+  * new diff-segments
+  * more complicated coloring in logs
+  * short-cut expand_ref (library call, not external tool)
+  * move dump-segment to .../share/
+  * find_roots_and_tops: new function, with side-effect
+  * dump_segment: change api to use explicit format, dump_whole_graph too.
+  * adapt git-tsort
+  * git-tsort: new format to invoke "git log"
+  * git-walk-down: adapt to the new api of dump_segment with segment_format.
+  * git-walk-down: new format -l for "git log --graph"
+  * git-walk-down: keep-graph -k option
+  * git-walk-down: provide the verbose variable needed by find_roots_and_tops
+  * gitk-poset: explain the various modes
+  * small
+  * format
+  * simplify info
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 17 Dec 2018 07:52:31 +0100
+
 git-hierarchy (5.10) release; urgency=medium
 
   * Global variable debug
