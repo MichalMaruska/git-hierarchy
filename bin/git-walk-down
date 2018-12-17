@@ -30,6 +30,7 @@ Output or Display the order of segments & sums below REF
 -x  display the graph w/ ImageMagick
 -g  dump the graph
 -r  raw format
+-l  log with --graph
 -d  turn on Debugging
 -h  help
 EOF
@@ -44,7 +45,7 @@ DEBUG=n
 typeset -a draw_options
 
 
-while getopts :dghxr OPT; do
+while getopts :dghklxr OPT; do
     case $OPT in
         x|+x)
             display_gui=y
@@ -62,7 +63,10 @@ while getopts :dghxr OPT; do
             dump_format=raw
             segment_format=$dump_format
             ;;
-
+        l)
+            segment_format=tsort
+            dump_format=log
+            ;;
         h|+h)
             usage
             exit 0
@@ -154,6 +158,17 @@ case $dump_format in
         ;;
     raw)
         cat $GRAPH
+        ;;
+    log)
+        find_roots_and_tops $GRAPH
+
+        for ((i=1; i<= ${#roots}; i++))
+            {echo $i $roots[$i];
+             roots[$i]="$roots[$i]^!";
+             echo $roots[$i]
+            }
+
+        git log --graph --oneline --decorate $roots $tops
         ;;
     tsort)
         tsort $GRAPH | tac
