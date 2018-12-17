@@ -28,6 +28,7 @@ EOF
 }
 
 while getopts :kgxd OPT; do
+segment_format=tsort
     case $OPT in
         k|+k)
             keep_graph_file=y
@@ -67,8 +68,9 @@ setopt NULL_GLOB
 # why temp file?
 # tsort doesn't need it (- is ok)
 # my ../../mmc-shell/bin/draw-tsort-graph
-dump_whole_graph > $GRAPH
+# this could be tsort-ed. But this ^ sort it too.
 
+dump_whole_graph $segment_format > $GRAPH
 
 if [ $keep_graph_file = y ]; then
     echo "graph left in: $GRAPH" >&2
