@@ -15,7 +15,7 @@ GIT_DIR=$(git_dir)
 ## skip-header  tail -f5
 
 ##
-readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort;fi ))
+readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort -t ;fi ))
 
 ##
 foreach ref ( ${(o)refs} )

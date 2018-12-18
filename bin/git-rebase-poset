@@ -62,7 +62,7 @@ if [ $# -gt 0 ]; then
     test "$DEBUG" = y && {echo -n "... down from ";cecho cyan "$1"} >&2
     WHAT_TO_REBASE=($(git-walk-down -g $1))
 else
-    WHAT_TO_REBASE=($(git-tsort))
+    WHAT_TO_REBASE=($(git-tsort -t))
 fi
 
 # Log in .git/

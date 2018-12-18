@@ -10,7 +10,9 @@ GIT_DIR=$(git_dir)
 
 keep_graph_file="n"
 just_graph=n
-dump_format=tsort
+
+dump_format=log
+segment_format=tsort
 verbose=n
 typeset -a draw_options
 
@@ -18,36 +20,39 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-k]  [-g] [-x] [--]
+usage: ${0##*/} [+-k]  [-g]  [-x | -l | -t] [--]
 -x display using  dot(1)
 -k keep the generated file (for tsort(1))
-
+-l log
+-t just dump the tsort lines
 -g don\'t dump the topological order on stdout.
 EOF
     unsetopt POSIX_ARGZERO
 }
 
-segment_format=tsort
-while getopts :dgklx OPT; do
+while getopts :dgkltx OPT; do
     case $OPT in
-        k|+k)
-            keep_graph_file=y
-            draw_options+=(-k)
+        d)
+            verbose=y
             ;;
         g)
             just_graph=y
             ;;
-        d)
-            verbose=y
-            ;;
-        x)
-            dump_format=dot
+        k|+k)
+            keep_graph_file=y
+            draw_options+=(-k)
             ;;
         l)
             dump_format=log
             segment_format=tsort
             ;;
+        t)
+            dump_format=tsort
+            ;;
 
+        x)
+            dump_format=dot
+            ;;
         *)
             usage
             exit 2
