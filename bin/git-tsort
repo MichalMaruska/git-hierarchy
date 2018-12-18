@@ -87,11 +87,10 @@ elif [ $dump_format = log ]; then
 
     for ((i=1; i<= ${#roots}; i++))
         {
-            echo $i $roots[$i];
+            # echo $i $roots[$i];
             roots[$i]="$roots[$i]^!";
-            echo $roots[$i]
-        };
-
+            # echo $roots[$i]
+        }
     git log --graph --oneline --decorate $roots $tops
 elif [ $just_graph = y ]; then
     # sort:
