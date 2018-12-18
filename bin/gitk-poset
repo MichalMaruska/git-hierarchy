@@ -51,18 +51,21 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
-
 if [ $all_graph = y ]; then
-    find_roots_and_tops
+    GRAPH=$(tempfile)
+    dump_whole_graph "tsort" > $GRAPH
+    find_roots_and_tops $GRAPH
 
     # echo now prefix:
     for ((i=1; i<= ${#roots}; i++))
-        {echo $i $roots[$i]; roots[$i]="$roots[$i]^!"; echo $roots[$i] }
+        {
+            roots[$i]="$roots[$i]^!"
+        }
     # echo now
     # "${roots[*]^@}"
     # convert:
     #    echo ${#roots}
-    #    set -x
+    rm -f $GRAPH
     $GITK --title="poset" --max-count=$MAX $roots $tops HEAD
     exit 0
 fi
