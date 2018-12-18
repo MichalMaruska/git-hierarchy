@@ -135,8 +135,8 @@ do
     # append the base(s), or summands:
     name=${this#refs/heads/}
     if is_sum $name; then
-        # note these functions need the variables: dump_format etc.
-        dump_sum $name
+        # fixme:
+        dump_sum $segment_format $name
         queue+=($(summands_of $name))
     elif is_segment $name; then
         dump_segment $segment_format $name

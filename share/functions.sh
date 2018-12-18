@@ -292,7 +292,8 @@ EOF
 
 dump_sum()
 {
-    local sum=$1
+    readonly dump_format=$1
+    readonly sum=$2
     local summand
 
     case $dump_format in
@@ -503,7 +504,7 @@ dump_whole_graph()
     else
         foreach sum ($sums)
         {
-            dump_sum $sum
+            dump_sum $segment_format $sum
         }
     fi
 }
