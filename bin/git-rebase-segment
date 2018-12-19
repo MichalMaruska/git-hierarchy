@@ -5,6 +5,7 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 if cherry_pick_in_progress;then
+   cecho red "cherry pick in progress!" >&2
    exit 1
 fi
 
