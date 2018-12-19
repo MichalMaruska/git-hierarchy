@@ -1,3 +1,13 @@
+git-hierarchy (5.12) release; urgency=medium
+
+  * dump_sum with the explicit format!
+  * drop verbosity
+  * git-tsort: default to the -l log format. Porcelain to use -t for the tsort format.
+  * gitk-poset: fix for the new api
+  * git-rebase-segment: Do explay why it stops when cherry-pick in progress
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 19 Dec 2018 10:33:45 +0100
+
 git-hierarchy (5.11.2) release; urgency=medium
 
   * fix expand_ref for ref/*
