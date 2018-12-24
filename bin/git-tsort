@@ -52,6 +52,7 @@ while getopts :dgkltx OPT; do
 
         x)
             dump_format=dot
+            segment_format=dot
             ;;
         *)
             usage
