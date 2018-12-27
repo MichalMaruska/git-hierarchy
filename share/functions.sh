@@ -3,6 +3,7 @@
 # todo: enforce ZSH!
 PROGRAM=$0
 debug=n
+source /usr/share/mmc-shell/git-functions.sh
 # mmc: so this should EXIT afterwards!
 trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 
@@ -15,12 +16,6 @@ die()
 {
     echo $@ >&2
     exit -1;
-}
-
-git_dir()
-{
-    ## --git-common-dir would be global to all worktrees.
-    git rev-parse --git-dir
 }
 
 # todo: static variables!
@@ -531,44 +526,6 @@ find_roots_and_tops()
     roots=( $(comm -1 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
     tops=( $(comm -2 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
     rm -f $VERTICES $ANCESTORS
-}
-
-# fixme: protect this:
-GIT_STASHED=no
-## possibly stash:
-# sets the variable STASHED
-stash_if_non_clean()
-{
-    # fixme: some variable is used-before-defined, in upstream code.
-    # this is run after processing the command line args. Otherwise -h would be
-    # handled by it
-    set +u
-    . /usr/lib/git-core/git-sh-setup
-    # git rev-parse --is-inside-work-tree
-    GIT_DIR=$(git_dir)
-    set -u
-
-    # todo:
-    # octopus can leave half work, so yes, I prefer:
-    if ! ( require_clean_work_tree $1 "$(gettext "Please commit or stash them.")" )
-    then
-        local cmd=""
-        # todo: orange:
-        cecho yellow "stashing for you..."
-        eval $cmd git stash save $1
-        GIT_STASHED=yes
-    fi
-}
-
-
-unstash_if_stashed()
-{
-    if [ "$GIT_STASHED" = "yes" ]
-    then
-        cecho yellow "unstashing now."
-        # eval $cmd
-        git stash pop --quiet
-    fi
 }
 
 git_segment_mark=".segment-cherry-pick"
