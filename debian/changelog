@@ -1,3 +1,14 @@
+git-hierarchy (5.13) release; urgency=medium
+
+  * fix git-tsort -x: specify the segment_format
+  * rename current_branch_poset to current_branch_name
+  * try to depend on mmc-shell. Half of functions.sh should be moved there.
+  * Move part of the functions to mmc-shell, and source that git-functions.
+  * new commands: git-diff-poset-dumps, git-diff-segments
+  * git-rebase-segment: explain on failure-exit
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 27 Dec 2018 12:28:27 +0100
+
 git-hierarchy (5.12) release; urgency=medium
 
   * dump_sum with the explicit format!
