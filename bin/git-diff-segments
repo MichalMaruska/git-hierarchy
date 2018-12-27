@@ -1,11 +1,16 @@
 #!/bin/zsh -feu
 
+# Given 2 dumps of segments, produced by ../bin/git-dump-refs
+# compare the content of same-name-segment.
+
+# Outputs:
+# runs diff(1) by field patch-id ... and shows the related commit-id message.
 
 name=$1
 dump=$2
 dump2=$3
 
-GAWK_FILE="/home/git/my/repo/git-hierarchy/contrib/dump-segment"
+GAWK_FILE="/home/git/my/repo/git-hierarchy/share/dump-segment"
 
 temp=$(mktemp)
 temp2=$(mktemp)
