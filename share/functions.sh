@@ -450,7 +450,7 @@ set_branch_to()
     local branch=$1
     local commit_id=$2
 
-    if [ $branch = $(current_branch_poset) ]
+    if [ $branch = $(current_branch_name) ]
     then
         git reset --hard $commit_id
     else
@@ -458,14 +458,14 @@ set_branch_to()
     fi
 }
 
-
-current_branch_poset()
+# return the branch checked-out. Error if in "detached HEAD" state.
+current_branch_name()
 {
     local head
     head=$(dump_ref_without_ref HEAD)
     head=${head##refs/heads/}
     if [ $head = HEAD ]; then
-        cecho red "currently not on a poset branch" >&2
+        cecho red "currently not on a branch" >&2
         exit 1;
     fi
 

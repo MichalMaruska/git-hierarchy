@@ -56,7 +56,7 @@ OPTIND=1
 #fixme:
 if [ $# = 0 ]; then
     # default is the current branch
-    branch=$(current_branch_poset)
+    branch=$(current_branch_name)
 elif [ $# = 1 ]; then
     branch=${1}
 fi
