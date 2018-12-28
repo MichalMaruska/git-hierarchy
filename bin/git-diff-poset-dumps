@@ -18,8 +18,20 @@ set -x
 if [[ $# != 2 ]]; then
     usage
 fi
-dump1=$1
-dump2=$2
+
+deduce_dump()
+{
+    local path=$1
+    if [[ -d $path ]]; then
+        path=$path/hierarchy.dump
+    fi
+    echo $path
+}
+
+
+dump1=$(deduce_dump $1)
+dump2=$(deduce_dump $2)
+
 GREP=/bin/grep
 
 segment_rx='^segment:'
