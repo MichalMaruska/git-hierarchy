@@ -37,16 +37,16 @@ GREP=/bin/grep
 segment_rx='^segment:'
 sum_rx='^sum:'
 
-status=0
+collect_status=0
 
 if ! diff <($GREP $segment_rx $dump1 |sort ) <($GREP $segment_rx $dump2 |sort)
 then
-    status=1
+    collect_status=1
 fi
 
 if ! diff <($GREP $sum_rx $dump1 |sort ) <($GREP $sum_rx $dump2 |sort )
 then
-    status=1
+    collect_status=1
 fi
 
 cecho blue "now diff single segments"
@@ -63,9 +63,9 @@ foreach segment ( $(sed --silent -e 's|segment: refs/heads/||g;T;p' $dump1 ) )
     # todo: collect the status
     if ! $DIFF_SEGMENT $segment $dump1 $dump2
     then
-        status=1
+        collect_status=1
     fi
 }
 
 
-exit $status
+exit $collect_status
