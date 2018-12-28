@@ -39,17 +39,26 @@ sum_rx='^sum:'
 
 collect_status=0
 
+STEP()
+{
+    cecho blue $@
+}
+
+STEP "diff the segment sets"
 if ! diff <($GREP $segment_rx $dump1 |sort ) <($GREP $segment_rx $dump2 |sort)
 then
     collect_status=1
 fi
 
+STEP "diff the sum sets"
 if ! diff <($GREP $sum_rx $dump1 |sort ) <($GREP $sum_rx $dump2 |sort )
 then
     collect_status=1
 fi
 
-cecho blue "now diff single segments"
+STEP "diff the sum definitions -- todo!"
+
+STEP "now diff single segments"
 set +x
 
 # - grep segment hierarchy.dump| sed --silent -e 's|segment: refs/heads/||g;p'
