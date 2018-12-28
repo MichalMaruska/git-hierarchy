@@ -5,6 +5,8 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
+MAGIC_FILENAME="hierarchy.dump"
+
 # used as:
 # git tag "hierarchy-refs" -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
 # git notes add -f -m "$(/home/git/my/repo/git-hierarchy/bin/git-dump-refs)"
@@ -13,6 +15,33 @@ GIT_DIR=$(git_dir)
 ## git cat-file tag hierarchy-refs | tail -n +6 |  git-recover-symbolic-refs
 
 ## skip-header  tail -f5
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-ho] [--] ARGS...
+
+-o  outputs into  $MAGIC_FILENAME in cwd.
+EOF
+}
+
+integer myfd
+while getopts :ho OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        o|+o)
+            exec {myfd}>$MAGIC_FILENAME
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 ##
 readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort -t ;fi ))
@@ -34,4 +63,4 @@ foreach ref ( ${(o)refs} )
     else
         cecho red "bottom: $ref" $(git rev-parse $ref)
     fi
-}
+} >&$myfd
