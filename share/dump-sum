@@ -1,0 +1,16 @@
+# -*-awk-*-
+BEGIN {
+    # It is expected that "requested" variable is assigned.
+    # I should check it here! todo!
+    dump=0;
+}
+
+/^(segment|sum|bottom)/ {dump=0;}
+
+/^sum: / {if ($2 == requested) { dump=1;next}}
+
+{
+    if (dump == 1) {
+        print $0;
+    }
+}

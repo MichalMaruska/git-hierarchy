@@ -54,7 +54,18 @@ then
     collect_status=1
 fi
 
-STEP "diff the sum definitions -- todo!"
+SUM_AWK=/usr/share/git-hierarchy/dump-sum
+
+STEP "diff the sum definitions!"
+
+foreach sum ( $(sed --silent -e 's|sum: refs/heads/||g;T;p' $dump1 ))
+{
+    cecho yellow $sum
+    (
+     comm -3 <(gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump1 |sort) \
+          <(gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump2|sort)
+     )
+}
 
 STEP "now diff single segments"
 set +x
