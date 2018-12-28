@@ -1,12 +1,14 @@
 #!/bin/zsh -feu
 
+# $TMP must be absolute path!
+
 source /usr/share/git-hierarchy/functions.sh
 # Uses ../bin/git-segment-patches and "git am"
 
 VERBOSE="n"
 usage()
 {
-cat <<EOF
+    cat <<EOF
 usage: ${0##*/} [+-h] [-n] [-b base] [--] {source-dir} {segment-name} [dest-dir]
 
 Port segment between Git repos, which don't share commits.
@@ -18,9 +20,12 @@ Port segment between Git repos, which don't share commits.
 
 source-dir   ... the git-repository which contains:
 segment-name ... the name
-dest-repo    ... the destination git-repository; default is cwd.
+dest-repo    ... the destination git-repository; DEFAULT is cwd.
 EOF
 }
+
+# todo: show the base.
+# --dry?
 
 
 CREATE_SEGMENT=y
@@ -54,11 +59,13 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 
-readonly SOURCE_DIR=$(realpath --canonicalize-existing $1)
+SOURCE_DIR=$1
 readonly SEGMENT_NAME=$2 # fixme: must be acceptable filename!
 
 if [ $# -gt 2 ]; then
     DESTDIR=$3
+    # only in this case we chdir(2), so need this:
+    SOURCE_DIR=(realpath --canonicalize-existing $SOURCE_DIR)
     cd $DESTDIR
 fi
 
@@ -70,13 +77,16 @@ clean_up()
     fi
 }
 
-# $TMP must be absolute path!
 readonly tempdir=$(mktemp --directory ${TMP-/run/tmp}/segment-patches-$SEGMENT_NAME-XXX)
 
 if [[ $debug = y ]]; then INFO "will use $tempdir" >&2; fi
 # todo: trap to remove the dir!
-trap 'clean_up' ZERR
 
+# on exit also?
+trap 'clean_up' ZERR EXIT
+
+
+# hm, so I don't do it one-by-one.
 (
     cd $SOURCE_DIR
     git-segment-patches -o $tempdir $SEGMENT_NAME
@@ -97,13 +107,15 @@ if [[ $CREATE_SEGMENT = y ]]; then
         git checkout -b $SEGMENT_NAME $SEGMENT_BASE
         # mmc: doesn't this do it?
         git-segment --checkout $SEGMENT_NAME $SEGMENT_BASE
+        # I could probably do it with specifying: $SEGMENT_BASE $SEGMENT_BASE
     fi
 # else  reset-the-segment?
 fi
 
-# --keep-non-patch
+# --keep-non-patch ... drops [PATCH].
+# I need to keep the "[JIRA-ISSUE]" prefix. even [PATCH]
 if git am --keep $tempdir/*(n); then
-    status=$?
+    exit_status=$?
 fi
 
-exit ${status-0}
+exit ${exit_status-0}
