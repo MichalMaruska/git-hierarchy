@@ -73,12 +73,3 @@ else
 
     git format-patch $arguments --keep-subject --inline --output-directory $output_dir $start..$segment "$@"
 fi
-
-# dump sums:
-
-
-
-# foreach segment ($(git-tsort)) {~/repo/git-hierarchy/bin/git-segment-patches $segment Components/NavKit}
-
-
-# foreach segment (refs/heads/new-base  refs/heads/fts refs/heads/tools refs/heads/start refs/heads/navkit-cxx11 refs/heads/tests refs/heads/benchmarks refs/heads/svg refs/heads/telemetry  refs/heads/skia refs/heads/good  refs/heads/wip refs/heads/study refs/heads/skia-investigation refs/heads/skia-fat refs/heads/new refs/heads/navkit-sign-compare refs/heads/ct-devenv refs/heads/benchmarks-verbose ) {~/repo/git-hierarchy/bin/git-segment-patches $segment Components/NavKit}
