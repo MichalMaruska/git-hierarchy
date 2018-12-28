@@ -53,11 +53,6 @@ fi
 
 # dump segment:
 segment=$1; shift
-if [ -z "$output_dir" ]
-then
-    output_dir=$segment
-fi
-mkdir -p $output_dir
 
 name=${segment#refs/heads/}
 start=$(segment_start $name)
@@ -67,6 +62,15 @@ if [ $dump_ids = "y" ]; then
         git show $commit| git patch-id
     }
 else
+    if [ -z "$output_dir" ]
+    then
+        # this can fail!
+        output_dir=$name
+        mkdir -v $output_dir
+    else
+        mkdir -p $output_dir
+    fi
+
     git format-patch $arguments --keep-subject --inline --output-directory $output_dir $start..$segment "$@"
 fi
 
