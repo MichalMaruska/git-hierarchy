@@ -95,7 +95,7 @@ if [[ $verbose = y ]]; then set -x;fi
 # - grep segment $dump1 |sort
 foreach segment ( $(sed --silent -e 's|segment: refs/heads/||g;T;p' $dump1 ) )
 {
-    : ${segment=${segment#refs/heads/}}
+    #: ${segment=${segment#refs/heads/}}
     cecho yellow $segment;
     # todo: collect the status
     if ! $DIFF_SEGMENT $segment $dump1 $dump2
