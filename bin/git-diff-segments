@@ -21,11 +21,37 @@ show_commit()
     cd $(dirname $2)
     git show --oneline -s $1
 }
+usage()
+{
+    cat <<EOF
+print "usage: ${0##*/} [+-v] [--] ARGS..."
+
+-v verbose
+EOF
+}
+
+verbose=n
+while getopts :hv OPT; do
+    case $OPT in
+        h)
+            usage;exit 0
+            ;;
+        v|+v)
+            verbose=y
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump | cut -f 1 -d ' ' > $temp
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump2 | cut -f 1 -d ' ' > $temp2
 
-(set -x; diff $temp $temp2) |
+
+(if [ $verbose = y ]; then set -x;fi; diff $temp $temp2) |
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
