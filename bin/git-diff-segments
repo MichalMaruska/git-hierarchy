@@ -22,14 +22,10 @@ show_commit()
     git show --oneline -s $1
 }
 
-
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump | cut -f 1 -d ' ' > $temp
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump2 | cut -f 1 -d ' ' > $temp2
-# gawk '/segment refs\/heads\/$name/ {dump=1;}; ' >
 
-# cmp --bytes 86 --verbose $temp $temp2
-#set -x
-diff $temp $temp2 |
+(set -x; diff $temp $temp2) |
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
@@ -42,9 +38,9 @@ diff $temp $temp2 |
             commit=$(grep $commit $dump2| cut -f 2 -d ' ')
             show_commit $commit $dump2
         else
-            echo "ignoring $line"
+            # 0a1,2
+            echo "ignoring $line" >&2
         fi
     done
-#comm -2 $temp $temp2
 
 rm -f $temp $temp2
