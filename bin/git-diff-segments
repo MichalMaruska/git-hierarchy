@@ -10,7 +10,7 @@ name=$1
 dump=$2
 dump2=$3
 
-GAWK_FILE="/home/git/my/repo/git-hierarchy/share/dump-segment"
+GAWK_FILE="/usr/share/git-hierarchy/dump-segment"
 
 temp=$(mktemp)
 temp2=$(mktemp)
