@@ -26,7 +26,6 @@ foreach ref ( ${(o)refs} )
            then
                cecho red "sum: $ref"
                git-sum $ref
-               print
         fi
     elif git-segment $ref &>/dev/null;
     then
