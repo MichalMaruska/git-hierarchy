@@ -12,9 +12,6 @@ dump2=$3
 
 GAWK_FILE="/usr/share/git-hierarchy/dump-segment"
 
-temp=$(mktemp)
-temp2=$(mktemp)
-
 show_commit()
 {
     #  commit dir
@@ -47,18 +44,26 @@ done
 shift OPTIND-1
 OPTIND=1
 
-gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump | cut -f 1 -d ' ' > $temp
-gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump2 | cut -f 1 -d ' ' > $temp2
+# given the output of `git-dump-refs', extract the patch-ids ... not the commit numbers.
+extract_segment_patchids()
+{
+    readonly name=$1
+    readonly dump_file=$2
+    gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump_file | cut -f 1 -d ' '
+}
 
 find_commit_of_patchid()
 {
     readonly commit=$1
     readonly dump_file=$2
 
-(if [ $verbose = y ]; then set -x;fi; diff $temp $temp2) |
     grep $commit $dump_file| cut -f 2 -d ' '
 }
 
+
+
+(if [ $verbose = y ]; then set -x;fi; diff <(extract_segment_patchids $name $dump) \
+                                           <(extract_segment_patchids $name $dump2)) |
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
@@ -73,5 +78,3 @@ find_commit_of_patchid()
             echo "ignoring $line" >&2
         fi
     done
-
-rm -f $temp $temp2
