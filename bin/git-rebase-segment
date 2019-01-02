@@ -117,9 +117,13 @@ if git checkout --no-track -B temp $onto &&
 ## the alternative way:
 # git rebase --onto $onto $start $branch;
 then
+    exit_status=0
     git-done-segment $branch "temp"
 else
+    exit_status=1
     mark_rebase_segment $branch
 fi
 
 unstash_if_stashed
+
+exit $exit_status
