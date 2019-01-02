@@ -521,10 +521,11 @@ find_roots_and_tops()
     [ $verbose = "y" ] && { cecho red -n "the maximal bases/summands (ancestors) are "; comm -23  $VERTICES $ANCESTORS }
 
     # vertices ... roots^1 =  ^root^@ vertices
-    # comm -1 -3 /tmp/fileFDORjK /tmp/fileOgzwpK
 
-    roots=( $(comm -1 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
-    tops=( $(comm -2 -3 $VERTICES $ANCESTORS) ) #unique to ancestors.
+    #unique to ancestors.
+    roots=( $(comm -1 -3 $VERTICES $ANCESTORS) )
+    # unique to vertices
+    tops=( $(comm -2 -3 $VERTICES $ANCESTORS) )
     rm -f $VERTICES $ANCESTORS
 }
 
