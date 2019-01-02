@@ -18,7 +18,7 @@ temp2=$(mktemp)
 show_commit()
 {
     #  commit dir
-    cd $(dirname $2)
+    cd $2
     git show --oneline -s $1
 }
 usage()
@@ -50,19 +50,24 @@ OPTIND=1
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump | cut -f 1 -d ' ' > $temp
 gawk -v requested="refs/heads/$name" -f $GAWK_FILE < $dump2 | cut -f 1 -d ' ' > $temp2
 
+find_commit_of_patchid()
+{
+    readonly commit=$1
+    readonly dump_file=$2
 
 (if [ $verbose = y ]; then set -x;fi; diff $temp $temp2) |
+    grep $commit $dump_file| cut -f 2 -d ' '
+}
+
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
-            commit=${line#< }
-            commit=$(grep $commit $dump| cut -f 2 -d ' ')
-            show_commit $commit $dump
+            commit=$(find_commit_of_patchid ${line#< })
+            show_commit $commit $(dirname $dump)
         elif [[ $line[1] = ">"  ]]
         then
-            commit=${line#> }
-            commit=$(grep $commit $dump2| cut -f 2 -d ' ')
-            show_commit $commit $dump2
+            commit=$(find_commit_of_patchid ${line#> })
+            show_commit $commit $(dirname $dump2)
         else
             # 0a1,2
             echo "ignoring $line" >&2
