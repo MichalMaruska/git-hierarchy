@@ -1,3 +1,30 @@
+git-hierarchy (5.14) release; urgency=medium
+
+  * git-diff-poset-dumps: deduce the hierarchy.dump filenames
+  * fix: don't use the "status" reserved r/o variable.
+  * git-diff-poset-dumps: Unify the Step logs
+  * git-diff-segments: use the installed awk file
+  * git-diff-segments: info to stderr, show the diff command.
+  * git-dump-refs: drop empty line
+  * git-dump-refs:  -o to dump into hierarchy.dump
+  * git-reapply-segment: new command
+  * git-diff-poset-dumps: unset -x
+  * git-diff-segments: be verbose only withe the -v option
+  * git-segment-patches: Do not create the output directory if only patch-id is output
+  * drop old comments, transcripts
+  * git-diff-poset-dumps: compare the sums also
+  * git-diff-poset-dumps: add -v option
+  * drop
+  * git-copy-commit: new
+  * functions.sh: reformat comments.
+  * git-segment-compare: drop obsolete
+  * simplify  show_commit & split into find_commit_of_patchid()
+  * git-diff-segments: use Process Substitution
+  * git-rebase-segment: drop the "git rebase" based implementation
+  * promote the exit status past the unstash step
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 02 Jan 2019 16:19:02 +0100
+
 git-hierarchy (5.13) release; urgency=medium
 
   * fix git-tsort -x: specify the segment_format
