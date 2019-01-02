@@ -1,0 +1,76 @@
+#!/bin/zsh -feu
+
+# Give git-revisions spec, dump the commits (in a different git repo) and apply them on HEAD.
+
+keep_patches=n
+verbose=n
+dry_run=n
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-k] [-v] {dir}  {git-spec}...
+
+ ${0##*/} [-d]  {dir}  {git-spec}...
+-k  don't remove the temp. patches directory
+-v verbose
+
+git-spec is passed to "git format-patch"
+
+
+-d  dry-run: just dump the commit-messages of the git-revisions.
+EOF
+}
+
+while getopts :k OPT; do
+    case $OPT in
+        k|+k)
+            keep_patches=y
+            ;;
+        h)
+            usage
+            exit 0
+            ;;
+        d)
+            dry_run=y
+            ;;
+        v)
+            verbose=y
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [[ $# -lt 1 ]]; then
+   usage >&2
+   exit 1
+else
+    dir=$1
+    shift
+fi
+
+
+
+# --stdout --
+if [[ $verbose = y ]]; then
+   set -x
+fi
+
+if [[ $dry_run = y ]]
+then
+    (cd $dir; git log --oneline $@ )
+else
+    readonly tmpdir=$(mktemp --directory ${TMP:/run/tmp}/copy-commit-XXX)
+
+    (cd $dir; git format-patch --keep-subject --output-directory $tmpdir $@ )
+    git am --keep $tmpdir/*(n)
+
+    if [[ $keep_patches = n ]];
+    then
+        rm -rv $tmpdir
+    fi
+fi
