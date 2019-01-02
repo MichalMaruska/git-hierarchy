@@ -1,5 +1,0 @@
-#!/bin/zsh -feu
-
-join -a 1 -a 2 \
-     <(git-segment-patches -p $1|sort) \
-     <(git-segment-patches -p $2|sort)
