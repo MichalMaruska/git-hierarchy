@@ -40,7 +40,7 @@ GIT_DIR=$(git_dir)
 # check that it's a segment!
 if [ $# = 1 ]; then
     BRANCH=$1
-    BASE="refs/base/${BRANCH#refs/base/}"
+    readonly BASE=$(segment_base_name ${BRANCH#refs/base/})
     git-segment --restart $BRANCH $BASE
 
     unmark_rebase_segment $BRANCH

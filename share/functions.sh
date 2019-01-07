@@ -154,6 +154,11 @@ delete_sum_definition()
     )
 }
 
+segment_base_name()
+{
+    echo "refs/base/$1"
+}
+
 segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!

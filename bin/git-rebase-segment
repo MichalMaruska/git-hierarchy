@@ -78,7 +78,7 @@ stash_if_non_clean "git-rebase-segment saving"
 start="refs/start/$branch"
 if [ -z $onto ]; then
    # the base
-   onto="refs/base/$branch"
+   onto=$(segment_base_name $branch)
 fi
 
 rebase_empty_segment()

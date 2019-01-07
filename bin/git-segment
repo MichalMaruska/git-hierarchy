@@ -61,7 +61,7 @@ diff_segment()
 describe_segment()
 {
     local name=$1
-    local baseref=refs/base/$name
+    local baseref=$(segment_base_name $name)
     local startref=refs/start/$name
     #$baseref
 
@@ -179,7 +179,7 @@ fi
 
 # Otherwise a specific segment:
 name=${1#refs/heads/}
-baseref=refs/base/$name
+local baseref=$(segment_base_name $name)
 # echo "the segment name is $name"
 
 if [ $# = 1 ]; then
