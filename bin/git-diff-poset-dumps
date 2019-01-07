@@ -81,9 +81,12 @@ foreach sum ( $(sed --silent -e 's|sum: refs/heads/||g;T;p' $dump1 ))
 {
     cecho yellow $sum
     (if [[ $verbose = y ]]; then set -x;fi
-     comm -3 <(gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump1 |sort) \
-          <(gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump2|sort)
+     set -e
+     setopt PIPE_FAIL
+     comm -3 <(set -e; setopt PIPE_FAIL; gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump1 |sort) \
+          <(set -e; gawk -v requested="refs/heads/$sum" -f $SUM_AWK $dump2|sort)
      )
+    # exit if that failed!
 }
 
 STEP "now diff single segments"
