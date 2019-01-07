@@ -29,7 +29,6 @@ EOF
 }
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
 
 
 # return (print) a new number for the (next) summand.
@@ -86,7 +85,7 @@ show_prune_definition()
     fi
     local summand
 
-    if ! test -d $GIT_DIR/refs/sums/$name;
+    if ! test -d $(git rev-parse --git-path refs/sums/$name)
     then
         echo "$name is not a sum">&2
         exit 1
