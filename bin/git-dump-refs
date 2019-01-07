@@ -25,7 +25,9 @@ usage: ${0##*/} [+-ho] [--] ARGS...
 EOF
 }
 
-integer myfd
+# stdout
+integer myfd=1
+
 while getopts :ho OPT; do
     case $OPT in
         h|+h)
