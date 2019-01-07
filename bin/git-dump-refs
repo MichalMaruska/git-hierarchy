@@ -48,7 +48,7 @@ OPTIND=1
 ##
 readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort -t ;fi ))
 
-##
+## o: sort in ascending order
 foreach ref ( ${(o)refs} )
 {
     if git-sum $ref &>/dev/null;
