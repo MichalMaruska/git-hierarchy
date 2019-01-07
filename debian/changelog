@@ -1,3 +1,17 @@
+git-hierarchy (5.15) release; urgency=medium
+
+  * move git-copy-commit to mmc-shell
+  * git-dump-refs: to stdout
+  * git-dump-refs: document ordering
+  * git-dump-refs: improve the git-check-sum
+  * new function segment_base_name
+  * git-sum: fix for inside worktree
+  * git-dump-refs: split dump_segment to handle better variables
+  * git-walk-down clean up
+  * incomplete attempt to report errors from a pipeline
+
+ -- Michal Maruska <michal@ubuntu>  Mon, 07 Jan 2019 10:36:49 +0100
+
 git-hierarchy (5.14) release; urgency=medium
 
   * git-diff-poset-dumps: deduce the hierarchy.dump filenames
