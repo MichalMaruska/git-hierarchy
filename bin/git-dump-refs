@@ -51,13 +51,17 @@ readonly refs=( $(if [[ $# -ge 1 ]]; then git-walk-down $1; else git-tsort -t ;f
 ## o: sort in ascending order
 foreach ref ( ${(o)refs} )
 {
-    if git-sum $ref &>/dev/null;
+    if git-sum $ref &> /dev/null;
     then
-        if git-check-sum $ref;
-           then
-               cecho red "sum: $ref"
-               git-sum $ref
+        if git-check-sum $ref &> /dev/null;
+        then
+            cecho red "sum: $ref"
+            git-sum $ref
+        else
+            die "sum $ref is dirty" >&2
+            exit 1
         fi
+
     elif git-segment $ref &>/dev/null;
     then
         cecho red "segment: $ref"
