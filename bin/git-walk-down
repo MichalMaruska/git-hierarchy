@@ -18,8 +18,6 @@
 # fixme: this does not dump the TYPE of the relationship. (sum vs segment-base)
 source /usr/share/git-hierarchy/functions.sh
 
-# segment_base ${segment#refs/base/}
-
 usage()
 {
     setopt POSIX_ARGZERO
