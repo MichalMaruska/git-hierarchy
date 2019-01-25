@@ -30,7 +30,7 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-while getopts :dgkltx OPT; do
+while getopts :dgklstx OPT; do
     case $OPT in
         d)
             verbose=y
@@ -45,6 +45,10 @@ while getopts :dgkltx OPT; do
         l)
             dump_format=log
             segment_format=tsort
+            ;;
+        s)
+            dump_format=symbolic
+            segment_format=symbolic
             ;;
         t)
             dump_format=tsort
