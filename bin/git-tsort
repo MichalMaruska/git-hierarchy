@@ -94,6 +94,8 @@ if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
     #dot -Tpng  $GRAPH
     #rm $GRAPH
+elif [ $dump_format = symbolic ]; then
+    cat $GRAPH
 elif [ $dump_format = log ]; then
     find_roots_and_tops $GRAPH
 
