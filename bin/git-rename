@@ -34,7 +34,7 @@ readonly GIT_DIR=$(git_dir)
 # set -x
 
 # Extract the segment/branch name:
-full_from=$(git-expand-ref $1)
+full_from=$(expand_ref $1)
 from=${full_from#refs/heads/}
 # The new one probably does not exist, so I cannot use $(git-expand-ref $2)
 
@@ -99,7 +99,7 @@ fi
 
 
 # Here Git can fail, so we fallback to:
-readonly full_new=$(git-expand-ref $new || echo "refs/heads/$new")
+readonly full_new=$(expand_ref $new || echo "refs/heads/$new")
 
 # As the DESTINATION of a symref.
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
