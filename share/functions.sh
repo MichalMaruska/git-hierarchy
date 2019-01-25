@@ -4,6 +4,8 @@
 PROGRAM=$0
 debug=n
 source /usr/share/mmc-shell/git-functions.sh
+source /usr/share/mmc-shell/mmc-functions.sh
+
 
 # obsolete:
 # report_error()
@@ -22,12 +24,6 @@ trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 cherry_pick_in_progress()
 {
     test -d $(git rev-parse --git-common-dir)/sequencer
-}
-
-die()
-{
-    echo $@ >&2
-    exit -1;
 }
 
 # todo: static variables!
