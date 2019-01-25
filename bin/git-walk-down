@@ -22,17 +22,24 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-dghxr] [--] {root-ref}
+usage: ${0##*/} [-g | x | r | l | s]  [-dh] [--] {REF}
 
 Output or Display the order of segments & sums below REF
--x  display the graph w/ ImageMagick
--g  dump the graph
+
+Format:
+-g  dump the graph (default)
 -r  raw format
+-x  display the graph w/ ImageMagick
 -l  log with --graph
+-s  symbolic
+
+
 -d  turn on Debugging
 
 -k keep the graph file
 -h  help
+
+REF ... top segment/sum
 EOF
     unsetopt POSIX_ARGZERO
 }
