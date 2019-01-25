@@ -43,8 +43,9 @@ git-branch-exists()
 
 list_sums()
 {
-    git for-each-ref 'refs/sums/' --format "%(refname)" |\
-        sed -e 's|^refs/sums/\([^/]*\)/[^/]*$|\1|' | sort -u
+    git for-each-ref 'refs/sums/' --format "%(refname)" --sort refname |\
+        sed -e 's|^refs/sums/\([^/]*\)/[[:digit:]]*$|\1|' | sort -u
+    # so uniq could be enough?
 }
 
 # full
@@ -483,10 +484,12 @@ current_branch_name()
     echo "$head"
 }
 
-# writes to stdout 2 kinds (all for tsort input format!):
+# writes to stdout 2 kinds of lines:
 #  segment: base
+#   ....
 #  sum: summand1 summand2 ...
 #
+# In alphabetic order?
 # input: $debug, dump_format (see dump_segment()!)
 dump_whole_graph()
 {
@@ -495,7 +498,7 @@ dump_whole_graph()
     local segments
     typeset -a segments
     # this list_segments is also in `git-segment'
-    segments=($(git for-each-ref 'refs/base/' --format "%(refname)"))
+    segments=($(git for-each-ref 'refs/base/' --format "%(refname)" --sort refname))
     if [ 0 =  ${#segments} ]; then
         echo "no segments." >&2
     else
