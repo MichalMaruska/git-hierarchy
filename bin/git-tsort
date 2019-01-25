@@ -20,12 +20,14 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-k]  [-g]  [-x | -l | -t] [--]
+usage: ${0##*/} [+-k]  [-g | -x | -l | -t] [--]
 -x display using  dot(1)
--k keep the generated file (for tsort(1))
 -l log
+
 -t just dump the tsort lines
--g don\'t dump the topological order on stdout.
+  -g don\'t dump the topological order on stdout.
+
+-k keep the generated file (for tsort(1))
 EOF
     unsetopt POSIX_ARGZERO
 }
