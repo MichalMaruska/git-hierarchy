@@ -48,7 +48,7 @@ DEBUG=n
 typeset -a draw_options
 
 
-while getopts :dghklxr OPT; do
+while getopts :dghklrsx OPT; do
     case $OPT in
         x|+x)
             display_gui=y
