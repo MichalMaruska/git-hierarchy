@@ -4,6 +4,18 @@
 PROGRAM=$0
 debug=n
 source /usr/share/mmc-shell/git-functions.sh
+
+# obsolete:
+# report_error()
+# {
+#     echo "report_error $0 ERROR: $@"
+#     exit -1
+# }
+
+#ERR
+# DEBUG
+# trap 'report_error $LINENO $BASH_SOURCE' ERR
+
 # mmc: so this should EXIT afterwards!
 trap 'print ${PROGRAM-$0} ERROR: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2' ZERR
 
@@ -448,16 +460,6 @@ remove_symlink_to()
     fi
 }
 
-
-report_error()
-{
-    echo "$0 ERROR: $@"
-    exit -1
-}
-
-#ERR
-# DEBUG
-# trap 'report_error $LINENO $BASH_SOURCE' ERR
 set_branch_to()
 {
     local branch=$1
