@@ -138,7 +138,7 @@ do
     name=${this#refs/heads/}
     if is_sum $name; then
         # fixme:
-        dump_sum $segment_format $name
+        dump_sum ${sum_format-$segment_format} $name
         queue+=($(summands_of $name))
     elif is_segment $name; then
         dump_segment $segment_format $name
