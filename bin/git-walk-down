@@ -65,6 +65,10 @@ while getopts :dghklxr OPT; do
             dump_format=raw
             segment_format=$dump_format
             ;;
+        s)
+            dump_format=symbolic
+            segment_format=$dump_format
+            ;;
         l)
             segment_format=tsort
             dump_format=log
@@ -161,7 +165,7 @@ case $dump_format in
     dot)
         draw-tsort-graph $draw_options -F png $GRAPH | display -
         ;;
-    raw)
+    raw | symbolic)
         cat $GRAPH
         ;;
     log)
