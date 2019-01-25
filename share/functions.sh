@@ -279,6 +279,10 @@ EOF
         tsort)
             echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
             ;;
+        symbolic)
+            local base=$(segment_base $segment_name)
+            echo "segment $segment_name\t ${base#refs/}"
+            ;;
         raw)
             # dump the start  segment_start_sha
             echo segment $segment_name "\t"  $(dump_ref refs/heads/$segment_name) \
@@ -300,6 +304,9 @@ dump_sum()
         raw)
             echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
             ;;
+        symbolic)
+            echo "sum\t$sum"
+            ;;
         *)
     esac
 
@@ -316,6 +323,9 @@ dump_sum()
                 tsort)
                     echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand
                     ;;
+                symbolic)
+                    echo "\t${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}"
+                    ;;
                 raw)
                     echo -n "\t"; dump_ref_without_ref $summand
                     ;;
@@ -323,11 +333,14 @@ dump_sum()
             esac
         done }
 
+
     if [ $dump_format = dot ]; then
         cat <<EOF
 "${sum//-/_}" [label="$sum",color=red,fontsize=14,
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
+    elif [[ $dump_format = symbolic ]]; then
+        echo
     fi
 }
 
