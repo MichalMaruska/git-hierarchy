@@ -1,6 +1,11 @@
 #!/usr/bin/zsh -feu
 
-# output all relevant references: sums, bases, starts
+# todo: the diff-id does not close over metadata: commit message can be different!
+
+# fixme: duplicates ... at least for `sums' git-tsort!
+# so this should be      git-dump-segment-patches
+
+# Output all relevant references: sums, bases, starts
 
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
