@@ -44,11 +44,11 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-# sum_bases()
 display_gui=n
+
 dump_format=tsort
-extern_color=pink
 segment_format=$dump_format
+
 keep_graph=n
 verbose=n
 DEBUG=n
