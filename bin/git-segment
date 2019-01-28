@@ -226,7 +226,9 @@ else
         # moving the `base' or `start'
         if [ $restart = y ]; then
             new_start=$2
-            start_hash=$(git log $new_start --max-count=1 --format="%H")
+            start_hash=$(commit_id $new_start)
+            # git rev-parse
+            # git log $new_start --max-count=1 --format="%H" --
         else
             # fixme: use rev-parse
             new_base=$(try_to_expand $2)
