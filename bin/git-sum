@@ -179,6 +179,8 @@ else
     # now creation:
     # find minimal number:
     index=$(find_new_index $name)
+    readonly summands=($(summands_of $name))
+
     for br in "$@"
     do
         case "$br" in
@@ -195,10 +197,17 @@ else
             +* | *)
                 br=${br#+}
                 cecho green "addend $br"
-                # add:
                 br=$(git-expand-ref $br)
-                add_to_sum $name $br $index
-                ((index=index+1))
+
+                if [[ -n ${summands[(r)$br]} ]]; then
+                    WARN "already summand, skipping"
+                    # short-cut:
+                    continue
+                else
+                    # add:
+                    add_to_sum $name $br $index
+                    ((index=index+1))
+                fi
                 ;;
         esac
         git-sum-branches $name
