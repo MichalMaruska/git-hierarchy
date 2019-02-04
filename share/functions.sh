@@ -36,11 +36,6 @@ commit_id()
     git rev-parse $1
 }
 
-git-branch-exists()
-{
-    git show-ref refs/heads/$1 >/dev/null;
-}
-
 list_sums()
 {
     git for-each-ref 'refs/sums/' --format "%(refname)" --sort refname |\

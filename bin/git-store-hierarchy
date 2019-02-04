@@ -22,6 +22,11 @@ readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
 # |git update-index  --index-info
 
 # the parent:
-commit=$(echo "new hierarchy" | git commit-tree -p $branch $tree_hash)
+parents=()
+if git br $branch;
+then
+    parents+=(-p $branch)
+fi
+commit=$(git commit-tree  -m "new hierarchy" $parents $tree_hash)
 
 git branch -f $branch $commit
