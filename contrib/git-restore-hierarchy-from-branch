@@ -1,0 +1,74 @@
+#!/bin/zsh -feu
+
+zmodload zsh/regex
+
+source /usr/share/mmc-shell/git-functions.sh
+source /usr/share/mmc-shell/mmc-functions.sh
+colors
+source /usr/share/git-hierarchy/functions.sh
+
+
+
+# todo: share with ./git-store-hierarchy
+FILENAME=hierarchy
+branch="_hierarchy"
+REMOTE="optiplex"
+
+# uses $REMOTE
+reconstruct_segment()
+{
+    readonly segment=$1
+    readonly base=$2
+
+    if is_segment $segment; then
+        cecho red "we already have segment $segment"
+    else
+        if git rev-parse $base;
+        then
+            git-segment $segment $base $base remotes/$REMOTE/$segment
+        else
+            cecho red "don't have the base of segment $segment: $base"
+        fi
+    fi
+}
+
+reconstruct_sum()
+{
+    readonly sum=$1
+    shift
+    readonly summands=($@)
+    # check all the summands exist
+
+    (set -x
+    git-sum $sum $summands
+    )
+}
+
+
+cat_git_file_from_commit $REMOTE/$branch $FILENAME | \
+    while read line; do
+        echo ">$line<"
+        if [[ $line -regex-match '^segment ([[:graph:]]+)[[:space:]]+([[:graph:]]+)$' ]]
+        then
+            # variables:
+            segment=$match[1]
+            base=$match[2]
+            reconstruct_segment $segment $base
+
+        elif [[ $line -regex-match '^sum[[:space:]]+([[:graph:]]+)$' ]]
+        then
+             sum=$match[1]
+             # read the summands:
+             summands=()
+
+             while read line; do
+                 if [[ $line = '' ]]; then
+                     # empty line = end.
+                     break;
+                 fi
+                 summands+=($line)
+             done
+
+             reconstruct_sum $sum $summands
+        fi
+    done
