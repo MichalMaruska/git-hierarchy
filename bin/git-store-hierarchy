@@ -1,5 +1,7 @@
 #!/bin/zsh -feu
 
+source /usr/share/mmc-shell/git-functions.sh
+
 #
 MODE=100644
 FILENAME=hierarchy
@@ -23,10 +25,12 @@ readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
 
 # the parent:
 parents=()
-if git br $branch;
+
+if git-branch-exists $branch;
 then
     parents+=(-p $branch)
 fi
 commit=$(git commit-tree  -m "new hierarchy" $parents $tree_hash)
 
-git branch -f $branch $commit
+
+git branch --force $branch $commit
