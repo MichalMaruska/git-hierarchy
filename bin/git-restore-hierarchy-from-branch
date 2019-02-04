@@ -12,7 +12,7 @@ source /usr/share/git-hierarchy/functions.sh
 # todo: share with ./git-store-hierarchy
 FILENAME=hierarchy
 branch="_hierarchy"
-REMOTE="optiplex"
+REMOTE="heads"
 
 # uses $REMOTE
 reconstruct_segment()
@@ -43,6 +43,39 @@ reconstruct_sum()
     git-sum $sum $summands
     )
 }
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-hn]  [-r remote] [--] ARGS...
+
+-n   ... dump the last hierarchy
+-r remote  ... instead of local branch $branch, use the the remote one.
+
+EOF
+}
+
+while getopts :hnr: OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        r)
+            REMOTE=$OPTARG
+            # optiplex
+            ;;
+        n|+n)
+            cat_git_file_from_commit $REMOTE/$branch $FILENAME
+            exit
+            ;;
+        *)
+            usage>&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
 
 
 cat_git_file_from_commit $REMOTE/$branch $FILENAME | \
