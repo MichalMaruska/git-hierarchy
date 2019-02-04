@@ -1,3 +1,32 @@
+git-hierarchy (5.16) release; urgency=medium
+
+  * Symbolic format for sum/segment
+  * half-removed report_error()
+  * use die() to explain the reason
+  * Use mmc-functions!
+  * use dump_stack from mmc-functions
+  * Symbolic format
+  * sum_format defaults to the segment one
+  * have a default segment format
+  * sq symbolic
+  * improve the usage()
+  * drop unused
+  * symbolic
+  * improve usage
+  * short-cut git-expand-ref
+  * symbolic
+  * Produce the segment & sum lists in alphabetic order.
+  * functions: save the $ZSH_ARGZERO
+  * note on git-dump-refs ... being only about Segment patches!
+  * drop ambiguity when parsing the new segment "start"
+  * store-hierarchy: new tool
+  * rename git-store-hierarchy
+  * git-restore-hierarchy-from-branch: new command
+  * drop recreate-sums -- was used to convert from prehistoric format to the current one.
+  * publish the 2 new tools
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 04 Feb 2019 12:44:16 +0100
+
 git-hierarchy (5.15) release; urgency=medium
 
   * move git-copy-commit to mmc-shell
