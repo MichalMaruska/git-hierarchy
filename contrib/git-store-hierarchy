@@ -1,5 +1,10 @@
 #!/bin/zsh -feu
 
+#
+MODE=100644
+FILENAME=hierarchy
+branch="_hierarchy"
+
 # create the content:
 # git-tsort -s > $tmpfile
 set -x
@@ -8,15 +13,15 @@ readonly blob_hash=$(git-tsort -s | git hash-object --stdin -w)
 
 # check:
 git cat-file -p $blob_hash
+# must be "blob"
+git cat-file -t $blob_hash
 
-MODE=100644
-FILENAME=hierarchy
-branch="_hierarchy"
 
+# tree with 1 file:
 readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
 # |git update-index  --index-info
 
-commit=$(echo "new hierarchy" | git commit-tree $tree_hash)
+# the parent:
+commit=$(echo "new hierarchy" | git commit-tree -p $branch $tree_hash)
 
 git branch -f $branch $commit
-
