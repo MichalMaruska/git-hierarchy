@@ -1,0 +1,42 @@
+#!/bin/zsh -feu
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-hl] [--] ARGS...
+
+-l   list only ... the current or the diff?
+
+EOF
+}
+
+list_only=n
+while getopts :hl OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        l|+l)
+            list_only=y
+            ;;
+        *)
+            usage>&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if diff --color \
+        <(git-restore-hierarchy-from-branch -n) \
+        <(git-tsort -s)
+then
+    echo "no changes"
+fi
+
+if [[ $list_only = y ]];
+then
+    git-restore-hierarchy-from-branch -n
+    exit 0
+fi
