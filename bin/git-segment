@@ -8,9 +8,6 @@ if getopt -T; then # should test (( $? = -4 ))
     exit -1
 fi
 
-PROGRAM=${0##*/}
-
-
 usage()
 {
     cat <<EOF
