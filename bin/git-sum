@@ -199,7 +199,7 @@ else
                 cecho green "addend $br"
                 br=$(git-expand-ref $br)
 
-                if [[ -n ${summands[(r)$br]} ]]; then
+                if [[ ${summands[(i)$br]} -le ${#summands} ]]; then
                     WARN "already summand, skipping"
                     # short-cut:
                     continue
