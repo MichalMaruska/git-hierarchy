@@ -5,7 +5,7 @@ readonly PROGRAM=$ZSH_ARGZERO
 debug=n
 source /usr/share/mmc-shell/git-functions.sh
 source /usr/share/mmc-shell/mmc-functions.sh
-
+colors
 
 # obsolete:
 # report_error()
