@@ -128,7 +128,7 @@ GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
 
 # DFS:
 typeset -a queue
-queue=($root)
+queue=($ref_name)
 typeset -a processed
 while [[ ${#queue} -ge 1  ]];
 do
