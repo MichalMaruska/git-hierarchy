@@ -325,7 +325,7 @@ dump_sum()
                     echo "\"${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}\""
                     ;;
                 tsort)
-                    echo -n "refs/heads/$sum\t"; dump_ref_without_ref $summand
+                    echo "refs/heads/$sum\t$(dump_ref_without_ref $summand)"
                     ;;
                 symbolic)
                     echo "\t${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}"
