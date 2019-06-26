@@ -55,7 +55,7 @@ DEBUG=n
 typeset -a draw_options
 
 
-while getopts :dghklrsx OPT; do
+while getopts :dghklrstx OPT; do
     case $OPT in
         x|+x)
             display_gui=y
@@ -64,6 +64,10 @@ while getopts :dghklrsx OPT; do
             ;;
         k)
             keep_graph=y
+            ;;
+        t)
+            segment_format=tsort
+            dump_format=raw
             ;;
         g|+g)
             dump_format=tsort
