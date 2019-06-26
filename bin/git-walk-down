@@ -160,7 +160,7 @@ do
             cecho red "stopping @ $name" >&2
         fi
         if [ $dump_format = raw ]; then
-            echo "base: $name"
+            :
         fi
     fi
 
