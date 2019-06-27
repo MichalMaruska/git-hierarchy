@@ -13,7 +13,7 @@ usage: ${0##*/} [+-f|l] [-v] [--]    [REF]
 
 REF is segment or sum. By default HEAD is used.
 -f  show the whole poset! (uses git-tsort to get the base).
--l  only the current segment/sum
+-g  the whole graph.
 
 -v  verbose
 
@@ -29,15 +29,16 @@ unsetopt POSIX_ARGZERO
 MAX=2000
 
 full_poset=n  # take it full-depth, not just 1 segment/sum
-all_graph=y # take all tops, not just current branch
+all_graph=n # take all tops, not just current branch
+
 verbose=n
-while getopts :flv OPT; do
+while getopts :fgv OPT; do
     case $OPT in
         f|+f)
             full_poset=y
             ;;
-        l)
-            all_graph=n
+        g)
+            all_graph=y
             ;;
         v)
             verbose=y
