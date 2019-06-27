@@ -121,19 +121,27 @@ then
     exit 0
 fi
 
-if is_sum $ref_name;
+# set Roots & Tops:
+tops=($ref_name)
+if is_segment $ref_name
 then
-    typeset -a summands
-    summands=($(git-sum $ref_name))
+    title="segment $ref_name"
+    roots=("refs/start/$ref_name^!" "refs/base/$ref_name")
+    # base as well.
+elif is_sum $ref_name;
+then
+     title="sum $ref_name"
+     typeset -a summands
+     summands=($(git-sum $ref_name))
 
-    typeset -a ranges
-    ranges=($bottom..heads/$ref_name)
-
-    set -x
-    $GITK --title="sum $ref_name" $ranges
-else
-    set -x
-    $GITK --title="segment $ref_name" ${bottom#refs/}...heads/$ref_name
+     for ((i=1; i<= ${#summands}; i++))
+         {
+             roots[$i]="$summands[$i]^!"
+         }
 fi
+
+set -x
+exec $GITK --title=$title $roots $tops
+
 # full_poset:
 # git-walk-down mmc-focus |
