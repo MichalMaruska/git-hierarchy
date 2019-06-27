@@ -52,10 +52,24 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
-if [ $all_graph = y ]; then
-    GRAPH=$(tempfile)
-    dump_whole_graph "tsort" > $GRAPH
+
+# mmc: but some tops must be given!
+gitk_from_graph()
+{
+    local -r GRAPH=$1
+
+    printf "gitk_from_graph %s\n" $GRAPH  >&2
+
+    # this sets the variables: roots tops
     find_roots_and_tops $GRAPH
+
+    if [[ $verbose = y ]];
+    then
+        echo "tops: $tops"
+        # bug: not always is the symbolic graph *really* below the tops.... if not rebased!
+        # todo: so the middle should be listed as positive too.
+        echo "roots: $roots"
+    fi
 
     # echo now prefix:
     for ((i=1; i<= ${#roots}; i++))
@@ -68,6 +82,13 @@ if [ $all_graph = y ]; then
     #    echo ${#roots}
     rm -f $GRAPH
     $GITK --title="poset" --max-count=$MAX $roots $tops HEAD
+}
+
+
+if [ $all_graph = y ]; then
+    readonly GRAPH=$(tempfile)
+    dump_whole_graph "tsort" > $GRAPH
+    gitk_from_graph $GRAPH
     exit 0
 fi
 
