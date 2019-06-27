@@ -107,12 +107,18 @@ else
 fi
 ref_name=${ref_name#refs/heads/}
 
+if [[ $full_poset = y ]]
+then
+    # why only 1?
+    # fixme:
+    title="full down from $ref_name"
 
+    readonly GRAPH=$(tempfile)
 
-if [[ $full_poset = n ]] && is_segment $ref_name; then
-    bottom=refs/start/$ref_name
-else
-    bottom=$(git-walk-down $ref_name |head -n 1)
+    git-walk-down -t $ref_name > $GRAPH
+    # dump_whole_graph "tsort"
+    gitk_from_graph $GRAPH
+    exit 0
 fi
 
 if is_sum $ref_name;
