@@ -80,7 +80,8 @@ typeset -a bases
 git checkout HEAD
 
 # note: grep & drop = sed -n
-bases=($(git-walk-down -r $top|sed --silent -e '/^base: /s///p'))
+bases=($(git-walk-down -r $top|- grep segment| cut -f 3))
+
 
 DEBUG "bases: $bases"
 
