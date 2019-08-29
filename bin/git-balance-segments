@@ -1,0 +1,44 @@
+#!/bin/zsh -feu
+
+usage()
+{
+cat <<EOF
+usage: ${0##*/} [+-v] [--] top bottom split
+
+EOF
+}
+
+verbose=n
+# 2 segments $top based on $bottom.
+while getopts :v OPT; do
+    case $OPT in
+        v|+v)
+            verbose=y
+        ;;
+        h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [[ $# != 3 ]]; then
+    usage >&2
+    exit 1
+fi
+
+top=$1
+bottom=$2
+new_split=$3
+
+boundary=$(git rev-parse $new_split)
+
+# start:
+git-segment -r $top $boundary
+# cut (unless it's the current branch!)
+git branch -f $bottom $new_split

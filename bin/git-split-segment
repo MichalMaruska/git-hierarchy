@@ -1,0 +1,28 @@
+#!/bin/zsh -feu
+
+# Given a segment, split it into 2 sugments,
+# one base off the other/lower.
+
+# base ----- segment
+# base --- seg1 = base2 ---- seg2
+
+set -x
+readonly segment=$1
+readonly commit=$2
+# must be inside the segment! todo: check it!
+
+# upper one?
+readonly name=$3
+
+readonly new=${name}
+
+# The upper part: -- notice it temporarily has the base ABOVE the start:
+git-segment $new $segment $commit $segment
+
+
+# now cut the bottom part:
+git branch -f $segment $commit
+
+
+# git-rename $se
+# git-segment $3 ($git-base $segment)
