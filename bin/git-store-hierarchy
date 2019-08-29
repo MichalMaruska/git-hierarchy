@@ -3,9 +3,9 @@
 source /usr/share/mmc-shell/git-functions.sh
 
 #
-MODE=100644
-FILENAME=hierarchy
-branch="_hierarchy"
+readonly BRANCH="_hierarchy"
+readonly FILENAME=hierarchy
+readonly MODE=100644
 
 # create the content:
 # git-tsort -s > $tmpfile
@@ -26,11 +26,11 @@ readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
 # the parent:
 parents=()
 
-if git-branch-exists $branch;
+if git-branch-exists $BRANCH;
 then
-    parents+=(-p $branch)
+    parents+=(-p $BRANCH)
 fi
 commit=$(git commit-tree  -m "new hierarchy" $parents $tree_hash)
 
 
-git branch --force $branch $commit
+git branch --force $BRANCH $commit
