@@ -1,3 +1,30 @@
+git-hierarchy (5.17) release; urgency=medium
+
+  * move git-branch-exists to git-functions.sh
+  * Fix git-store-hierarchy: make the commit with parent if there is one.
+  * git-restore-hierarchy-from-branch: -n to view only, usage(), and use local _hierarchy branch
+  * git-sum: avoid re-adding a summand.
+  * drop PROGRAM (now in functions.sh)
+  * git-update-hierarchy: new tool to observe the hierarchy changes
+  * fix the sum check -- correct the Zsh reverse index
+  * we do use colors(), so autoload them.
+  * dump_sum/tsort -- does it change?
+  * git-walk-down: fix missing extern_color var
+  * git-walk-down new format -t to simply dump the graph.
+  * git-walk-down: simplify
+  * git-walk-down: Break the -r format:
+  * Invert the default & options:
+  * gitk_from_graph function, common for 2 cases
+  * the limited global case ... use the new format of git-walk-down.
+  * the single segment/sum case: use common vars/launcher.
+  * fixme: adapt to a change format of "git-walk-down -r"
+  * Handle correctly bases of form refs/heads/* and don't fetch if no remote is associated
+  * document my consideration on the Transfer.
+  * improve shell-- var naming, readonly
+  * fix uninintialized var
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 29 Aug 2019 09:16:35 +0200
+
 git-hierarchy (5.16) release; urgency=medium
 
   * Symbolic format for sum/segment
