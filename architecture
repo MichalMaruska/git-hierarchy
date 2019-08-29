@@ -4,3 +4,37 @@
 # git-walk-down
 # git-tsort  (all)
 # git-restore- ... same as tsort.
+
+
+
+* How to transfer the hierarchy/poset between repositories/forks?
+
+** via "git note" of a named tag.
+
+git notes show ef965bf1bd0068cfc2f8c871a7e2373c37a8ee23
+
+*** git notes show tags/hierarchy
+
+
+** via commits on a separate branch
+===========================
+
+2 tools:
+
+~/repo/git-hierarchy/bin/git-store-hierarchy
+~/repo/git-hierarchy/bin/git-restore-hierarchy-from-branch
+
+
+tool to populate the hierarchy...
+
+
+* bpg.jar
+
+FULL <-- pull
+|
+|
+v  cut down
+|
+| --- how to make the stable commit ids?
+
+either modify the tool, or extract the hierarchy and port it into a new cut-down git.
