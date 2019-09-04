@@ -77,8 +77,10 @@ describe_segment()
 
         # how many commits there?
         local count=$(git log --oneline $startref..heads/$name |wc --lines)
-        echo $count commits:
-        git log --oneline $startref..heads/$name
+        echo "$count commits"
+        if [[ $short_list != y ]]; then
+            git log --oneline $startref..heads/$name
+        fi
     else
         echo "$name is not a segment -- no 'base' found">&2
         exit 1
