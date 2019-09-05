@@ -1,3 +1,10 @@
+git-hierarchy (5.18) release; urgency=medium
+
+  * new: split & balance segment(s)
+  * git-segment: when describing a segment, skip the git history for -s option
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 05 Sep 2019 09:47:03 +0200
+
 git-hierarchy (5.17) release; urgency=medium
 
   * move git-branch-exists to git-functions.sh
