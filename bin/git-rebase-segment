@@ -85,8 +85,14 @@ rebase_empty_segment()
 {
     local -r name=$1
     local -r base=$2
+    cecho yellow "rebase_empty_segment $name"
 
-    git branch --force $name $base
+    if [[ $name = $(current_branch_name) ]]
+    then
+        git reset --hard $base
+    else
+        git branch --force $name $base
+    fi
     git-reset-segment $name
 }
 
