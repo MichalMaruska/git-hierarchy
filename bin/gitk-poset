@@ -3,6 +3,7 @@
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 roots=()
+title=""
 
 : ${GITK=gitk}
 
@@ -82,7 +83,7 @@ gitk_from_graph()
     # convert:
     #    echo ${#roots}
     rm -f $GRAPH
-    $GITK --title="poset" --max-count=$MAX $roots $tops HEAD
+    $GITK --title="poset" --max-count=$MAX $roots $tops
 }
 
 
