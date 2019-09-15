@@ -172,7 +172,7 @@ done  > $GRAPH
 
 # cat $GRAPH
 
-# same as git-tsort:
+# same as git-graph:
 case $dump_format in
     dot)
         draw-tsort-graph $draw_options -F png $GRAPH | display -

@@ -8,9 +8,9 @@ readonly FILENAME=hierarchy
 readonly MODE=100644
 
 # create the content:
-# git-tsort -s > $tmpfile
+# git-graph -s > $tmpfile
 set -x
-readonly blob_hash=$(git-tsort -s | git hash-object --stdin -w)
+readonly blob_hash=$(git-graph -s | git hash-object --stdin -w)
 # check it didn't fail.
 
 # check:

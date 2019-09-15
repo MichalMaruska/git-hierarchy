@@ -30,7 +30,7 @@ OPTIND=1
 
 if diff --color \
         <(git-restore-hierarchy-from-branch -n) \
-        <(git-tsort -s)
+        <(git-graph -s)
 then
     echo "no changes"
 fi

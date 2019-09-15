@@ -14,7 +14,7 @@ setopt POSIX_ARGZERO
 usage: ${0##*/} [+-f|l] [-v] [--]    [REF]
 
 REF is segment or sum. By default HEAD is used.
--f  show the whole poset! (uses git-tsort to get the base).
+-f  show the whole poset! (uses git-graph to get the base).
 -g  the whole graph.
 
 -v  verbose
