@@ -111,12 +111,17 @@ function rebase_one()
         remote_branch=${remote#*/}
         remote=${remote%/*}
         echo "the base is remote: $remote/$remote_branch"
+
     else
-        #fixme:
-        this_branch=$base
-        base=refs/heads/$base
+        if ! expr match $base 'refs/heads/' >/dev/null
+        then #fixme:
+            this_branch=$base
+            base=refs/heads/$base
+        fi
 
         remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
+        if [[ -z $remote_branch ]]; then git_fetch=no; fi
+
         echo "upstream: $remote_branch"
         remote=${remote_branch%/*}
         remote_branch=${remote_branch#*/}
