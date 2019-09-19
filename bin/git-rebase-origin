@@ -134,6 +134,10 @@ function rebase_one()
             local old_head=$(git rev-parse $remote/$remote_branch)
             git fetch $remote $remote_branch
             git log $old_head..FETCH_HEAD
+
+            # funny:
+            # $(basename $base)
+            git branch -f ${base#refs/heads/} $remote/$remote_branch
         else
             echo "would fetch from $remote $remote_branch"
         fi
