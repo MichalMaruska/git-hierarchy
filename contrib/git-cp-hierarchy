@@ -18,7 +18,8 @@ usage()
     cat <<EOF
 usage: ${0##*/} [+-h] [-m from:to] [--] {source-repo} {dest-repo} [ top ]
 
--m  map the base FROM to TO
+-m  map the base FROM to TO fixme: cannot be remote branch.
+
 
 Both {source-repo} {dest-repo} are git repositories.
 
