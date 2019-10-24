@@ -67,11 +67,11 @@ find_commit_of_patchid()
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
-            commit=$(find_commit_of_patchid ${line#< })
+            commit=$(find_commit_of_patchid ${line#< } $dump)
             show_commit $commit $(dirname $dump)
         elif [[ $line[1] = ">"  ]]
         then
-            commit=$(find_commit_of_patchid ${line#> })
+            commit=$(find_commit_of_patchid ${line#> } $dump2)
             show_commit $commit $(dirname $dump2)
         else
             # 0a1,2
