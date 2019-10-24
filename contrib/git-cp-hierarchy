@@ -144,9 +144,11 @@ foreach f ($refs) {
             git-reapply-segment -b $base $srcdir $name $destdir
         fi
     else
-       # fixme: make sure the base exists!
-       git rev-parse ${base_mapping[$name]-$name} > /dev/null
-       WARN "skipping $f -- not a segment nor a sum."
+        # fixme: make sure the base exists!
+        ( cd $destdir
+          git rev-parse ${base_mapping[$name]-$name} > /dev/null
+          # WARN "skipping $f -- not a segment nor a sum."
+        )
     fi
 
     cd $srcdir
