@@ -30,7 +30,7 @@ if git-branch-exists $BRANCH;
 then
     parents+=(-p $BRANCH)
 fi
-commit=$(git commit-tree  -m "new hierarchy" $parents $tree_hash)
+commit=$(git commit-tree -m "new hierarchy" $parents $tree_hash)
 
 
 git branch --force $BRANCH $commit
