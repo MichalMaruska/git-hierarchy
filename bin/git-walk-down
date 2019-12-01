@@ -124,7 +124,7 @@ clean()
     fi
 }
 
-GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
+GRAPH=$(mktemp graph.XXX)
 
 # DFS:
 typeset -a queue

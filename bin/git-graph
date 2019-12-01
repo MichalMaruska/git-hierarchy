@@ -74,8 +74,7 @@ if [ $# -gt 0 ]; then
     exit 1
 fi
 
-# Get a temp file:
-GRAPH=$(mktemp --tmpdir=${TEMP-/run/tmp/} graph.XXX)
+GRAPH=$(mktemp graph.XXX)
 extern_color=pink
 
 # segments ... look at bases.

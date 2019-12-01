@@ -77,7 +77,7 @@ clean_up()
     fi
 }
 
-readonly tempdir=$(mktemp --directory ${TMP-/run/tmp}/segment-patches-$SEGMENT_NAME-XXX)
+readonly tempdir=$(mktemp --directory segment-patches-$SEGMENT_NAME-XXX)
 
 if [[ $debug = y ]]; then INFO "will use $tempdir" >&2; fi
 # todo: trap to remove the dir!
