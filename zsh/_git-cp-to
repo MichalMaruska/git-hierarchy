@@ -9,25 +9,26 @@ typeset -A opt_args
 
 _arguments : \
 	   '-h[help]'  \
-	   '-d[Sum to drop]:sum:_git-sum-name' \
-	   '1: :->branch-or-tree-ish-or-file' \
-	   '*: :->git_segment_name' && return 0
+           '-h[help]'  \
+           '1: :->branch-or-tree-ish-or-file' \
+           '*: :->git_segment_name' && return 0
+
 
 case $state in
     branch-or-tree-ish-or-file)
-	# how to use a local function from _git?
-	# ~/git/zsh/Completion/Unix/Command/_git
-	_alternative 'branches::__git_revisions'
-	;;
+        # how to use a local function from _git?
+        # ~/git/zsh/Completion/Unix/Command/_git
+        _alternative 'branches::__git_revisions'
+        ;;
     git_segment_name)
-	    # or _sum
-	_alternative \
-	    'segment:segment:_git-segment-name' \
-	    'sum:sum:_git-sum-name'
-	    # _arguments "1:Segments:($available)"
-	;;
+            # or _sum
+        _alternative \
+            'segment:segment:_git-segment-name' \
+            'sum:sum:_git-sum-name'
+            # _arguments "1:Segments:($available)"
+        ;;
     *)
-	_files
+        ;; # _files
 esac
 }
 
