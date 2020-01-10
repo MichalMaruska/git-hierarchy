@@ -11,12 +11,12 @@ _arguments : \
 
 case $state in
     segment_sum_name)
-	    # or _sum
-	_alternative \
-	    'segment:segment:_git-segment-name' \
-	    'sum:sum:_git-sum-name'
-	    # _arguments "1:Segments:($available)"
-	;;
+            # or _sum
+        _alternative \
+            'segment:segment:_git-segment-name' \
+            'sum:sum:_git-sum-name'
+            # _arguments "1:Segments:($available)"
+        ;;
     *)
-	_files
+        _files
 esac
