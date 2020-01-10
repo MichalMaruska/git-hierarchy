@@ -36,7 +36,7 @@ esac
 
 if [[ ! $words[1] = 'git' ]]
 then
-    words[1]=(git "-cp-to")
+    words[1]=(git "cp-to")
     (( CURRENT++ ))
 else
     echo "already divided: $words[1] vs $words[2]">&2
