@@ -8,25 +8,25 @@ _git-segment1() {
     typeset -A opt_args
 
     _arguments : \
-	'-h[help]'  \
-	'-s[short]'  \
-	'-d[Segment to drop]:segment:_git-segment-name' \
-	'-u[update]:segment:_git-segment-name' \
-	'-r[restart]:segment:_git-segment-name' \
-	'*: :->git_segment_name' && return 0
+        '-h[help]'  \
+        '-s[short]'  \
+        '-d[Segment to drop]:segment:_git-segment-name' \
+        '-u[update]:segment:_git-segment-name' \
+        '-r[restart]:segment:_git-segment-name' \
+        '*: :->git_segment_name' && return 0
 
     # I need to complete the base or start!
     # base ... from git branches
     # start
 
     case $state in
-	git_segment_name)
-	    _git-segment-name
-	    # _arguments "1:Segments:($available)"
-	    ;;
-	*)
-	    # as a start ... ?
-	    # as a base ... any branch -- segments & sums prefered.
+        git_segment_name)
+            _git-segment-name
+            # _arguments "1:Segments:($available)"
+            ;;
+        *)
+            # as a start ... ?
+            # as a base ... any branch -- segments & sums prefered.
     esac
 }
 
