@@ -8,7 +8,6 @@ local curcontext="$curcontext" state line
 typeset -A opt_args
 
 _arguments : \
-	   '-h[help]'  \
            '-h[help]'  \
            '1: :->branch-or-tree-ish-or-file' \
            '*: :->git_segment_name' && return 0
