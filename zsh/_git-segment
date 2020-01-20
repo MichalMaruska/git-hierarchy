@@ -3,32 +3,51 @@
 # :completion::complete:git-segment:argument-1:git-branches
 
 
-_git-segment1() {
+_git-segment() {
     local curcontext="$curcontext" state line
     typeset -A opt_args
 
-    _arguments : \
+    _arguments -C \
         '-h[help]'  \
         '-s[short]'  \
         '-d[Segment to drop]:segment:_git-segment-name' \
         '-u[update]:segment:_git-segment-name' \
         '-r[restart]:segment:_git-segment-name' \
-        '*: :->git_segment_name' && return 0
+        ': :->git_segment_name' \
+        ': :->branch' \
+        ': :->branch-or-tree-ish-or-file' \
+        ': :->branch-or-tree-ish-or-file' \
+        && return 0
 
-    # I need to complete the base or start!
-    # base ... from git branches
+    # base ... from git branches remotes included (segments & sums prefered?).
     # start
+    # head
 
     case $state in
         git_segment_name)
             _git-segment-name
-            # _arguments "1:Segments:($available)"
+            ;;
+        branch)
+            __git_remote_branch_names
+            # todo: also:
+            # __git_branch_names
+            ;;
+        branch-or-tree-ish-or-file)
+            __git_commits_prefer_recent
             ;;
         *)
-            # as a start ... ?
-            # as a base ... any branch -- segments & sums prefered.
+            ;;
     esac
 }
 
+# standard trick:
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-segment")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git
 
-_git-segment1 "$@"
