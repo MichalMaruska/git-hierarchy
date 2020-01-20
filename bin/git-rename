@@ -99,7 +99,9 @@ fi
 
 
 # Here Git can fail, so we fallback to:
-readonly full_new=$(expand_ref $new || echo "refs/heads/$new")
+if [[ -z ${full_new::=$(expand_ref $new 2>/dev/null)} ]]; then
+    full_new="refs/heads/$new";
+fi
 
 # As the DESTINATION of a symref.
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
