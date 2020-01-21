@@ -20,18 +20,18 @@ git_branch_delete_option="-d"
 
 while getopts :hsD OPT; do
     case $OPT in
-	h|+h)
-	    usage
-	    exit 0
-	    ;;
-	s)
-	    delete_from_sum=no
-	    ;;
-	D)
-	    git_branch_delete_option="-D"
-	    ;;
-	*)
-	    exit 2
+        h|+h)
+            usage
+            exit 0
+            ;;
+        s)
+            delete_from_sum=no
+            ;;
+        D)
+            git_branch_delete_option="-D"
+            ;;
+        *)
+            exit 2
     esac
 done
 shift OPTIND-1
@@ -49,40 +49,40 @@ delete_one()
 ## Sums
     foreach ref ($(git for-each-ref "refs/sums/*/*" --format "%(refname)"))
     {
-	if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
-	    sum=${ref#refs/sums/}
-	    sum=${sum%/*}
-	    cecho red "Sum $sum depends on it"
-	    if [ $delete_from_sum = yes ];then
-		echo "hence removing automatically from it."
-		git-sum $sum "-$victim"
-	    else
-		exit -1
-	    fi
-	fi
+        if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
+            sum=${ref#refs/sums/}
+            sum=${sum%/*}
+            cecho red "Sum $sum depends on it"
+            if [ $delete_from_sum = yes ];then
+                echo "hence removing automatically from it."
+                git-sum $sum "-$victim"
+            else
+                exit -1
+            fi
+        fi
     }
 
 ## Check dependency: segment bases & other refs?
     foreach ref ($(git for-each-ref --format="%(refname)" \
-	'refs/base/*'))
+        'refs/base/*'))
     {
-	if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
-	    cecho red "it's a base for $ref"
-	    exit -1
-	fi
+        if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
+            cecho red "it's a base for $ref"
+            exit -1
+        fi
     }
 
 
 # is it a sum itself?
     if is_sum $victim ; then
-	cecho yellow "it's a sum"
-	delete_sum_definition $victim
+        cecho yellow "it's a sum"
+        delete_sum_definition $victim
     fi
 
 # A segment?
     if is_segment $victim; then
-	cecho yellow "$victim is a segment -> dropping segment references"
-	drop_segment $victim
+        cecho yellow "$victim is a segment -> dropping segment references"
+        drop_segment $victim
     fi
 
 
