@@ -54,6 +54,9 @@ done
 shift $(( OPTIND - 1 ))
 OPTIND=1
 
+# Beware: for now gitk cannot be directed to start on a given commit.
+# Hence it's desirable, that the `top' intended commit is near the top
+# and hence the other included/positive refs should not bring in many underlying commits.
 
 # mmc: but some tops must be given!
 gitk_from_graph()
