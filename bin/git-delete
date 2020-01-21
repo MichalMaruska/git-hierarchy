@@ -6,7 +6,7 @@ usage()
 Usage: ${0##*/} [+-h] [-s] [--] ARGS...
 
 Delete a branch, and any mention of it  -- symbolic references.
--s  ... prevent dropping summands.
+-s  ... first check & abort if it's a summand.
 -D  ... option to delete the branch. (git branch -D vs -d)
 EOF
 }
@@ -57,6 +57,7 @@ delete_one()
                 echo "hence removing automatically from it."
                 git-sum $sum "-$victim"
             else
+                die "it's a summand of $sum -> not deleting!"
                 exit -1
             fi
         fi
