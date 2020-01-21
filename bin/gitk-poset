@@ -128,7 +128,7 @@ tops=($ref_name)
 if is_segment $ref_name
 then
     title="segment $ref_name"
-    roots=("refs/start/$ref_name^!" "refs/base/$ref_name")
+    roots=("refs/start/$ref_name^!" "refs/base/$ref_name^!")
     # base as well.
 elif is_sum $ref_name;
 then
