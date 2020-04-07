@@ -1,3 +1,22 @@
+git-hierarchy (5.22) unstable; urgency=medium
+
+  * debian:suggest graphviz
+  * tabs
+  * correct the git trick for Zsh tab completion
+  * tabs
+  * drop duplicate
+  * tabs
+  * git-rename: so git fails to expand non-existent ref, at least handle it robustly
+  * expand_ref: do not prepend head.
+  * _git-segment: use functions from _git
+  * tabs
+  * git-delete: improve clarity of usage, and error-on-exit message
+  * [FIX] gitk: Cut the inclusion at the base
+  * Document limitation of gitk -- cannot position initially at a given commit
+  * drop zsh for _git-cp-to
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 07 Apr 2020 19:40:36 +0200
+
 git-hierarchy (5.21) unstable; urgency=medium
 
   * bump up the version
