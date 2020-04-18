@@ -260,6 +260,9 @@ else
     else
         # no update -> start is defined:
         if ! git-branch-exists $name; then
+            # check it:
+            if [[ $# = 4 ]]; then git rev-parse $4; fi
+            # Create it:
             git branch $name $start_hash
         fi
         # doing in this order intentionally?
