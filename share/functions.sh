@@ -19,7 +19,7 @@ colors
 # trap 'report_error $LINENO $BASH_SOURCE' ERR
 
 # mmc: so this should EXIT afterwards!
-trap 'print ${PROGRAM-$0} Error: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2; dump_stack' ZERR
+trap 'print ${PROGRAM-$0} Error: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2; dump_stack; exit 1' ZERR
 
 cherry_pick_in_progress()
 {
