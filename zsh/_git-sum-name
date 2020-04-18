@@ -5,4 +5,3 @@ typeset -a available
 available=( $(git-sum 2>/dev/null) )
 compadd -- ${(k)available} && ret=0
     # _arguments "1:Segments:($available)"
-

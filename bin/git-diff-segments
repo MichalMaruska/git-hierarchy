@@ -3,7 +3,6 @@
 # Given 2 dumps of segments, produced by ../bin/git-dump-refs
 # compare the content of same-name-segment.
 
-# Outputs:
 # runs diff(1) by field patch-id ... and shows the related commit-id message.
 
 name=$1

@@ -9,4 +9,3 @@ AVAILABLE=( $(git-segment -s 2>/dev/null) )
 
 compadd -a AVAILABLE && ret=0
 #}
-

@@ -8,8 +8,8 @@ readonly FILENAME=hierarchy
 readonly MODE=100644
 
 # create the content:
+# ==================
 # git-graph -s > $tmpfile
-set -x
 readonly blob_hash=$(git-graph -s | git hash-object --stdin -w)
 # check it didn't fail.
 
