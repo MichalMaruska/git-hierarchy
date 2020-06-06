@@ -72,19 +72,24 @@ find_commit_of_patchid()
 
 
 
-(if [ $verbose = y ]; then set -x;fi; diff <(extract_segment_patchids $name $dump) \
-                                           <(extract_segment_patchids $name $dump2)) |
+(if [[ $verbose = y ]]; then set -x; fi;
+ diff <(extract_segment_patchids $name $dump) \
+      <(extract_segment_patchids $name $dump2)) |
     while read line; do
         if [[ $line[1] = "<"  ]]
         then
             commit=$(find_commit_of_patchid ${line#< } $dump)
+            cecho red "<"
             show_commit $commit $(dirname $dump)
         elif [[ $line[1] = ">"  ]]
         then
             commit=$(find_commit_of_patchid ${line#> } $dump2)
+            cecho blue ">"
             show_commit $commit $(dirname $dump2)
         else
             # 0a1,2
-            echo "ignoring $line" >&2
+            if [[ $verbose = y ]]; then
+                echo "ignoring $line" >&2
+            fi
         fi
     done
