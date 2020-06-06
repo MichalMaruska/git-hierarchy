@@ -3,7 +3,7 @@
 # Given 2 dumps of segments, produced by ../bin/git-dump-refs
 # compare the content of same-name-segment.
 
-# runs diff(1) by field patch-id ... and shows the related commit-id message.
+# runs diff(1) on column of patch-id ... and shows the related commit-id message.
 
 
 GAWK_FILE="/usr/share/git-hierarchy/dump-segment"
@@ -18,9 +18,12 @@ show_commit()
 usage()
 {
     cat <<EOF
-print "usage: ${0##*/} [+-v] [--] ARGS..."
+print "usage: ${0##*/} [+-v] [--] segment dump1 dump2"
 
 -v verbose
+
+use git-dump-refs to produce the dumps files.
+
 EOF
 }
 
