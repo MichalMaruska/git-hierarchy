@@ -5,9 +5,6 @@
 
 # runs diff(1) by field patch-id ... and shows the related commit-id message.
 
-name=$1
-dump=$2
-dump2=$3
 
 GAWK_FILE="/usr/share/git-hierarchy/dump-segment"
 
@@ -17,6 +14,7 @@ show_commit()
     cd $2
     git show --oneline -s $1
 }
+
 usage()
 {
     cat <<EOF
@@ -42,6 +40,16 @@ while getopts :hv OPT; do
 done
 shift OPTIND-1
 OPTIND=1
+
+
+if [[ $# -lt 3 ]]; then
+    usage >&2
+    exit 1
+fi
+
+name=$1
+dump=$2
+dump2=$3
 
 # given the output of `git-dump-refs', extract the patch-ids ... not the commit numbers.
 extract_segment_patchids()
