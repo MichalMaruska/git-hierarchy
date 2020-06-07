@@ -101,7 +101,7 @@ if [[ $verbose = y ]]; then set -x;fi
 # sed -n  -e '\|segment: refs/heads/|p' hierarchy.dump
 # sed --silent -e 's|segment: refs/heads/||g;tp'
 # - grep segment $dump1 |sort
-foreach segment ( $(sed --silent -e 's|segment: refs/heads/||g;T;p' $dump1 ) )
+foreach segment ( $(sed --silent -e 's|segment: refs/heads/||g;T;p' $dump1 |cut --fields=1 --delimiter=' ') )
 {
     #: ${segment=${segment#refs/heads/}}
     cecho orange $segment;
