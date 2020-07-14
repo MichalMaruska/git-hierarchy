@@ -328,7 +328,9 @@ dump_sum()
                     echo "refs/heads/$sum\t$(dump_ref_without_ref $summand)"
                     ;;
                 symbolic)
-                    echo "\t${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}"
+                    # mmc: why?
+                    # "\t${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}"
+                    echo "\t${$(dump_symbolic_ref $summand)#refs/heads/}"
                     ;;
                 raw)
                     echo -n "\t"; dump_ref_without_ref $summand
