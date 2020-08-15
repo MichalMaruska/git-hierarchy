@@ -112,7 +112,6 @@ else
 fi
 
 ref_name=${ref_name#refs/heads/}
-root=$ref_name
 
 GRAPH=
 
