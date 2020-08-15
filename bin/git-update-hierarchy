@@ -1,5 +1,7 @@
 #!/bin/zsh -feu
 
+source /usr/share/mmc-shell/mmc-functions.sh && colors
+
 usage()
 {
     cat <<EOF
@@ -33,7 +35,11 @@ if diff --color \
         <(git-graph -s)
 then
     echo "no changes"
+else
+    warn "should store a new commit!"
 fi
+
+
 
 if [[ $list_only = y ]];
 then
