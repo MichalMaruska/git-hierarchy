@@ -166,8 +166,7 @@ do
     if test "$DEBUG" = y; then
         cecho green "iterate $queue -- ${#queue}" >&2
     fi
-done  > $GRAPH
-
+done > $GRAPH
 
 # cat $GRAPH
 
