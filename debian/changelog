@@ -1,3 +1,22 @@
+git-hierarchy (5.23) unstable; urgency=medium
+
+  * Don't create the segment, if any of the 3 references is wrong
+  * Correct the ZERO handler: exit!
+  * indentation
+  * small reformatting
+  * git-diff-segments: print usage if insufficient arguments provided
+  * git-diff-poset-dumps: improve usage & LOG descriptions
+  * git-diff-segments: improve usage()
+  * git-diff-segments: improve output
+  * git-diff-poset-dumps: take just the segment name, not the base
+  * dump_sum: don't translate - into _ for symbolic format
+  * git-update-hierarchy add colors
+  * drop unused variable
+  * spaces
+  * Switch dump_symbolic_ref to keep the "ref: ", so use dump_ref_without_ref for the old API
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 16 Aug 2020 13:42:41 +0200
+
 git-hierarchy (5.22) unstable; urgency=medium
 
   * debian:suggest graphviz
