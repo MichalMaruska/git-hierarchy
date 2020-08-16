@@ -58,7 +58,7 @@ dump_segment()
     readonly ref=$1
 
     readonly baseref=$(segment_base_name ${ref#refs/heads/})
-    readonly base=$(dump_symbolic_ref $baseref | /bin/sed -e 's|^refs/||')
+    readonly base=$(dump_ref_without_ref $baseref | /bin/sed -e 's|^refs/||')
 
     cecho red "segment: $ref base $base"
     git-segment-patches -p $ref

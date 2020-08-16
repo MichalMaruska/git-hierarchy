@@ -54,7 +54,7 @@ summands_of()
     ( while read summand;
         do
             # echo $summand >&2
-            dump_symbolic_ref $summand
+            dump_ref_without_ref $summand
         done)
 }
 
@@ -107,7 +107,7 @@ dump_symbolic_ref(){
     # todo: use 'read'
     local a
     a=$(cat $(git rev-parse --git-path $1))
-    echo ${a#ref: }
+    echo $a
 }
 
 dump_ref_without_ref()
@@ -116,7 +116,7 @@ dump_ref_without_ref()
         git rev-parse --symbolic-full-name $1
     else
         a=$(dump_symbolic_ref $1)
-        echo $a
+        echo ${a#ref: }
     fi
 }
 
@@ -167,7 +167,7 @@ segment_base()
 {
     # fixme:  dump_ref $1 ... so full ref is needed!
     # refs/\(heads\|remotes\)
-    dump_symbolic_ref refs/base/$1
+    dump_ref_without_ref refs/base/$1
 }
 
 segment_start()
@@ -322,15 +322,15 @@ dump_sum()
             case $dump_format in
                 dot)
                     echo -n "\"${sum//-/_}\"" "->"
-                    echo "\"${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}\""
+                    echo "\"${${$(dump_ref_without_ref $summand)#refs/heads/}//-/_}\""
                     ;;
                 tsort)
                     echo "refs/heads/$sum\t$(dump_ref_without_ref $summand)"
                     ;;
                 symbolic)
                     # mmc: why?
-                    # "\t${${$(dump_symbolic_ref $summand)#refs/heads/}//-/_}"
-                    echo "\t${$(dump_symbolic_ref $summand)#refs/heads/}"
+                    # "\t${${$(dump_ref_without_ref $summand)#refs/heads/}//-/_}"
+                    echo "\t${$(dump_ref_without_ref $summand)#refs/heads/}"
                     ;;
                 raw)
                     echo -n "\t"; dump_ref_without_ref $summand

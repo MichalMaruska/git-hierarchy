@@ -106,7 +106,7 @@ fi
 # As the DESTINATION of a symref.
 git for-each-ref "refs/sums/" "refs/base/" --format "%(refname)"|\
 while read symref; do
-    if dump_symbolic_ref $symref|\
+    if dump_ref_without_ref $symref|\
        grep --line-regexp --fixed-strings "$full_from" >/dev/null
     then
         INFO "replacing symbolic ref $symref to reference $full_new"
