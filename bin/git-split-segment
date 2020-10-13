@@ -1,10 +1,39 @@
 #!/bin/zsh -feu
 
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h] [--]  {segment} {commit} {new-name}
+
 # Given a segment, split it into 2 sugments,
 # one base off the other/lower.
 
 # base ----- segment
 # base --- seg1 = base2 ---- seg2
+EOF
+}
+
+
+while getopts :h OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            # wrong option
+            usage >&2
+            exit 1
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
+if [[ $# != 3 ]]; then
+    usage >&2
+    exit 1
+fi
 
 set -x
 readonly segment=$1
