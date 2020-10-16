@@ -1,0 +1,5 @@
+#!/bin/zsh -feu
+
+name=$1
+shift
+git diff $@ start/$name..$name
