@@ -5,11 +5,11 @@ usage()
     cat <<EOF
 usage: ${0##*/} [+-h] [--]  {segment} {commit} {new-name}
 
-# Given a segment, split it into 2 sugments,
-# one base off the other/lower.
+*************
+Given a segment, split it into 2 segments:
+The new one is the _TOP_ half of the existing.
 
-# base ----- segment
-# base --- seg1 = base2 ---- seg2
+base/start .... segment (commit) .... new-name
 EOF
 }
 
