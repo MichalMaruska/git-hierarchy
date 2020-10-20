@@ -1,4 +1,6 @@
 #!/bin/zsh -feu
+source /usr/share/git-hierarchy/functions.sh
+
 
 usage()
 {
@@ -40,18 +42,23 @@ readonly segment=$1
 readonly commit=$2
 # must be inside the segment! todo: check it!
 
-# upper one?
-readonly name=$3
+# git rev-parse $commit
+git merge-base --is-ancestor start/$segment $commit
+git merge-base --is-ancestor $commit $segment
 
-readonly new=${name}
+readonly name=$3
+# upper one?
 
 # The upper part: -- notice it temporarily has the base ABOVE the start:
-git-segment $new $segment $commit $segment
+git-segment $name $segment $commit $segment
 
 
 # now cut the bottom part:
-git branch -f $segment $commit
+if [[ $(current_branch_name) = $segment ]]; then
+    git switch $name
+fi
 
+git branch -f $segment $commit
 
 # git-rename $se
 # git-segment $3 ($git-base $segment)
