@@ -5,6 +5,10 @@ usage()
 cat <<EOF
 usage: ${0##*/} [+-v] [--] top bottom split
 
+Given 2 segments, TOP based on BOTTOM, change their boundary
+to SPLIT (previously the head of BOTTOM)
+
+Nothing happens to other segments.
 EOF
 }
 
