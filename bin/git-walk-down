@@ -22,7 +22,7 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [-g | x | r | l | s]  [-dh] [--] {REF}
+usage: ${0##*/} [-g | x | r | l | s] | [-f format]  [-dh] [--] {REF}
 
 Output or Display the order of segments & sums below REF
 
@@ -32,6 +32,8 @@ Format:
 -x  display the graph w/ ImageMagick
 -l  log with --graph
 -s  symbolic
+
+-f  format --- explicitly select (dot raw tsort)
 
 
 -d  turn on Debugging
@@ -55,7 +57,7 @@ DEBUG=n
 typeset -a draw_options
 
 
-while getopts :dghklrstx OPT; do
+while getopts :df:ghklrstx OPT; do
     case $OPT in
         x|+x)
             display_gui=y
@@ -84,6 +86,10 @@ while getopts :dghklrstx OPT; do
         l)
             segment_format=tsort
             dump_format=log
+            ;;
+        f)
+            dump_format=$OPTARG
+            segment_format=$dump_format
             ;;
         h|+h)
             usage
