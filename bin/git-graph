@@ -16,6 +16,7 @@ segment_format=tsort
 verbose=n
 typeset -a draw_options
 
+DEBUG=no
 usage()
 {
     setopt POSIX_ARGZERO
@@ -68,25 +69,37 @@ done
 shift OPTIND-1
 OPTIND=1
 
-if [ $# -gt 0 ]; then
-    echo "unexpected argument(s)" >&2
-    usage >&2
-    exit 1
-fi
-
-GRAPH=$(mktemp graph.XXX)
+readonly GRAPH=$(mktemp -t graph.XXX)
 extern_color=pink
 
 # segments ... look at bases.
 setopt NULL_GLOB
-
 
 # why temp file?
 # tsort doesn't need it (- is ok)
 # my ../../mmc-shell/bin/draw-tsort-graph
 # this could be tsort-ed. But this ^ sort it too.
 
-dump_whole_graph $segment_format > $GRAPH
+
+# only 1?
+if [ $# -gt 1 ]; then
+    usage >&2
+    exit 1
+elif [ $# = 0 ]; then
+    # default:
+    dump_whole_graph $segment_format > $GRAPH
+else
+    ref_name=$1
+    ref_name=${ref_name#refs/heads/}
+    # ref_name=$(git rev-parse --symbolic-full-name "HEAD")
+
+    # title="full down from $ref_name"
+    sum_format=$segment_format
+    walk_down_from $ref_name $segment_format $sum_format > $GRAPH
+    # git-walk-down -f $segment_format $ref_name > $GRAPH
+fi
+
+
 
 if [ $dump_format = dot ]; then
     draw-tsort-graph $draw_options -F png $GRAPH | display -
