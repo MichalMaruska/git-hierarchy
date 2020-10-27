@@ -1,0 +1,6 @@
+#compdef git-graph
+#description dump the graph
+
+# or
+_git-segment-name
+_git-sum-name
