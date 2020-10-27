@@ -523,6 +523,58 @@ dump_whole_graph()
     fi
 }
 
+# in environment:  DEBUG
+walk_down_from()
+{
+    ref_name=$1
+    segment_format=$2
+    sum_format=$3
+
+    # local
+    typeset -a queue
+    queue=($ref_name)
+    typeset -a processed
+
+    local this
+    local name
+    while [[ ${#queue} -ge 1 ]];
+    do
+        this=${queue[1]}
+        # remove "first" if it's repeated:
+        # we don't need += here, since all previously processed cannot be in `queue' anymore,
+        # if the graph is DAG (acyclic!):
+        processed=($this)
+
+        queue=(${queue:|processed})# A:|B is A-B. fixme: processed ?
+        # take the first, and append the base(s)
+        # also remove "first" if it's repeated.
+
+        test "$DEBUG" = y && \
+            cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
+
+        # append the base(s), or summands:
+        name=${this#refs/heads/}
+
+        if is_sum $name; then
+            # fixme:
+            dump_sum ${sum_format-$segment_format} $name
+            queue+=($(summands_of $name))
+        elif is_segment $name; then
+            dump_segment $segment_format $name
+            queue+=($(segment_base $name))
+        else
+            if test "$DEBUG" = y; then
+                cecho red "stopping @ $name" >&2
+            fi
+        fi
+
+        if test "$DEBUG" = y; then
+            cecho green "iterate $queue -- ${#queue}" >&2
+        fi
+    done
+}
+
+
 # use $debug
 # set roots and tops.
 find_roots_and_tops()
