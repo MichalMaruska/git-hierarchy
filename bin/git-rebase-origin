@@ -19,8 +19,9 @@ usage: ${0##*/} [+-hfv] [--] [top-ref]
 
 *******
 Discover which remote branches to fetch, then rebase ....
-update the Bases by `fetch' and rebase.
+update the Bases by \`fetch' and rebase.
 EOF
+
 }
 
 DEBUG()
