@@ -2,8 +2,6 @@
 
 GIT_P4=~/git/git-core/git-p4.py
 
-# update the Bases by `fetch' and rebase.
-
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 cd "$(git rev-parse --show-toplevel)"
@@ -19,7 +17,9 @@ usage: ${0##*/} [+-hfv] [--] [top-ref]
 -d  dry
 [top-ref]  what to rebase, by default the current branch.
 
+*******
 Discover which remote branches to fetch, then rebase ....
+update the Bases by `fetch' and rebase.
 EOF
 }
 

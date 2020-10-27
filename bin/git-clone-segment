@@ -1,8 +1,5 @@
 #!/bin/zsh -euf
 
-# Create a new git-segment, which contains the same sequence of
-# patches as a given one, starting off a new-base.
-
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
@@ -15,6 +12,11 @@ usage: ${0##*/} [+-h] [--] {original} {clone-name} {new-base}
 original ... an existing segment
 clone-name ... non-existing ref name.
 new-base ... existing commit-id/ref/tag.
+
+****
+Create a new git-segment, which contains the same sequence of
+patches as a given one, starting off a new-base.
+
 
 EOF
     unsetopt POSIX_ARGZERO

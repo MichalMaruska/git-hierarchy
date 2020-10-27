@@ -11,8 +11,6 @@ usage()
     cat <<EOF
 usage: ${0##*/} [+-h] [-n] [-b base] [--] {source-dir} {segment-name} [dest-dir]
 
-Port segment between Git repos, which don't share commits.
-
 -k ....      keep the patches directory
 -n ...       don't re-define the segment, just append the commits.
 -b base  ... Use this reference as a 'base' of the new segment
@@ -21,6 +19,9 @@ Port segment between Git repos, which don't share commits.
 source-dir   ... the git-repository which contains:
 segment-name ... the name
 dest-repo    ... the destination git-repository; DEFAULT is cwd.
+
+*******
+Port segment between Git repos, which don't share commits.
 EOF
 }
 
