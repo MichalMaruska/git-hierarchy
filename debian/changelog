@@ -1,3 +1,24 @@
+git-hierarchy (5.24) unstable; urgency=medium
+
+  * usage for git-split-segment
+  * new: git-diff-segment
+  * debian: depend on imagemagick
+  * _git-split-segment basic
+  * git-split-segment: improve usage()
+  * git-split-segment: verify splitting, handle current-branch
+  * _git-split-segment show the recent commits
+  * rename to git-segments-balance
+  * Stop using tempfile, use mktemp instead
+  * git-walk-down: allow explicit format selection (-f option)
+  * new function walk_down_from
+  * Move description into usage() output
+  * git-walk-down: use the walk_down_from function
+  * git-graph: use walk_down_from function for 1 parameter
+  * Add zsh completions: _git-graph _git-rebase-segment
+  * Move git-cp-to to mmc-shell
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 27 Oct 2020 02:03:49 +0100
+
 git-hierarchy (5.23) unstable; urgency=medium
 
   * Don't create the segment, if any of the 3 references is wrong
