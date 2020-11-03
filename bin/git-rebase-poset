@@ -15,22 +15,38 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-h] [-d] [--]  [sum|segment] ...
+usage: ${0##*/} [+-h] [-d] [-n] [--]  [sum|segment] ...
 -d debug
+
+-n .. dry
+
+
+-s old-name
+-t new-name
+Replace old-name as summands/segment-bases with new-name.
 EOF
     unsetopt POSIX_ARGZERO
 }
 
 DEBUG=n
 dry_only=n
+skip_over=""
 
-while getopts :hdn OPT; do
+while getopts :hdns:t: OPT; do
     case $OPT in
         d) DEBUG=y
            set -x
            ;;
         n)
             dry_only=y
+            ;;
+        s)
+            # ref = another_ref
+            skip_over=$(expand_ref $OPTARG)
+            ;;
+        t)
+            replacement=$(expand_ref $OPTARG)
+            #"master"
             ;;
         h|+h)
             usage
@@ -76,6 +92,77 @@ test "$DEBUG" = y && GIT_DEBUG_OPTIONS+=(-d)
 test "$DEBUG" = n && GIT_DEBUG_OPTIONS+=(-q)
 #test "$SILENT" = y &&
 
+
+log()
+{
+    if [[ $DEBUG = y ]]; then
+        cecho red $1 >&2
+    fi
+}
+
+report()
+{
+        cecho blue $1 >&2
+}
+
+
+
+is_summand()
+{
+    local sum=$1
+    local ref=$2
+
+    typeset -a summands
+    summands=( $(summands_of $sum) )
+    # echo "summands: $summands"
+    [[ ${summands[(i)$ref]} -le ${#summands} ]]
+}
+
+#
+git-drop-in-hierarchy()
+{
+    local skip=$1
+    local ref=$2
+    local replacement=$3
+
+    ref=$2
+    name=${ref#refs/heads/}
+
+    log "$skip vs ... $ref"
+
+    if is_segment $name
+    then
+        log "$ref is segment"
+
+        if [[ $skip == $ref ]]
+        then
+            log "skip over"
+        elif [[ $skip = $(segment_base $name) ]]
+        then
+            if [[ $dry_only = y ]];
+            then
+                report "rebase $ref on $replacement"
+            else
+                git-segment -u $name $replacement
+            fi
+        else
+            log "$skip unrelated to segment $ref"
+        fi
+    elif is_sum $name
+    then
+        if is_summand $name $skip
+        then
+            if [[ $dry_only = y ]];
+            then
+                report "remove $skip from sum $ref"
+            else
+                git-sum $name -$skip
+            fi
+        fi
+    fi
+}
+
+
 foreach ref ($WHAT_TO_REBASE)
 {
         # todo: create a tag, so that if `git-rebase' fails
@@ -83,18 +170,23 @@ foreach ref ($WHAT_TO_REBASE)
         #
     test "$DEBUG" = y && cecho green "rebasing $ref"
 
-    if [ $dry_only = y ];
+    if [[ -n $skip_over ]]
     then
-        echo "git-rebase-ref $ref"
+        git-drop-in-hierarchy $skip_over $ref $replacement
     else
-        if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
+        if [[ $dry_only = y ]];
         then
-            # todo: save continuation!
-            #problem=$?
-            problem=1
-            cecho red "Failure on $ref: $?"
-            # todo: list the path from .... poset root to this one
-            exit $problem
+            echo "git-rebase-ref $ref"
+        else
+            if ! git-rebase-ref $GIT_DEBUG_OPTIONS $ref;
+            then
+                # todo: save continuation!
+                #problem=$?
+                problem=1
+                cecho red "Failure on $ref: $?"
+                # todo: list the path from .... poset root to this one
+                exit $problem
+            fi
         fi
     fi
 }
