@@ -279,7 +279,7 @@ else
         new_base=$(expand_ref $new_base)
         # cecho yellow "so the base is ${new_base-}"
 
-        cecho yellow "Changing the base to $new_base"
+        cecho yellow "Changing the base of $name to $new_base"
         git symbolic-ref $baseref $new_base
     fi
 
