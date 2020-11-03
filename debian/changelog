@@ -1,3 +1,11 @@
+git-hierarchy (5.25) unstable; urgency=medium
+
+  * Remove unintended backtics in a string.
+  * git-rebase-poset: implement a REPLACE operation: summands/bases are changed
+  * git-segment: make the rebasing log more informative
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 03 Nov 2020 15:31:37 +0100
+
 git-hierarchy (5.24) unstable; urgency=medium
 
   * usage for git-split-segment
