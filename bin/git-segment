@@ -26,9 +26,9 @@ $PROGRAM [-d | --delete | -D | -prune] name
 $PROGRAM -r {segment} {start}
   set the start
 
-$PROGRAM [-u | --update ] {segment} symbolic-base [start]
-  update
-
+$PROGRAM [-u | --update ] [-b | --rebase] {segment} symbolic-base [start]
+  change base (start)
+  -b  and rebase immediately
 
 $PROGRAM [-c | --checkout] {segment} symbolic-base [start] [head]
   DEFINE
@@ -107,6 +107,7 @@ list_segments(){
     done
 }
 
+rebase_immediately=n
 delete_segment=n
 delete_branch=n
 short_list=n
@@ -115,13 +116,16 @@ checkout=n
 update=n
 restart=n
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions help,short,delete,prune,update:,restart,full,diff,checkout \
-        --options     hsdDurfpc \
+        --longoptions rebase,help,short,delete,prune,update:,restart,full,diff,checkout \
+        --options     bhsdDurfpc \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
+        b)
+            rebase_immediately=y
+            ;;
         -h | --help)
             usage
             exit 0
@@ -287,6 +291,10 @@ else
     if [ -n "${start_hash-}" ]; then
         cecho yellow "pushing the start to $start_hash"
         git-set-start $name $start_hash
+    fi
+
+    if [[ $rebase_immediately = y ]]; then
+        git-rebase-segment $name
     fi
 
     if [ $# = 4 ]; then
