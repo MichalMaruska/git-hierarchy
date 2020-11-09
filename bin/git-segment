@@ -181,7 +181,7 @@ fi
 
 
 # Otherwise a specific segment:
-name=${1#refs/heads/}
+readonly name=${1#refs/heads/}
 local baseref=$(segment_base_name $name)
 # echo "the segment name is $name"
 
