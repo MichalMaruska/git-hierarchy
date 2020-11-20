@@ -342,7 +342,7 @@ dump_sum()
 
     if [ $dump_format = dot ]; then
         cat <<EOF
-"${sum//-/_}" [label="$sum",color=red,fontsize=14,
+"${sum//-/_}" [label="$sum",color=green,fontsize=14,
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
     elif [[ $dump_format = symbolic ]]; then
