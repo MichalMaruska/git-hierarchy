@@ -123,7 +123,7 @@ cmd_options=$(getopt --name $0 --shell bash \
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
-        b)
+        -b | --rebase)
             rebase_immediately=y
             ;;
         -h | --help)
