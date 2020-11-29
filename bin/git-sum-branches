@@ -31,18 +31,11 @@ cmd=""
 debug=n
 stepwise=0
 
-while getopts :rdhvqs OPT; do
+while getopts :dhqrsv OPT; do
     case $OPT in
         d)
             dry=y
             cmd="cecho red"
-            ;;
-        r)
-            # reset:
-            reset=y
-            ;;
-        +r)
-            reset=n
             ;;
         h)
             usage
@@ -50,6 +43,13 @@ while getopts :rdhvqs OPT; do
             ;;
         q)
             # quiet silent
+            ;;
+        r)
+            # reset:
+            reset=y
+            ;;
+        +r)
+            reset=n
             ;;
         s)
             stepwise=1
@@ -82,10 +82,12 @@ then
     exit 1
 fi
 
+# y ... gives priority to heads, remotes, generic
 sum_branch=$(expand_ref $sum_name y)
 
 #### Calculate the summands: for the check and for re-merging.
 typeset -a summand_branches
+# this is `definition'
 summand_branches=(
     $(git for-each-ref "refs/sums/$sum_name/" --format "%(refname)") )
 #(${(f)_tmp})
@@ -107,6 +109,7 @@ foreach br ($summand_branches) {
 test $debug = y && echo "Summands: $real_branches"
 
 equal=n
+# This is the `situation':
 # sanity check:
 test $debug = y && echo "sanity check" >&2
 if git-branch-exists $sum_name;
