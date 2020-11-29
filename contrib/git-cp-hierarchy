@@ -2,7 +2,7 @@
 
 # todo: trap & clean up!
 
-# fixme: it produces the patches even if it later decides to NOT use them.
+# fixme: it produces the patches even if later it decides to NOT use them.
 
 source /usr/share/git-hierarchy/functions.sh
 

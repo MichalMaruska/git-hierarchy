@@ -118,7 +118,7 @@ is_summand()
     [[ ${summands[(i)$ref]} -le ${#summands} ]]
 }
 
-#
+# 
 git-drop-in-hierarchy()
 {
     local skip=$1

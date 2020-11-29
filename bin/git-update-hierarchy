@@ -9,6 +9,9 @@ usage: ${0##*/} [+-hl] [--] ARGS...
 
 -l   list only ... the current or the diff?
 
+*******
+Reads from the _hierarchy branch!
+
 EOF
 }
 

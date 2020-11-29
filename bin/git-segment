@@ -292,8 +292,7 @@ else
         cecho yellow "pushing the start to $start_hash"
         git-set-start $name $start_hash
     fi
-
-    if [[ $rebase_immediately = y ]]; then
+    if [[ $rebase_immediately = "y" ]]; then
         git-rebase-segment $name
     fi
 
