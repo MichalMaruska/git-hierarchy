@@ -493,9 +493,11 @@ try_to_expand()
     # echo "try_to_expand $name" >&2
     # Here the priority
     local expanded=$(
-        {git show-ref heads/$name || \
-        git show-ref remotes/$name || \
-        git show-ref $name } |\
+        {
+            git show-ref heads/$name || \
+            git show-ref remotes/$name || \
+            git show-ref $name
+        } |\
             head -n 1|cut -f 2 '-d ')
     # echo "expanded $expanded" >&2
     echo $expanded
