@@ -87,7 +87,8 @@ if [ $# -gt 1 ]; then
     exit 1
 elif [ $# = 0 ]; then
     # default:
-    dump_whole_graph $segment_format > $GRAPH
+    # fixme: this must SORT topologically!
+    dump_whole_graph_tsort  $segment_format > $GRAPH
 else
     ref_name=$1
     ref_name=${ref_name#refs/heads/}
