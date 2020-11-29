@@ -358,11 +358,12 @@ test_commit_parents()
 #
 # `returns' the $equal variable is set.
 {
-# take the branches' commit-ids
-# and parent-ids of the sum's head.
-# sort & compare
+    # take the commit-ids of the summands: (definition)
+    # And parent-ids of the sum's head.    (situation)
+    # sort & compare
     local commit_ids_summands
     commit_ids_summands=()
+
     local br
     foreach br ($summand_branches) {
         commit_ids_summands+=$(commit_id $br)
@@ -370,33 +371,39 @@ test_commit_parents()
 
     test $debug = y && echo "Summands: $commit_ids_summands" >&2
 
+    # situation:
     local commit_ids_sum_parents
     commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
 
 
     test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
 
-# new criterion:
-# the parents "include" all summands, and each parent is one of the summands.
-# that is, each parent is fast-forward of summands and a summand itself.
-# fixme!
+    # new criterion:
+    # the parents "include" all summands, and each parent is one of the summands.
+    # that is, each parent is fast-forward of summands and a summand itself.
+    # fixme!
 
-# how to get common base for merge:
-# git merge-base
+    # how to get common base for merge:
+    # git merge-base
 
     equal=y
 
-# 1/ each parent is one of summands.
-# But, if the merge is itself one of summands -> should be ok!
+    # 1/ each parent is one of summands.
+    # But, if the merge is itself one of summands -> should be ok!
 
-    set +u # here we risk the "var. lookup" fails, so treat it explicitly
+    set +u # here we risk the "var. lookup" fails, so we treat it explicitly!
 
+
+    # Check that parents are subset of "summands" -- i.e. the sum is not AHEAD....btw.
     local sum_id
     sum_id=$(commit_id $sum_branch)
+
+    # if the sum refers to one of the summand commit?
     if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
         test $debug = y && cecho red "This merge is itself a summand." >&2
     else
-# here the O(N^2) tests:
+        # here the O(N^2) tests:
+        # verify
         foreach id ($commit_ids_sum_parents) {
             if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
                 test $debug = y && cecho red "This parent is not in summands: $id" >&2
@@ -408,9 +415,12 @@ test_commit_parents()
     fi
     set -u # here again we don't (intend to) risk it.
 
-# if test $equal = y
-# then
-# 2/ each summand is less than the sum. not -> N
+
+
+    # if test $equal = y
+    # then
+
+    # 2/ each summand is less than the sum. not -> N
     foreach id ($commit_ids_summands) {
         #if still a chance to win:
         if test $id = $sum_id; then
