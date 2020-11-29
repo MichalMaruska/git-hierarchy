@@ -7,11 +7,26 @@ source /usr/share/mmc-shell/mmc-functions.sh
 colors
 source /usr/share/git-hierarchy/functions.sh
 
+hierarchy_branch="_hierarchy"
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-hn]  [-r remote] [--] ARGS...
+
+-n   ... dump (only) the last hierarchy
+-r remote  ... instead of local branch $hierarchy_branch, use the the remote one.
+
+******************
+Create segments/sums following hierarchy on $hierarchy_branch
+
+EOF
+}
+
 
 
 # todo: share with ./git-store-hierarchy
 FILENAME=hierarchy
-branch="_hierarchy"
 REMOTE="heads"
 
 # uses $REMOTE
@@ -44,17 +59,6 @@ reconstruct_sum()
     )
 }
 
-usage()
-{
-    cat <<EOF
-usage: ${0##*/} [+-hn]  [-r remote] [--] ARGS...
-
--n   ... dump the last hierarchy
--r remote  ... instead of local branch $branch, use the the remote one.
-
-EOF
-}
-
 while getopts :hnr: OPT; do
     case $OPT in
         h|+h)
@@ -77,8 +81,8 @@ done
 shift OPTIND-1
 OPTIND=1
 
-
-cat_git_file_from_commit $REMOTE/$branch $FILENAME | \
+# Maybe this should invoke a tool which `only' creates?
+cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME | \
     while read line; do
         echo ">$line<"
         if [[ $line -regex-match '^segment ([[:graph:]]+)[[:space:]]+([[:graph:]]+)$' ]]
