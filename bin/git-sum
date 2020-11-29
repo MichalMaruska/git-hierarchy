@@ -12,15 +12,25 @@ usage()
     cat <<EOF
 Usage:
 ${0##*/} [+-h]
-${0##*/} branch
-  list all Sums
-${0##*/} branch
+
+${0##*/}
+  list all sums
+
+${0##*/} {name}
+  show the definition -- list of summands
+
 ${0##*/} [-c] branch
-  show the Sum definition, possibly pruning non-existings summands
+  show the sum definition,
+-c prune non-existings summands
+  # does this make it contiguous?
 
 ${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
   modify the definition.
   -r reset: empty the definition first.
+  -s start_point
+
+  -name ... remove this ref as summand
+  name | +name add.
 
 ${0##*/} [-d] branch
   drop the definition.
