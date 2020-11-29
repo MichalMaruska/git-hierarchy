@@ -611,6 +611,35 @@ dump_whole_graph()
     fi
 }
 
+dump_whole_graph_tsort()
+{
+    readonly segment_format=$1
+
+
+    local graph=$(mktemp -t whole_graph_order.XXX)
+    dump_whole_graph tsort | tsort > $graph
+
+    # now in this order!
+    {
+        while read ref;
+        do
+            ref=${ref#refs/heads/}
+            # echo $ref >&2
+            if is_segment $ref; then
+                dump_segment $segment_format $ref
+            elif is_sum $ref; then
+                dump_sum $segment_format $ref
+            else
+                :
+                # base might be just a branch!
+            fi
+        done
+    } < $graph
+
+    rm -f $graph
+}
+
+
 # in environment:  DEBUG
 walk_down_from()
 {
