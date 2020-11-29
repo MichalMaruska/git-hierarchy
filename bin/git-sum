@@ -165,19 +165,17 @@ fi
 name=${1#refs/heads/}
 shift
 
-if [ $delete = y ]; then
+if [[ $delete = y ]];
+then
     delete_sum_definition $name
     git branch -d $name
     exit 0
-fi
-
-
-if [ $reset = "y" ];then
+elif [[ $reset = "y" ]];
+then
     delete_sum_definition $name
-fi
+    exit 0
 
-
-if [ $# = 0 ]; then
+elif [ $# = 0 ]; then
     if [ $correct = y ]; then
         TEMP=$(mktemp)
         show_prune_definition $name "silent" > $TEMP
@@ -186,45 +184,50 @@ if [ $# = 0 ]; then
     else
         show_prune_definition $name
     fi
-else
-
-    # create the branch:
-    git rev-parse heads/$name -- || git branch $name
-
-    # now creation:
-    # find minimal number:
-    index=$(find_new_index $name)
-    readonly summands=($(summands_of $name))
-
-    for br in "$@"
-    do
-        case "$br" in
-            -*)
-                br=${br#-}
-                # I need to `expand' to `Full' ref!
-                br=$(git-expand-ref $br)
-
-                # remove:
-                # find its index!
-                cecho red $br
-                remove_from_sum $name $br
-                ;;
-            +* | *)
-                br=${br#+}
-                cecho green "addend $br"
-                br=$(git-expand-ref $br)
-
-                if [[ ${summands[(i)$br]} -le ${#summands} ]]; then
-                    WARN "already summand, skipping"
-                    # short-cut:
-                    continue
-                else
-                    # add:
-                    add_to_sum $name $br $index
-                    ((index=index+1))
-                fi
-                ;;
-        esac
-        git-sum-branches $name
-    done
+    exit 0
 fi
+
+
+
+# Create the branch. todo: might hint at where!
+git rev-parse heads/$name -- || git branch $name $start_point
+
+# now creation:
+# find minimal number:
+# mmc: do we guarantee that indices form an interval? continous?
+index=$(find_new_index $name)
+readonly summands=($(summands_of $name))
+
+for br in "$@"
+do
+    case "$br" in
+        -*)
+            br=${br#-}
+            # I need to `expand' to `Full' ref!
+            br=$(git-expand-ref $br)
+
+            # remove:
+            # find its index!
+            cecho red $br
+            remove_from_sum $name $br
+            ;;
+        +* | *)
+            br=${br#+}
+            cecho green "addend $br"
+            br=$(git-expand-ref $br)
+
+            if [[ ${summands[(i)$br]} -le ${#summands} ]]; then
+                WARN "already summand, skipping"
+                # short-cut:
+                continue
+            else
+                # add:
+                add_to_sum $name $br $index
+                ((index=index+1))
+            fi
+            ;;
+    esac
+
+    # refresh:
+    git-sum-branches $name
+done
