@@ -17,6 +17,8 @@ usage: ${0##*/} [+-hn]  [-r remote] [--] ARGS...
 -n   ... dump (only) the last hierarchy
 -r remote  ... instead of local branch $hierarchy_branch, use the the remote one.
 
+-l list all remote "$hierarchy_branch" branches
+
 ******************
 Create segments/sums following hierarchy on $hierarchy_branch
 
@@ -59,7 +61,7 @@ reconstruct_sum()
     )
 }
 
-while getopts :hnr: OPT; do
+while getopts :hlnr: OPT; do
     case $OPT in
         h|+h)
             usage
@@ -69,8 +71,19 @@ while getopts :hnr: OPT; do
             REMOTE=$OPTARG
             # optiplex
             ;;
+        l)
+            echo "let's find possible branches:"
+            foreach remote ( $(git remote ) ) {
+                if git rev-parse remotes/$remote/$hierarchy_branch >/dev/null;
+                then
+                    echo "$remote/$hierarchy_branch !"
+                fi
+            }
+            # git rev-parse   'remotes/origin/_hierarchy'
+            exit 0
+            ;;
         n|+n)
-            cat_git_file_from_commit $REMOTE/$branch $FILENAME
+            cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME
             exit
             ;;
         *)
