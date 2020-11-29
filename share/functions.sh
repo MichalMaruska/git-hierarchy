@@ -617,7 +617,7 @@ dump_whole_graph_tsort()
 
 
     local graph=$(mktemp -t whole_graph_order.XXX)
-    dump_whole_graph tsort | tsort > $graph
+    dump_whole_graph tsort | tsort | tac > $graph
 
     # now in this order!
     {
