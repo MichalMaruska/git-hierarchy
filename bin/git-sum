@@ -129,7 +129,9 @@ reset="n"
 correct="n"
 delete=n
 
-while getopts :hrcd OPT; do
+start_point="HEAD"
+
+while getopts :cdhrs: OPT; do
     case $OPT in
         h|+h)
             usage
@@ -137,6 +139,9 @@ while getopts :hrcd OPT; do
             ;;
         r)
             reset="y"
+            ;;
+        s)
+            start_point=$OPT_ARG
             ;;
         c)
             correct="y"
