@@ -1,0 +1,22 @@
+#!/bin/zsh -feu
+
+source /usr/share/git-hierarchy/functions.sh
+GIT_DIR=$(git_dir)
+
+tag=$1
+shift
+
+#fixme:
+if [ $# = 0 ]; then
+    # default is the current branch
+    branch=$(current_branch_name)
+elif [ $# = 1 ]; then
+    branch=${1}
+fi
+
+
+readonly content=$(mktemp -t graph.XXX)
+git-graph -r $branch > $content
+
+git tag $tag HEAD --file $content
+
