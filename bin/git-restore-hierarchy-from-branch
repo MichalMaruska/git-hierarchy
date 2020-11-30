@@ -61,6 +61,7 @@ reconstruct_sum()
     )
 }
 
+cat_only=n
 while getopts :hlnr: OPT; do
     case $OPT in
         h|+h)
@@ -83,8 +84,7 @@ while getopts :hlnr: OPT; do
             exit 0
             ;;
         n|+n)
-            cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME
-            exit
+            cat_only=y
             ;;
         *)
             usage>&2
@@ -93,6 +93,13 @@ while getopts :hlnr: OPT; do
 done
 shift OPTIND-1
 OPTIND=1
+
+
+if [[ $cat_only = y ]]; then
+    # from mmc-shell
+    cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME
+    exit
+fi
 
 # Maybe this should invoke a tool which `only' creates?
 cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME | \
