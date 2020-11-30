@@ -21,7 +21,7 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-k]  [-g | -x | -l | -t] [--]
+usage: ${0##*/} [+-k]  choose-format  [--]
 -x display using  dot(1)
 -l log
 
@@ -29,11 +29,19 @@ usage: ${0##*/} [+-k]  [-g | -x | -l | -t] [--]
   -g don\'t dump the topological order on stdout.
 
 -k keep the generated file (for tsort(1))
+
+Format:
+-g
+-x   Xdot
+-l   git log
+-r   resolved
+-s   symbolic
+-t
 EOF
     unsetopt POSIX_ARGZERO
 }
 
-while getopts :dgklstx OPT; do
+while getopts :dgklrstx OPT; do
     case $OPT in
         d)
             verbose=y
@@ -48,6 +56,10 @@ while getopts :dgklstx OPT; do
         l)
             dump_format=log
             segment_format=tsort
+            ;;
+        r)
+            dump_format=resolved
+            segment_format=resolved
             ;;
         s)
             dump_format=symbolic
@@ -108,6 +120,10 @@ case $dump_format in
         #rm $GRAPH
         ;;
     symbolic)
+        cat $GRAPH
+        ;;
+    resolved)
+        # fixme?
         cat $GRAPH
         ;;
     log)
