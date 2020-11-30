@@ -101,35 +101,41 @@ else
 fi
 
 
+case $dump_format in
+    dot)
+        draw-tsort-graph $draw_options -F png $GRAPH | display -
+        #dot -Tpng  $GRAPH
+        #rm $GRAPH
+        ;;
+    symbolic)
+        cat $GRAPH
+        ;;
+    log)
+        find_roots_and_tops $GRAPH
 
-if [ $dump_format = dot ]; then
-    draw-tsort-graph $draw_options -F png $GRAPH | display -
-    #dot -Tpng  $GRAPH
-    #rm $GRAPH
-elif [ $dump_format = symbolic ]; then
-    cat $GRAPH
-elif [ $dump_format = log ]; then
-    find_roots_and_tops $GRAPH
+        for ((i=1; i<= ${#roots}; i++))
+            {
+                # echo $i $roots[$i];
+                roots[$i]="$roots[$i]^!";
+                # echo $roots[$i]
+            }
+            git log --graph --oneline --decorate $roots $tops
+        ;;
+    *)
+        if [ $just_graph = y ]; then
+            # sort:
 
-    for ((i=1; i<= ${#roots}; i++))
-        {
-            # echo $i $roots[$i];
-            roots[$i]="$roots[$i]^!";
-            # echo $roots[$i]
-        }
-    git log --graph --oneline --decorate $roots $tops
-elif [ $just_graph = y ]; then
-    # sort:
+            # while read
+            for a in $(tsort $GRAPH)
+            do
+                cecho green $a
+                grep -e "^$a" $GRAPH || true
+            done
+            else
+                tsort $GRAPH | tac
+        fi
 
-    # while read
-    for a in $(tsort $GRAPH)
-    do
-        cecho green $a
-        grep -e "^$a" $GRAPH || true
-    done
-else
-    tsort $GRAPH | tac
-fi
+esac
 
 
 if [ $keep_graph_file != y ]; then
