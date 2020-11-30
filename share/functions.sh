@@ -287,6 +287,11 @@ EOF
             local base=$(segment_base $segment_name)
             echo "segment $segment_name\t ${base#refs/}"
             ;;
+        resolved)
+            echo segment $segment_name "\t" $(git rev-parse $segment_name) \
+                 "\t" $(segment_base $segment_name) \
+                 "\t" $(git rev-parse $(segment_start $segment_name))
+            ;;
         raw)
             # dump the start  segment_start_sha
             echo segment $segment_name "\t"  $(dump_ref refs/heads/$segment_name) \
