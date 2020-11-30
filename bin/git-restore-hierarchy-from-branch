@@ -56,9 +56,15 @@ reconstruct_sum()
     readonly summands=($@)
     # check all the summands exist
 
-    (set -x
-    git-sum $sum $summands
-    )
+    if is_sum $sum; then
+        warn "we already have SUM $sum"
+    else
+        (
+            set -x
+            # fixme: a bit dangerous! what if I already have it?
+            git-sum -r -s remotes/$REMOTE/$sum $sum $summands
+        )
+    fi
 }
 
 cat_only=n
