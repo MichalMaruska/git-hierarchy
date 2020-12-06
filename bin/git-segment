@@ -82,7 +82,7 @@ describe_segment()
         cecho yellow "$count commits"
         if [[ $short_list != y ]]; then
             # git patch-id
-            if [[ $show_patch_id = y ]];
+            if [[ $show_patch_id = n ]];
             then
                 git log --oneline $startref..heads/$name
             else
