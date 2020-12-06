@@ -12,7 +12,8 @@ usage()
 {
     cat <<EOF
 usage:
-$PROGRAM [-s| --short] [-f | --full]
+
+$PROGRAM [-s| --short] [-f | --full] [ --diff -p ]
   LIST the segments, -s short-format
   Full implies output ref/heads/XXX instead of XXX
 
@@ -20,10 +21,10 @@ $PROGRAM {segment-name}
   SHOW the definition & dump the commits/history
   Exit with non-zero, if the segment-name is not a segment.
 
-$PROGRAM [-d | --delete | -D | -prune] name
+$PROGRAM [-d | --delete | -D | --prune] name
   DELETE the definition, and even the branch itself.
 
-$PROGRAM -r {segment} {start}
+$PROGRAM -r | --restart  {segment} {start}
   set the start
 
 $PROGRAM [-u | --update ] [-b | --rebase] {segment} symbolic-base [start]
