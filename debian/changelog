@@ -1,3 +1,38 @@
+git-hierarchy (5.26) unstable; urgency=medium
+
+  * git-segment: rebase immediately if requested
+  * shell var. readonly
+  * git-segment: sq --rebase option
+  * Make sum in the graph green, not red
+  * Move test_commit_parents into functions
+  * dump_whole_graph_tsort: new function atop dump_whole_graph
+  * git-graph: dump in order
+  * git-store-hierarchy: usage
+  * invert the order
+  * Small typos corrected
+  * debian: compat 10
+  * git-restore-hierarchy-from-branch: usage & rename variable
+  * git-restore-hierarchy-from-branch: new option to List remote branches
+  * Comments in test_commit_parents()
+  * git-sum: improve usage()
+  * git-sum: add -s option -- to position the sum branch initially
+  * reformat
+  * reformat try_to_expand()
+  * git-sum-branches: reformat getopts & comments
+  * git-restore-hierarchy-from-branch: first process all options
+  * git-restore-hierarchy-from-branch: don't create sum if already exists
+  * git-restore-hierarchy-from-branch: Use the right start to create segment
+  * dump_segment: "resolved" format
+  * Implement the format selection with 'case' shell
+  * new format: -r  resolved
+  * New tool git-tag-hierarchy
+  * git-segment: document the --long options in usage()
+  * title the show HEAD sha
+  * show the segment lenght in yellow
+  * New mode to show the patch-id (option -i)
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 06 Dec 2020 19:11:41 +0100
+
 git-hierarchy (5.25) unstable; urgency=medium
 
   * Remove unintended backtics in a string.
