@@ -74,7 +74,7 @@ describe_segment()
         echo -n "base is "; cecho green "$base"
 
         output_dirty $name ""
-        git show-ref --hash $startref
+        echo -n "head is "; git show-ref --hash $startref
 
         # how many commits there?
         local count=$(git log --oneline $startref..heads/$name |wc --lines)
