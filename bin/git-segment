@@ -17,9 +17,10 @@ $PROGRAM [-s| --short] [-f | --full] [ --diff -p ]
   LIST the segments, -s short-format
   Full implies output ref/heads/XXX instead of XXX
 
-$PROGRAM {segment-name}
+$PROGRAM [-i] {segment-name}
   SHOW the definition & dump the commits/history
   Exit with non-zero, if the segment-name is not a segment.
+  -i  show the patch-ids instead
 
 $PROGRAM [-d | --delete | -D | --prune] name
   DELETE the definition, and even the branch itself.
@@ -80,7 +81,27 @@ describe_segment()
         local count=$(git log --oneline $startref..heads/$name |wc --lines)
         cecho yellow "$count commits"
         if [[ $short_list != y ]]; then
-            git log --oneline $startref..heads/$name
+            # git patch-id
+            if [[ $show_patch_id = y ]];
+            then
+                git log --oneline $startref..heads/$name
+            else
+                # 2 implementations:
+                if false; then
+                    git rev-list $startref..heads/$name| {
+                        while read sha; do
+                            git show $sha | git patch-id --stable
+                        done
+                    }
+                else
+                    git log --oneline $startref..heads/$name | {
+                        while read sha rest;
+                        do
+                            git show $sha | git patch-id --stable| read diff sha; echo "$diff $rest"
+                        done
+                    }
+                fi
+            fi
         fi
     else
         echo "$name is not a segment -- no 'base' found">&2
@@ -112,13 +133,14 @@ rebase_immediately=n
 delete_segment=n
 delete_branch=n
 short_list=n
+show_patch_id=n
 
 checkout=n
 update=n
 restart=n
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions rebase,help,short,delete,prune,update:,restart,full,diff,checkout \
-        --options     bhsdDurfpc \
+        --longoptions checkout,delete,diff,full,help,patch-id,prune,rebase,short,update:,restart \
+        --options     bdDcfihprsu \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -143,7 +165,10 @@ while (( $# > 0 )); do
         -p | --diff)
             patch_segment=y
             ;;
-
+        -i | --patch-id)
+            short_list=n
+            show_patch_id=y
+            ;;
         -D | --prune )
             delete_segment=y
             delete_branch=y
