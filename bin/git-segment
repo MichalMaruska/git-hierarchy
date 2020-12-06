@@ -100,7 +100,7 @@ describe_segment()
                     git log --oneline $startref..heads/$name | {
                         while read sha rest;
                         do
-                            git show $sha | git patch-id --stable| read diff sha; echo "$diff $rest"
+                            git show $sha | git patch-id --stable| read diff sha; echo "$diff $sha $rest"
                         done
                     }
                 fi
