@@ -1,3 +1,13 @@
+git-hierarchy (5.27~3.gbp8184d4) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @8184d47fce2f4b5ba49335859efc4192a7d0c806 **
+
+  * invert the option -i
+  * Avoid the header about segment, just dump the patch-ids
+  * -i show also the sha
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sun, 06 Dec 2020 22:19:18 +0100
+
 git-hierarchy (5.26) unstable; urgency=medium
 
   * git-segment: rebase immediately if requested

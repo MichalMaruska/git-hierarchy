@@ -4,18 +4,32 @@ source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 
 
-readonly TEMP="temp"
+usage()
+{
 
+    cat <<EOF
+usage: ${0##*/} [+-ha] [--] ARGS...
+
+-a   ... abort
+****
+record the end of segment-rebasing.
+EOF
+    }
+
+
+readonly TEMP="temp"
+abort_rebase=n
 while getopts :ha OPT; do
     case $OPT in
         h|+h)
-
-            ;;
+            usage
+            exit 0
+        ;;
         a|+a)
-            # abort
+            abort_rebase=y
             ;;
         *)
-            print "usage: ${0##*/} [+-ha] [--] ARGS..."
+            usage >&2
             exit 2
     esac
 done
@@ -34,12 +48,20 @@ then
     exit 0
 fi
 
-git branch --force $branch $TEMP
-git checkout $branch
+if [[ $abort_rebase = n ]]
+then
+    git branch --force $branch $TEMP
+    git checkout $branch
 
-# This is also the content of the rebase-complete hook!
-# although there we need to recover the "state", so `git-reset-segment'
-# and clean it after.
-#    git-segment --restart $branch $onto
-git-reset-segment $branch
-git branch --delete $TEMP
+    # This is also the content of the rebase-complete hook!
+    # although there we need to recover the "state", so `git-reset-segment'
+    # and clean it after.
+    #    git-segment --restart $branch $onto
+    git-reset-segment $branch
+    git branch --delete $TEMP
+else
+    echo -n "was rebasing "
+    cat ${FILE=$GIT_DIR/.segment-cherry-pick}
+    rm -vf $FILE
+    echo "remaining on temp branch possibly?" >&2
+fi
