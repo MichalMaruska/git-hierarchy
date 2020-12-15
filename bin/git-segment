@@ -44,7 +44,7 @@ output_dirty()
     prefix=$2
     local count=$(segment_age $segment)
     if [ $count = 0 ]; then
-        echo
+        echo "clean"
     else
         echo -e $prefix"dirty: $count"
     fi
