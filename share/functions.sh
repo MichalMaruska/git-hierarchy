@@ -700,7 +700,7 @@ test_sum_is_intact()
 
     equal=n
     test_commit_parents $sum_branch $real_branches[@]
-    if test "$equal" = y;
+    if test "$equal" = n;
     then
         die "sum $sum_name is not the merge of other branches! ($real_branches[@])"
         exit -2
