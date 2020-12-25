@@ -87,13 +87,16 @@ typeset -a real_branches
 sum_resolve_summands $sum_name
 test $debug = y && echo "Summands: $real_branches"
 
+# y ... gives priority to heads, remotes, generic
+sum_branch=$(expand_ref $sum_name y)
+
 equal=n
 # This is the `situation':
 # sanity check:
 test $debug = y && echo "sanity check" >&2
 if git-branch-exists $sum_name;
 then
-    test_commit_parents
+    test_commit_parents $sum_branch
 else
     git branch $sum_name
 fi

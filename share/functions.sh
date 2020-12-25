@@ -392,6 +392,7 @@ test_commit_parents()
 #
 # `returns' the $equal variable is set.
 {
+    local sum_branch=$1
     # take the commit-ids of the summands: (definition)
     # And parent-ids of the sum's head.    (situation)
     # sort & compare
