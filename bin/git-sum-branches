@@ -96,7 +96,7 @@ equal=n
 test $debug = y && echo "sanity check" >&2
 if git-branch-exists $sum_name;
 then
-    test_commit_parents $sum_branch
+    test_commit_parents $sum_branch $real_branches[@]
 else
     git branch $sum_name
 fi

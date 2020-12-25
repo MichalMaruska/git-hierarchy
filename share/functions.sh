@@ -393,6 +393,8 @@ test_commit_parents()
 # `returns' the $equal variable is set.
 {
     local sum_branch=$1
+    shift
+    summand_branches=($@)
     # take the commit-ids of the summands: (definition)
     # And parent-ids of the sum's head.    (situation)
     # sort & compare
@@ -691,12 +693,13 @@ test_sum_is_intact()
     local sum_name=$1
     local sum_branch=$(expand_ref $sum_name y)
 
+    # summand_branches
     typeset -a real_branches
     sum_resolve_summands $sum_name
     # if git-branch-exists $sum_name;
 
     equal=n
-    test_commit_parents $sum_branch
+    test_commit_parents $sum_branch $real_branches[@]
     if test "$equal" = y;
     then
         die "sum is not the merge of other branches!"
