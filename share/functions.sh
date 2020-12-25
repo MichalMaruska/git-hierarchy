@@ -686,13 +686,30 @@ dump_whole_graph_tsort()
     rm -f $graph
 }
 
+test_sum_is_intact()
+{
+    local sum_name=$1
+    local sum_branch=$(expand_ref $sum_name y)
+
+    typeset -a real_branches
+    sum_resolve_summands $sum_name
+    # if git-branch-exists $sum_name;
+
+    equal=n
+    test_commit_parents $sum_branch
+    if test "$equal" = y;
+    then
+        die "sum is not the merge of other branches!"
+        exit -2
+    fi
+}
 
 # in environment:  DEBUG
 walk_down_from()
 {
     ref_name=$1
     segment_format=$2
-    sum_format=$3
+    sum_format=${3-$segment_format}
 
     # local
     typeset -a queue
@@ -720,8 +737,10 @@ walk_down_from()
         name=${this#refs/heads/}
 
         if is_sum $name; then
-            # fixme:
-            dump_sum ${sum_format-$segment_format} $name
+            # fixme: this should _test_
+            test_sum_is_intact $name
+
+            dump_sum ${sum_format} $name
             queue+=($(summands_of $name))
         elif is_segment $name; then
             dump_segment $segment_format $name
