@@ -58,6 +58,35 @@ summands_of()
         done)
 }
 
+# in: $1 the name
+# out: array `real_branches' is filled.
+sum_resolve_summands()
+{
+    #### Calculate the summands: for the check and for re-merging.
+    # local
+    local sum_name=$1
+    typeset -a summand_branches
+    # this is `definition'
+    summand_branches=(
+        $(git for-each-ref "refs/sums/$sum_name/" --format "%(refname)") )
+    #(${(f)_tmp})
+    #test $debug = y &&     echo $summand_branches
+
+    # Those references are symbolic "ref: ref/head/NAME", but we want to
+    # use the NAMES in the commit message & interaction with the user.
+    # So, `resolve' them:
+    real_branches=()
+
+    local br
+    local name
+    foreach br ($summand_branches) {
+        # local
+        name=$(dump_ref_without_ref $br)
+        name=${name#refs/heads/}
+        real_branches+=$name
+    }
+}
+
 
 ref_exists(){
     test -e "$(git rev-parse --git-path $1)"

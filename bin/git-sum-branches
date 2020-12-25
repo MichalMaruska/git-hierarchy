@@ -82,30 +82,9 @@ then
     exit 1
 fi
 
-# y ... gives priority to heads, remotes, generic
-sum_branch=$(expand_ref $sum_name y)
-
-#### Calculate the summands: for the check and for re-merging.
-typeset -a summand_branches
-# this is `definition'
-summand_branches=(
-    $(git for-each-ref "refs/sums/$sum_name/" --format "%(refname)") )
-#(${(f)_tmp})
-#test $debug = y &&     echo $summand_branches
-
-# Those references are symbolic "ref: ref/head/NAME", but we want to
-# use the NAMES in the commit message & interaction with the user.
-# So, `resolve' them:
 typeset -a real_branches
-real_branches=()
 
-foreach br ($summand_branches) {
-    # local
-    name=$(dump_ref_without_ref $br)
-    name=${name#refs/heads/}
-    real_branches+=$name
-    }
-
+sum_resolve_summands $sum_name
 test $debug = y && echo "Summands: $real_branches"
 
 equal=n
