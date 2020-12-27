@@ -41,7 +41,7 @@ fetch=yes
 dry_only=no
 
 # if only debian/changelog -> stash
-while getopts :hfvd OPT; do
+while getopts :hi:fvd OPT; do
     case $OPT in
         h|+h)
             usage
@@ -49,6 +49,9 @@ while getopts :hfvd OPT; do
             ;;
         d)
             dry_only=yes
+            ;;
+        i)
+            known_divergent+=($OPTARG)
             ;;
         f)
             fetch=no

@@ -7,6 +7,11 @@ source /usr/share/mmc-shell/git-functions.sh
 source /usr/share/mmc-shell/mmc-functions.sh
 colors
 
+# apps can add into here!
+typeset -a known_divergent
+known_divergent=()
+
+
 # obsolete:
 # report_error()
 # {
@@ -708,6 +713,7 @@ test_sum_is_intact()
 }
 
 # in environment:  DEBUG
+# typeset -a known_divergent
 walk_down_from()
 {
     ref_name=$1
@@ -741,7 +747,12 @@ walk_down_from()
 
         if is_sum $name; then
             # fixme: this should _test_
-            test_sum_is_intact $name
+            # unless $known_divergent[$name]
+            if [[ ${known_divergent[(i)$name]} -le ${#known_divergent} ]]; then
+                :
+            else
+                test_sum_is_intact $name
+            fi
 
             dump_sum ${sum_format} $name
             queue+=($(summands_of $name))
