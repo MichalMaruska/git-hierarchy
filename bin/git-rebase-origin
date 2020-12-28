@@ -97,6 +97,11 @@ bases=($(git-walk-down $ignore_options -r $top|- grep segment| cut -f 3))
 
 DEBUG "bases: $bases"
 
+
+typeset -a fetched
+fetched=()
+# keys:  $remote:$remote_branch
+
 # uses $dry_only, $fetch, $GIT_P4
 function rebase_one()
 {
@@ -140,18 +145,26 @@ function rebase_one()
     fi
 
     if [ $git_fetch = yes ]; then
-        INFO "Fetching upstream to $base: $remote"
-        set -x
-        if [ $dry_only = no ]; then
-            local old_head=$(git rev-parse $remote/$remote_branch)
-            git fetch $remote $remote_branch
-            git log $old_head..FETCH_HEAD
+        key="$remote:$remote_branch"
 
-            # funny:
-            # $(basename $base)
-            git branch -f ${base#refs/heads/} $remote/$remote_branch
+        if [[ $fetched[(i)${(q)key}] -le ${#fetched} ]]
+        then
+            INFO "already fetched from $remote $remote_branch"
         else
-            echo "would fetch from $remote $remote_branch"
+            fetched+=($key)
+            INFO "Fetching upstream to $base: $remote"
+            set -x
+            if [ $dry_only = no ]; then
+                local old_head=$(git rev-parse $remote/$remote_branch)
+                git fetch $remote $remote_branch
+                git log $old_head..FETCH_HEAD
+
+                # funny:
+                # $(basename $base)
+                git branch -f ${base#refs/heads/} $remote/$remote_branch
+            else
+                echo "would fetch from $remote $remote_branch"
+            fi
         fi
     fi # manual! todo: understand what error scenarios are possible!
 
