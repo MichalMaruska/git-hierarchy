@@ -15,12 +15,13 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-h] [-d] [-n] [--]  [sum|segment] ...
+usage: ${0##*/} [+-h] [-d] [-i ref] [-n] [--]  [sum|segment] ...
 -d debug
 
 -n .. dry
 
 
+-i ... ignore misalignment
 -s old-name
 -t new-name
 Replace old-name as summands/segment-bases with new-name.
@@ -32,11 +33,14 @@ DEBUG=n
 dry_only=n
 skip_over=""
 
-while getopts :hdns:t: OPT; do
+while getopts :dhi:ns:t: OPT; do
     case $OPT in
         d) DEBUG=y
            set -x
            ;;
+        i)
+            known_divergent+=($OPTARG)
+            ;;
         n)
             dry_only=y
             ;;
@@ -76,6 +80,15 @@ typeset -a WHAT_TO_REBASE
 
 if [ $# -gt 0 ]; then
     test "$DEBUG" = y && {echo -n "... down from ";cecho cyan "$1"} >&2
+
+    if [[ ${#known_divergent} -gt 0 ]]
+    then
+        ignore_options=("-i")
+        ignore_options=(${ignore_options:^^known_divergent})
+    else
+        ignore_options=("-i")
+    fi
+
     WHAT_TO_REBASE=($(git-walk-down -g $1))
 else
     WHAT_TO_REBASE=($(git-graph -t))
