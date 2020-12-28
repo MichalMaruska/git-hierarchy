@@ -748,7 +748,7 @@ walk_down_from()
         if is_sum $name; then
             # fixme: this should _test_
             # unless $known_divergent[$name]
-            if [[ ${known_divergent[(i)$name]} -le ${#known_divergent} ]]; then
+            if [[ ${known_divergent[(i)${(q)name}]} -le ${#known_divergent} ]]; then
                 :
             else
                 test_sum_is_intact $name
