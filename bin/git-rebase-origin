@@ -93,7 +93,10 @@ else
     ignore_options=()
 fi
 bases=($(git-walk-down $ignore_options -r $top|- grep segment| cut -f 3))
-
+if [[ $$ != 0 ]]
+then
+    die "cannot contiue"
+fi
 
 DEBUG "bases: $bases"
 
