@@ -1,12 +1,27 @@
-git-hierarchy (5.27~3.gbp8184d4) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @8184d47fce2f4b5ba49335859efc4192a7d0c806 **
+git-hierarchy (5.27) unstable; urgency=medium
 
   * invert the option -i
   * Avoid the header about segment, just dump the patch-ids
   * -i show also the sha
+  * git-done-segment: implement the -a option to abort the rebase
+  * git-segment: fix the description of "start"
+  * git-segment: report "clean"
+  * move sum_resolve_summands
+  * Add parameter to test_commit_parents()
+  * Use test_sum_is_intact when discovering the hierarchy
+  * test_commit_parents try to pass the parent commits as params
+  * improve diagnostics of mismatch
+  * test_sum_is_intact -- fix the logic (inverted)
+  * Introduce known_divergent to relax the test for definition.
+  * git-walk-down: add -i option
+  * git-rebase-origin: pass -i down to git-walk-down
+  * git-rebase-poset: support -i to pass it to git-walk-down
+  * git-rebase-origin: don't fetch multiple-times from one remote/branch
+  * git-rebase-origin: pass -i to git-rebase-poset
+  * Use quoting to test array-membership
+  * git-rebase-origin: Don't ignore failure of $(git-walk-down ... )
 
- -- Michal Maruska <mmaruska@gmail.com>  Sun, 06 Dec 2020 22:19:18 +0100
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 28 Dec 2020 13:29:37 +0100
 
 git-hierarchy (5.26) unstable; urgency=medium
 
