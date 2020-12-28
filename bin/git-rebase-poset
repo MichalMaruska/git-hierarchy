@@ -86,10 +86,10 @@ if [ $# -gt 0 ]; then
         ignore_options=("-i")
         ignore_options=(${ignore_options:^^known_divergent})
     else
-        ignore_options=("-i")
+        ignore_options=()
     fi
 
-    WHAT_TO_REBASE=($(git-walk-down -g $1))
+    WHAT_TO_REBASE=($(git-walk-down $ignore_options -g $1))
 else
     WHAT_TO_REBASE=($(git-graph -t))
 fi
