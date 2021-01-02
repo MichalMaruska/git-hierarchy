@@ -34,10 +34,13 @@ full_poset=n  # take it full-depth, not just 1 segment/sum
 all_graph=n # take all tops, not just current branch
 
 verbose=n
-while getopts :fgv OPT; do
+while getopts :fgi:v OPT; do
     case $OPT in
         f|+f)
             full_poset=y
+            ;;
+        i)
+            known_divergent+=($OPTARG)
             ;;
         g)
             all_graph=y
@@ -53,6 +56,15 @@ done
 
 shift $(( OPTIND - 1 ))
 OPTIND=1
+
+if [[ ${#known_divergent} -gt 0 ]]
+then
+    ignore_options=("-i")
+    ignore_options=(${ignore_options:^^known_divergent})
+else
+    ignore_options=()
+fi
+
 
 # Beware: for now gitk cannot be directed to start on a given commit.
 # Hence it's desirable, that the `top' intended commit is near the top
@@ -120,7 +132,7 @@ then
 
     readonly GRAPH=$(mktemp -t gitk-graph.XXX)
 
-    git-walk-down -t $ref_name >! $GRAPH
+    git-walk-down $ignore_options -t $ref_name >! $GRAPH
     # dump_whole_graph "tsort"
     gitk_from_graph $GRAPH
     exit 0
