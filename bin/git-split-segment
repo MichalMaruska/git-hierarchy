@@ -5,19 +5,24 @@ source /usr/share/git-hierarchy/functions.sh
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [--]  {segment} {commit} {new-name}
+usage: ${0##*/} [+-h] [-b]  {segment} {commit} {new-name}
 
 *************
 Given a segment, split it into 2 segments:
-The new one is the _TOP_ half of the existing.
+The new one is the _TOP_ (or _bottom_ if -b) half of the existing.
 
 base/start .... segment (commit) .... new-name
+-b:
+base/start ....  (commit) = new-name .... segment
 EOF
 }
 
-
-while getopts :h OPT; do
+bottom=n
+while getopts :bh OPT; do
     case $OPT in
+        b)
+            bottom=y
+            ;;
         h|+h)
             usage
             exit 0
@@ -49,16 +54,29 @@ git merge-base --is-ancestor $commit $segment
 readonly name=$3
 # upper one?
 
-# The upper part: -- notice it temporarily has the base ABOVE the start:
-git-segment $name $segment $commit $segment
+if [[ $bottom = n ]];
+then
+    # The upper part: -- notice it temporarily has the base ABOVE the start:
+    git-segment $name $segment $commit $segment
 
+    # now cut the bottom part:
+    if [[ $(current_branch_name) = $segment ]]; then
+        git switch $name
+    fi
 
-# now cut the bottom part:
-if [[ $(current_branch_name) = $segment ]]; then
-    git switch $name
+    git branch -f $segment $commit
+else
+    # The upper part: -- notice it temporarily has the base ABOVE the start:
+    baseref=$(segment_base_name $segment)
+    base=$(dump_ref_without_ref $baseref)
+         # | sed -e 's|^refs/heads/||')
+    startref=refs/start/$segment
+    start=$(git show-ref --hash $startref)
+
+    git-segment $name $base $start $commit
+
+    git-segment -r $segment $commit
+    git-segment -u $segment $name
 fi
-
-git branch -f $segment $commit
-
 # git-rename $se
 # git-segment $3 ($git-base $segment)
