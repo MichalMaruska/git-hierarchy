@@ -47,9 +47,12 @@ readonly segment=$1
 readonly commit=$2
 # must be inside the segment! todo: check it!
 
+# Check:
 # git rev-parse $commit
-git merge-base --is-ancestor start/$segment $commit
-git merge-base --is-ancestor $commit $segment
+{
+    git merge-base --is-ancestor start/$segment $commit &&
+        git merge-base --is-ancestor $commit $segment
+} || exit 1
 
 readonly name=$3
 # upper one?
