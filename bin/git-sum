@@ -141,7 +141,7 @@ while getopts :cdhrs: OPT; do
             reset="y"
             ;;
         s)
-            start_point=$OPT_ARG
+            start_point=$OPTARG
             ;;
         c)
             correct="y"
