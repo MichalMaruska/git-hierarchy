@@ -173,7 +173,7 @@ then
 elif [[ $reset = "y" ]];
 then
     delete_sum_definition $name
-    exit 0
+    # exit 0
 
 elif [ $# = 0 ]; then
     if [ $correct = y ]; then
