@@ -1,3 +1,17 @@
+git-hierarchy (5.28) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * git-rebase-poset: fix invocation of git-walk-down with -i
+  * git-rebase-origin: fix the status test
+  * gitk-poset add -i option to work with broken poset
+  * _git-rebase-poset complete for *-ref too
+  * git-split-segment -b option to use the bottom part as new segment
+  * git-split-segment: formalize the initial check
+  * correct name as OPTARG
+  * git-sum: continue after reset of -r
+
+ --  <mmaruska@gmail.com>  Tue, 12 Jan 2021 11:47:13 +0100
+
 git-hierarchy (5.27) unstable; urgency=medium
 
   * invert the option -i
