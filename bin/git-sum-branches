@@ -18,6 +18,11 @@ EOF
 }
 
 
+if getopt -T; then # should test (( $? = -4 ))
+    echo "incompatible  getopt(1) installed. Abort"
+    exit -1
+fi
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 # fixme:
@@ -31,39 +36,45 @@ cmd=""
 debug=n
 stepwise=0
 
-while getopts :dhqrsv OPT; do
-    case $OPT in
-        d)
+cmd_options=$(getopt --name $0 --shell bash \
+        --longoptions dry,help,quit,reset,stepwise,verbose \
+        --options     dhqrsv \
+        -- "$@") || { usage && exit 1 }
+
+eval set -- "$cmd_options"
+while (( $# > 0 )); do
+    case $1 in
+        -d | --dry)
             dry=y
             cmd="cecho red"
             ;;
-        h)
+        -h | --help)
             usage
             exit
             ;;
-        q)
+        -q | --quiet)
             # quiet silent
             ;;
-        r)
+        -r | --reset)
             # reset:
             reset=y
             ;;
-        +r)
-            reset=n
-            ;;
-        s)
+        -s | --stepwise )
             stepwise=1
             ;;
-        v)
+        -v | --verbose | --debug)
             debug=y
             ;;
+        --)
+            shift
+            break
+        ;;
         *)
             usage
             exit 2
     esac
+    shift
 done
-shift OPTIND-1
-OPTIND=1
 
 stash_if_non_clean "git-sum-branches saving"
 
