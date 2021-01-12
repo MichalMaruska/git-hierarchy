@@ -82,6 +82,7 @@ then
     exit 1
 fi
 
+### same as `test_sum_is_intact', but we need real_branches ourselves:
 typeset -a real_branches
 
 sum_resolve_summands $sum_name
