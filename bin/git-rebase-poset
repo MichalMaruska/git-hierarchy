@@ -7,6 +7,9 @@
 #         segments
 #         sums.
 
+source /usr/share/mmc-shell/mmc-functions.sh
+check_getopt
+
 source /usr/share/git-hierarchy/functions.sh
 GIT_DIR=$(git_dir)
 cd "$(git rev-parse --show-toplevel)"
@@ -33,37 +36,48 @@ DEBUG=n
 dry_only=n
 skip_over=""
 
-while getopts :dhi:ns:t: OPT; do
-    case $OPT in
-        d) DEBUG=y
+cmd_options=$(getopt --name $0 --shell bash \
+        --longoptions debug,ignore,dry,skip,replace,help \
+        --options     :dhi:ns:t: \
+        -- "$@") || { usage && exit 1 }
+
+eval set -- "$cmd_options"
+while (( $# > 0 )); do
+    case $1 in
+        --debug | -d) DEBUG=y
            set -x
            ;;
-        i)
-            known_divergent+=($OPTARG)
+        -i | --ignore)
+            known_divergent+=($1)
+            shift
             ;;
-        n)
+        -n | --dry )
             dry_only=y
             ;;
-        s)
+        -s | --skip)
             # ref = another_ref
-            skip_over=$(expand_ref $OPTARG)
+            skip_over=$(expand_ref $1)
+            shift
             ;;
-        t)
-            replacement=$(expand_ref $OPTARG)
+        -t | replace )
+            replacement=$(expand_ref $1)
+            shift
             #"master"
             ;;
-        h|+h)
+        -h| --help)
             usage
             exit
+            ;;
+        --)
+            shift
+            break
             ;;
         *)
             usage
             exit 2
     esac
+    shift
 done
-shift OPTIND-1
-OPTIND=1
-
 
 # check, that no other rebase in progress
 # check consistency:
@@ -90,8 +104,14 @@ if [ $# -gt 0 ]; then
     fi
 
     WHAT_TO_REBASE=($(git-walk-down $ignore_options -g $1))
+    # if [[ $? != 0 ]]; then die "";fi
 else
-    WHAT_TO_REBASE=($(git-graph -t))
+    # who checks the sums?
+    # a=<<(dump_whole_graph_tsort tsort)
+    set -x
+    WHAT_TO_REBASE=($(dump_whole_graph_tsort tsort
+                      #git-graph -t
+                      ))
 fi
 
 # Log in .git/
@@ -131,7 +151,7 @@ is_summand()
     [[ ${summands[(i)$ref]} -le ${#summands} ]]
 }
 
-# 
+#
 git-drop-in-hierarchy()
 {
     local skip=$1
