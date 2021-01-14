@@ -110,8 +110,9 @@ else
 fi
 
 # Log in .git/
-mark_rebase_poset $WHAT_TO_REBASE
-
+if [[ $dry_only != y ]]; then
+    mark_rebase_poset $WHAT_TO_REBASE
+fi
 
 typeset -a GIT_DEBUG_OPTIONS
 GIT_DEBUG_OPTIONS=()
