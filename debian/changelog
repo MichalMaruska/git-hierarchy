@@ -1,3 +1,38 @@
+git-hierarchy (5.29) unstable; urgency=medium
+
+  * git-sum-branches: compare with test_sum_is_intact !
+  * git-sum-branches: convert getopts to getopt
+  * use check_getopt
+  * git-rebase-poset: getopts -> getopt
+  * new format "name"
+  * git-rebase-segment: implement -n to dry run.
+  * git-sum-branches: implement the -n --dry option
+  * rebase-ref: implement -n for dry run
+  * fix the "shift" in getopt -- arguments
+  * git-rebase-poset: reduce verbosity
+  * rebase-poset: don't record on dry operation
+  * git-sum-branches/segment: dry operation only prints & exits with 0
+  * dump_whole_graph_tsort: check the sums are intact
+  * git-graph: implement -i option
+  * git-graph: clean up & reindent
+  * git-segment: use getopt check function
+  * git-rebase-poset: implement dry
+  * git-rebase-poset implement -x --exclude option to avoid rebasing a ref
+  * git-rebase-poset: logging changed
+  * git-graph: rename to "dump_action"
+  * summands_of: document & reindent
+  * dump_sum: use summands_of
+  * Use sum_resolve_summands()
+  * Translate the base into segment name immediately.
+  * dump_sum: optionally test
+  * delegate dump_sum to make the check for 2 walking functions
+  * sum_resolve_summands: don't drop refs/head
+  * Clearly mark refs as not files (git log cmdline)
+  * Comments in functions.sh
+  * For dot don't err on failure, but set the sum color to red
+
+ -- Michal Maruska <mmaruska@gmail.com>  Thu, 14 Jan 2021 23:04:21 +0100
+
 git-hierarchy (5.28) unstable; urgency=medium
 
   [ Michal Maruska ]
