@@ -48,20 +48,20 @@ while (( $# > 0 )); do
            set -x
            ;;
         -i | --ignore)
-            known_divergent+=($1)
             shift
+            known_divergent+=($1)
             ;;
         -n | --dry )
             dry_only=y
             ;;
         -s | --skip)
             # ref = another_ref
-            skip_over=$(expand_ref $1)
             shift
+            skip_over=$(expand_ref $1)
             ;;
         -t | replace )
-            replacement=$(expand_ref $1)
             shift
+            replacement=$(expand_ref $1)
             #"master"
             ;;
         -h| --help)
