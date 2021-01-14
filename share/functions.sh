@@ -267,10 +267,8 @@ drop_symbolic_ref()
 dump_segment()
 {
     readonly dump_format=$1
-    readonly segment=$2
+    readonly segment_name=$2
 
-    # mmc: why not output the full base ref?
-    local segment_name=${segment#refs/base/}
     case $dump_format in
         name)
             echo "$segment_name"
@@ -655,7 +653,7 @@ dump_whole_graph()
     else
         foreach segment ($segments);
         {
-            dump_segment $segment_format $segment
+            dump_segment $segment_format ${segment#refs/base/}
         }
     fi
 
