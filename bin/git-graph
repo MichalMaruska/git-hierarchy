@@ -140,7 +140,7 @@ case $dump_action in
                 roots[$i]="$roots[$i]^!";
                 # echo $roots[$i]
             }
-            git log --graph --oneline --decorate $roots $tops
+            git log --graph --oneline --decorate $roots $tops --
         ;;
     *)
         if [ $just_graph = y ]; then
