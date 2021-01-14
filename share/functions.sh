@@ -48,7 +48,7 @@ list_sums()
     # so uniq could be enough?
 }
 
-# full
+# output full references (to stdout)
 summands_of()
 {
     # the sum is just the name!
@@ -56,11 +56,11 @@ summands_of()
     local summand
     # print
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
-    ( while read summand;
-        do
-            # echo $summand >&2
-            dump_ref_without_ref $summand
-        done)
+        ( while read summand;
+          do
+              # echo $summand >&2
+              dump_ref_without_ref $summand
+          done)
 }
 
 # in: $1 the name
