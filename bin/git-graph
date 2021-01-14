@@ -25,7 +25,6 @@ usage: ${0##*/} [+-k]  choose-format  [--]
 -i ignore mis-alignment
 
 -x display using  dot(1)
--l log
 
 -t just dump the tsort lines
   -g don\'t dump the topological order on stdout.
@@ -105,7 +104,7 @@ if [ $# -gt 1 ]; then
 elif [ $# = 0 ]; then
     # default:
     # fixme: this must SORT topologically!
-    dump_whole_graph_tsort  $segment_format > $GRAPH
+    dump_whole_graph_tsort $segment_format > $GRAPH
 else
     ref_name=$1
     ref_name=${ref_name#refs/heads/}
@@ -118,6 +117,7 @@ else
 fi
 
 
+# now the action -- the format of the file is not changed anymore
 case $dump_format in
     dot)
         draw-tsort-graph $draw_options -F png $GRAPH | display -
@@ -152,7 +152,7 @@ case $dump_format in
                 cecho green $a
                 grep -e "^$a" $GRAPH || true
             done
-            else
+        else
                 tsort $GRAPH | tac
         fi
 
