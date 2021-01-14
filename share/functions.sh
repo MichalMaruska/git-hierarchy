@@ -313,6 +313,7 @@ EOF
         fi
             ;;
         tsort)
+            # mmc: so full refs here!
             echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
             ;;
         symbolic)
@@ -656,6 +657,7 @@ current_branch_name()
 #
 # In alphabetic order?
 # input: $debug, dump_format (see dump_segment()!)
+# mmc: very low level, does not check the sums!
 dump_whole_graph()
 {
     readonly segment_format=$1
@@ -688,6 +690,9 @@ dump_whole_graph()
     fi
 }
 
+
+# output with this format $1
+# todo: should accept sum-format as $2
 dump_whole_graph_tsort()
 {
     readonly segment_format=$1
@@ -741,6 +746,8 @@ test_sum_is_intact()
 
 # in environment:  DEBUG
 # typeset -a known_divergent
+# Breadth first search
+# output to STDOUT ?
 walk_down_from()
 {
     ref_name=$1
