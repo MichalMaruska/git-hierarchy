@@ -341,9 +341,14 @@ EOF
 
 dump_sum()
 {
+    local test=n
+    if [[ $1 = "--test" ]]; then
+        test=y
+        shift
+    fi
+
     readonly dump_format=$1
     readonly sum=$2
-    local summand
 
     case $dump_format in
         raw)
@@ -362,6 +367,21 @@ dump_sum()
     # dump the summands:
     typeset -a real_branches
     sum_resolve_summands $sum
+
+
+    if [[ $test = y ]]; then
+        if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
+        then
+            equal=n
+            test_commit_parents $sum $real_branches[@]
+            if test "$equal" = n;
+            then
+                die "sum $sum is not the merge of other branches! i.e. $real_branches[@]"
+                exit -2
+            fi
+        fi
+    fi
+
     # git for-each-ref "refs/sums/$sum/" --format "%(refname)"
     # summands_of $sum |\
     foreach summand ( $real_branches[@] )
