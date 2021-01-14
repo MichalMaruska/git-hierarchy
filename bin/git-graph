@@ -11,7 +11,7 @@ GIT_DIR=$(git_dir)
 keep_graph_file="n"
 just_graph=n
 
-dump_format=log
+dump_action=log
 segment_format=tsort
 verbose=n
 typeset -a draw_options
@@ -58,23 +58,23 @@ while getopts :dgi:klrstx OPT; do
             draw_options+=(-k)
             ;;
         l)
-            dump_format=log
+            dump_action=log
             segment_format=tsort
             ;;
         r)
-            dump_format=resolved
+            dump_action=resolved
             segment_format=resolved
             ;;
         s)
-            dump_format=symbolic
+            dump_action=symbolic
             segment_format=symbolic
             ;;
         t)
-            dump_format=tsort
+            dump_action=tsort
             ;;
 
         x)
-            dump_format=dot
+            dump_action=dot
             segment_format=dot
             ;;
         *)
@@ -118,7 +118,7 @@ fi
 
 
 # now the action -- the format of the file is not changed anymore
-case $dump_format in
+case $dump_action in
     dot)
         draw-tsort-graph $draw_options -F png $GRAPH | display -
         #dot -Tpng  $GRAPH
