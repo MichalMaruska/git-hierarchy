@@ -362,32 +362,31 @@ dump_sum()
     esac
 
     # dump the summands:
-
-    # git for-each-ref "refs/sums/$sum/" --format "%(refname)" 
-    summands_of $sum |\
-        {
-            while read summand
-            do
-                case $dump_format in
-                    dot)
-                        echo -n "\"${sum//-/_}\"" "->"
-                        echo "\"${${summand#refs/heads/}//-/_}\""
-                        ;;
-                    tsort)
-                        echo "refs/heads/$sum\t$summand"
-                        ;;
-                    symbolic)
-                        # mmc: why?
-                        # "\t${${$(dump_ref_without_ref $summand)#refs/heads/}//-/_}"
-                        echo "\t${summand#refs/heads/}"
-                        ;;
-                    raw)
-                        echo -n "\t" $summand
-                        ;;
-                    *)
-                esac
-            done
-        }
+    typeset -a real_branches
+    sum_resolve_summands $sum
+    # git for-each-ref "refs/sums/$sum/" --format "%(refname)"
+    # summands_of $sum |\
+    foreach summand ( $real_branches[@] )
+    {
+        case $dump_format in
+            dot)
+                echo -n "\"${sum//-/_}\"" "->"
+                echo "\"${${summand#refs/heads/}//-/_}\""
+                ;;
+            tsort)
+                echo "refs/heads/$sum\t$summand"
+                ;;
+            symbolic)
+                # mmc: why?
+                # "\t${${$(dump_ref_without_ref $summand)#refs/heads/}//-/_}"
+                echo "\t${summand#refs/heads/}"
+                ;;
+            raw)
+                echo -n "\t" $summand
+                ;;
+            *)
+        esac
+    }
 
     if [ $dump_format = dot ]; then
         cat <<EOF
