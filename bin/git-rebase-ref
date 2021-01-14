@@ -11,12 +11,17 @@ usage()
 
 DEBUG=n
 SILENT=n
-
-while getopts :dqh OPT; do
+dry=n
+dry_flag=()
+while getopts :dhnq OPT; do
     case $OPT in
         d|+d)
             DEBUG=y
             SILENT=n
+            ;;
+        n)
+            dry=y
+            dry_flag=(-n)
             ;;
         q)
             SILENT=y
@@ -51,9 +56,9 @@ test "$SILENT" = y && verbosity+=("-q")
 
 if is_sum $branch; then
     # shouldn't it be  EVALed?
-    $cmd git-sum-branches $verbosity -r $branch
+    $cmd git-sum-branches $dry_flag $verbosity -r $branch
 elif is_segment $branch; then
-    $cmd git-rebase-segment $verbosity $branch
+    $cmd git-rebase-segment $dry_flag $verbosity $branch
 else
     if test "$DEBUG" = y; then echo "unknown -- leaving unchanged $ref";fi
 fi
