@@ -23,11 +23,13 @@ usage: ${0##*/} [-qv] [-o onto] [--] [branch]
 -q quiet
 -s stash-if-needed
 
+-n dry
 branch ... segment-name, by default the current branch.
 EOF
 }
 
-while getopts :hqvso: OPT; do
+dry=n
+while getopts :hno:qsv OPT; do
     case $OPT in
         h)
             usage
@@ -35,6 +37,9 @@ while getopts :hqvso: OPT; do
             ;;
         s)
             stash_if_needed=y
+            ;;
+        n)
+            dry=y
             ;;
         o)
             onto=$OPTARG
@@ -71,15 +76,26 @@ then
 fi
 
 
-### STASH:
-stash_if_non_clean "git-rebase-segment saving"
-
 # not needed "ref/
 start="refs/start/$branch"
 if [ -z $onto ]; then
    # the base
    onto=$(segment_base_name $branch)
 fi
+
+if [[ $dry = y ]];
+then
+    if [[ $(git rev-parse $start) = $(git rev-parse $onto) ]];
+    then
+        exit 0
+    else
+        echo "should rebase segment $branch" >&2
+        exit 1
+    fi
+fi
+
+### STASH:
+stash_if_non_clean "git-rebase-segment saving"
 
 rebase_empty_segment()
 {
