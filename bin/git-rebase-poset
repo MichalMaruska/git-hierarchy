@@ -36,10 +36,11 @@ DEBUG=n
 dry_only=n
 dry_option=()
 skip_over=""
-
+typeset -a excluded
+excluded=()
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions debug,ignore,dry,skip,replace,help \
-        --options     :dhi:ns:t: \
+        --longoptions debug,exclude,ignore,dry,skip,replace,help \
+        --options     :dhi:ns:t:x: \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -54,6 +55,10 @@ while (( $# > 0 )); do
         -n | --dry )
             dry_only=y
             dry_option=(-n)
+            ;;
+        -x | --exclude)
+            shift
+            excluded+=($1)
             ;;
         -s | --skip)
             # ref = another_ref
@@ -204,6 +209,10 @@ foreach ref ($WHAT_TO_REBASE)
     then
         git-drop-in-hierarchy $skip_over $ref $replacement
     else
+        if [[ $excluded[(i)${(q)ref}] -le $#excluded ]] then
+            continue
+        fi
+
         if ! git-rebase-ref $dry_option $GIT_DEBUG_OPTIONS $ref;
         then
             # todo: save continuation!
