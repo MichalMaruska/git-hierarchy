@@ -22,6 +22,8 @@ usage()
     setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-k]  choose-format  [--]
+-i ignore mis-alignment
+
 -x display using  dot(1)
 -l log
 
@@ -41,13 +43,16 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-while getopts :dgklrstx OPT; do
+while getopts :dgi:klrstx OPT; do
     case $OPT in
         d)
             verbose=y
             ;;
         g)
             just_graph=y
+            ;;
+        i)
+            known_divergent+=($OPTARG)
             ;;
         k|+k)
             keep_graph_file=y
