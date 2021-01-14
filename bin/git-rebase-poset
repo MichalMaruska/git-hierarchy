@@ -175,9 +175,11 @@ git-drop-in-hierarchy()
             log "skip over"
         elif [[ $skip = $(segment_base $name) ]]
         then
+            log "This $ref is affected by $skip -> $replacement graft"
+
             if [[ $dry_only = y ]];
             then
-                report "rebase $ref on $replacement"
+                report "(dry) rebase $ref on $replacement"
             else
                 git-segment -u $name $replacement
             fi
@@ -202,8 +204,8 @@ foreach ref ($WHAT_TO_REBASE)
 {
     # todo: create a tag, so that if `git-rebase' fails
     # at least I see the segment (in gitk).
-    #
-    log "rebasing $ref"
+
+    # log "rebasing $ref"
 
     if [[ -n $skip_over ]]
     then
