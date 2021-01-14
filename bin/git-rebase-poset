@@ -45,7 +45,6 @@ eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
         --debug | -d) DEBUG=y
-           set -x
            ;;
         -i | --ignore)
             shift
@@ -107,11 +106,7 @@ if [ $# -gt 0 ]; then
     # if [[ $? != 0 ]]; then die "";fi
 else
     # who checks the sums?
-    # a=<<(dump_whole_graph_tsort tsort)
-    set -x
-    WHAT_TO_REBASE=($(dump_whole_graph_tsort tsort
-                      #git-graph -t
-                      ))
+    WHAT_TO_REBASE=($(dump_whole_graph_tsort name))
 fi
 
 # Log in .git/
@@ -161,8 +156,6 @@ git-drop-in-hierarchy()
     ref=$2
     name=${ref#refs/heads/}
 
-    log "$skip vs ... $ref"
-
     if is_segment $name
     then
         log "$ref is segment"
@@ -195,13 +188,12 @@ git-drop-in-hierarchy()
     fi
 }
 
-
 foreach ref ($WHAT_TO_REBASE)
 {
-        # todo: create a tag, so that if `git-rebase' fails
-        # at least I see the segment (in gitk).
-        #
-    test "$DEBUG" = y && cecho green "rebasing $ref"
+    # todo: create a tag, so that if `git-rebase' fails
+    # at least I see the segment (in gitk).
+    #
+    log "rebasing $ref"
 
     if [[ -n $skip_over ]]
     then
