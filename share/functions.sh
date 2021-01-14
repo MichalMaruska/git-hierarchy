@@ -690,6 +690,13 @@ dump_whole_graph_tsort()
             if is_segment $ref; then
                 dump_segment $segment_format $ref
             elif is_sum $ref; then
+                name=$ref
+
+                # check the sum is up-to-date:
+                if [[ ${known_divergent[(i)${(q)name}]} -gt ${#known_divergent} ]]; then
+                    test_sum_is_intact $name
+                fi
+
                 dump_sum $segment_format $ref
             else
                 :
