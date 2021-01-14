@@ -35,13 +35,13 @@ stepwise=0
 
 cmd_options=$(getopt --name $0 --shell bash \
         --longoptions dry,help,quit,reset,stepwise,verbose \
-        --options     dhqrsv \
+        --options     dhnqrsv \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
-        -d | --dry)
+        -d | --dry | -n)
             dry=y
             cmd="cecho red"
             ;;
@@ -72,8 +72,6 @@ while (( $# > 0 )); do
     esac
     shift
 done
-
-stash_if_non_clean "git-sum-branches saving"
 
 if [ $# != 1 ]; then
     usage
@@ -117,9 +115,17 @@ then
     {echo -n "no need to merge again -- the sum ";
         cecho magenta -n $sum_name
         echo " is up-to-date (as defined)." } >&2
-    unstash_if_stashed
     exit 0
 fi
+
+if [[ $dry = y ]]
+then
+    echo "should re-sum $sum_name" >&2
+    exit 1
+fi
+
+
+stash_if_non_clean "git-sum-branches saving"
 
 
 test $debug = y && echo "checkout & merge" >&2
