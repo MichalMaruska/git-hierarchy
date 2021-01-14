@@ -90,7 +90,7 @@ then
         exit 0
     else
         echo "should rebase segment $branch" >&2
-        exit 1
+        exit 0
     fi
 fi
 

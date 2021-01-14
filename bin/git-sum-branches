@@ -121,7 +121,7 @@ fi
 if [[ $dry = y ]]
 then
     echo "should re-sum $sum_name" >&2
-    exit 1
+    exit 0
 fi
 
 
