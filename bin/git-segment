@@ -3,10 +3,9 @@
 source /usr/share/git-hierarchy/functions.sh
 
 SEGMENT_PREFIX=""
-if getopt -T; then # should test (( $? = -4 ))
-    echo "incompatible  getopt(1) installed. Abort"
-    exit -1
-fi
+
+source /usr/share/mmc-shell/mmc-functions.sh
+check_getopt
 
 usage()
 {
