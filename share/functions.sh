@@ -366,6 +366,7 @@ dump_sum()
     sum_resolve_summands $sum
 
 
+    local up_to_date=y
     if [[ $test = y ]]; then
         if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
         then
@@ -373,8 +374,12 @@ dump_sum()
             test_commit_parents $sum $real_branches[@]
             if test "$equal" = n;
             then
-                die "sum $sum is not the merge of other branches! i.e. $real_branches[@]"
-                exit -2
+                if [[ $dump_format = dot ]]; then
+                    up_to_date=n
+                else
+                    die "sum $sum is not the merge of other branches! i.e. $real_branches[@]"
+                    exit -2
+                fi
             fi
         fi
     fi
@@ -404,8 +409,12 @@ dump_sum()
     }
 
     if [ $dump_format = dot ]; then
+        local color=green
+        if [[ $up_to_date = n ]]; then
+            color=red
+        fi
         cat <<EOF
-"${sum//-/_}" [label="$sum",color=green,fontsize=14,
+"${sum//-/_}" [label="$sum",color=$color,fontsize=14,
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
     elif [[ $dump_format = symbolic ]]; then
