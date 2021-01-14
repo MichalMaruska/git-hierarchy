@@ -711,12 +711,9 @@ dump_whole_graph_tsort()
             elif is_sum $ref; then
                 name=$ref
 
+                # todo: delegate dump_sum to make the check
                 # check the sum is up-to-date:
-                if [[ ${known_divergent[(i)${(q)name}]} -gt ${#known_divergent} ]]; then
-                    test_sum_is_intact $name
-                fi
-
-                dump_sum $segment_format $ref
+                dump_sum --test $segment_format $ref
             else
                 :
                 # base might be just a branch!
@@ -781,14 +778,8 @@ walk_down_from()
 
         if is_sum $name; then
             # fixme: this should _test_
-            # unless $known_divergent[$name]
-            if [[ ${known_divergent[(i)${(q)name}]} -le ${#known_divergent} ]]; then
-                :
-            else
-                test_sum_is_intact $name
-            fi
+            dump_sum --test ${sum_format} $name
 
-            dump_sum ${sum_format} $name
             queue+=($(summands_of $name))
         elif is_segment $name; then
             dump_segment $segment_format $name
