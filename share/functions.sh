@@ -272,6 +272,10 @@ dump_segment()
     # mmc: why not output the full base ref?
     local segment_name=${segment#refs/base/}
     case $dump_format in
+        name)
+            echo "$segment_name"
+            return
+            ;;
         dot)
             # for dot(1) we have to follow some restrictions on symbols:
             #  - has a special meaning.
@@ -349,6 +353,10 @@ dump_sum()
             ;;
         symbolic)
             echo "sum\t$sum"
+            ;;
+        name)
+            echo "$sum"
+            return
             ;;
         *)
     esac
