@@ -83,12 +83,8 @@ sum_resolve_summands()
     real_branches=()
 
     local br
-    local name
     foreach br ($summand_branches) {
-        # local
-        name=$(dump_ref_without_ref $br)
-        name=${name#refs/heads/}
-        real_branches+=$name
+        real_branches+=$(dump_ref_without_ref $br)
     }
 }
 
