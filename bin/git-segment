@@ -121,8 +121,8 @@ list_segments(){
         echo -e -n "$SEGMENT_PREFIX$segment"
 
         if [ $short_list = n ]; then
-            echo -en "\t\t";
-            echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/}
+            echo -en "\t";
+            echo -n ${$(dump_ref_without_ref "refs/base/$segment")#refs/heads/} "\t"
 
             output_dirty $segment "\t"
         else
@@ -198,7 +198,7 @@ GIT_DIR=$(git_dir)
 
 ## `list' all segments, and the Bases.
 if [ $# = 0 ]; then
-    list_segments
+    list_segments | column --table
 
     # Dump the starts?
     if false; then
