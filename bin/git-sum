@@ -107,7 +107,11 @@ show_prune_definition()
         local ref="$(git symbolic-ref $summand)"
         local hash="$(git show-ref $summand)"
         if [ -n "$hash" ]; then
-           echo "$ref"
+            local prefix=""
+            if [[ $number_them = y ]]; then
+                prefix="${summand#refs/sums/$name/}\t"
+            fi
+            echo "$prefix$ref"
         else
             if [ $silent != "y" ]; then
                 echo NON-existant $ref = $summand
@@ -128,10 +132,10 @@ fi
 reset="n"
 correct="n"
 delete=n
-
+number_them=n
 start_point="HEAD"
 
-while getopts :cdhrs: OPT; do
+while getopts :cdhnrs: OPT; do
     case $OPT in
         h|+h)
             usage
@@ -139,6 +143,9 @@ while getopts :cdhrs: OPT; do
             ;;
         r)
             reset="y"
+            ;;
+        n)
+            number_them=y
             ;;
         s)
             start_point=$OPTARG

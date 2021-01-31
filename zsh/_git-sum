@@ -9,6 +9,7 @@ _git_sum() {
     _arguments : \
 	'-h[help]'  \
 	'-d[Sum to drop]:sum:_git-sum-name' \
+	'-n[number them]' \
 	'1: :->sum' \
 	'*: :->git_segment_name' && return 0
 
