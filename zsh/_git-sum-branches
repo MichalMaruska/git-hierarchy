@@ -1,0 +1,26 @@
+#compdef git-sum-branches
+#description Remake a git sum/merge. (akin 'rebase' for segments)
+
+
+_git_sum_branches() {
+    # fixme: necessara?
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	'-h[help]'  \
+	'-d[dry]' \
+	'-v[verbose]' \
+	'-n[number them]' \
+	'1: :->sum'  && return 0
+
+    case $state in
+	sum)
+	    _git-sum-name
+	    ;;
+    esac
+}
+
+
+_git_sum_branches "$@"
+
