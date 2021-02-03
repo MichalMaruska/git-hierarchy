@@ -352,7 +352,7 @@ dump_sum()
             echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
             ;;
         symbolic)
-            echo "sum\t$sum"
+            echo "sum $sum"
             ;;
         name)
             echo "$sum"
