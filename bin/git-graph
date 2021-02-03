@@ -125,7 +125,7 @@ case $dump_action in
         #rm $GRAPH
         ;;
     symbolic)
-        cat $GRAPH
+        column -t -s '	' $GRAPH
         ;;
     resolved)
         # fixme?
