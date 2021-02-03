@@ -318,7 +318,7 @@ EOF
             ;;
         symbolic)
             local base=$(segment_base $segment_name)
-            echo "segment $segment_name\t ${base#refs/}"
+            echo "segment $segment_name\t${base#refs/}"
             ;;
         resolved)
             echo segment $segment_name "\t" $(git rev-parse $segment_name) \
