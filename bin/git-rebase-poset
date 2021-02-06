@@ -32,7 +32,7 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-DEBUG=n
+debug=n
 dry_only=n
 dry_option=()
 skip_over=""
@@ -46,7 +46,7 @@ cmd_options=$(getopt --name $0 --shell bash \
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
-        --debug | -d) DEBUG=y
+        --debug | -d) debug=y
            ;;
         -i | --ignore)
             shift
@@ -101,7 +101,7 @@ fi
 typeset -a WHAT_TO_REBASE
 
 if [ $# -gt 0 ]; then
-    test "$DEBUG" = y && {echo -n "... down from ";cecho cyan "$1"} >&2
+    test "$debug" = y && {echo -n "... down from ";cecho cyan "$1"} >&2
 
     if [[ ${#known_divergent} -gt 0 ]]
     then
@@ -111,7 +111,7 @@ if [ $# -gt 0 ]; then
         ignore_options=()
     fi
 
-    WHAT_TO_REBASE=($(git-walk-down $ignore_options -g $1))
+    WHAT_TO_REBASE=($(git-walk-down $ignore_options ${debug+-d} -g $1))
     # if [[ $? != 0 ]]; then die "";fi
 else
     # who checks the sums?
@@ -126,14 +126,14 @@ fi
 typeset -a GIT_DEBUG_OPTIONS
 GIT_DEBUG_OPTIONS=()
 
-test "$DEBUG" = y && GIT_DEBUG_OPTIONS+=(-d)
-test "$DEBUG" = n && GIT_DEBUG_OPTIONS+=(-q)
+test "$debug" = y && GIT_DEBUG_OPTIONS+=(-d)
+test "$debug" = n && GIT_DEBUG_OPTIONS+=(-q)
 #test "$SILENT" = y &&
 
 
 log()
 {
-    if [[ $DEBUG = y ]]; then
+    if [[ $debug = y ]]; then
         cecho red $1 >&2
     fi
 }
