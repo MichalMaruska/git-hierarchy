@@ -422,13 +422,16 @@ EOF
     fi
 }
 
+
 ######################################## Test if up-to-date
 test_commit_parents()
 # input:  the $summand_branches variable.
 # $sum_branch
 # $debug
 #
+# output
 # `returns' the $equal variable is set.
+# $reason
 {
     local sum_branch=$1
     shift
@@ -481,7 +484,8 @@ test_commit_parents()
         # verify
         foreach id ($commit_ids_sum_parents) {
             if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
-                test $debug = y && cecho red "This parent is not in summands: $id" >&2
+                reason="This parent is not in summands: $id"
+                test $debug = y && cecho red $reason >&2
                 equal=n
             else
                 test $debug = y && cecho green "found $id" >&2
@@ -503,15 +507,16 @@ test_commit_parents()
         else
             if test $equal = y;
             then
+                reason="some summand is equal to the sum itself?"
                 equal=n
-            # SOME of the parent covers it:
+                # SOME of the parent covers it:
                 foreach parent ($commit_ids_sum_parents) {
                     if test $(git merge-base $parent $id) = $id
                     then
                         test $debug = y && cecho green "$parent is greater than $id" >&2
                         equal=y
                     else
-            # cecho green "found $id" >&2
+                        # cecho green "found $id" >&2
                         :
                     fi
                 }
