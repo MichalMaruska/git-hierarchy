@@ -352,7 +352,7 @@ dump_sum()
             echo "sum\t$sum\t$(dump_ref refs/heads/$sum)";
             ;;
         symbolic)
-            echo "sum $sum"
+            echo "sum $fg[red]$sum$reset_color"
             ;;
         name)
             echo "$sum"
