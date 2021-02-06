@@ -377,7 +377,11 @@ dump_sum()
                 if [[ $dump_format = dot ]]; then
                     up_to_date=n
                 else
-                    die "sum $sum is not the merge of other branches! i.e. $real_branches[@]"
+                    echo $reason >&2
+                    echo "sum $sum is not the merge of other branches! i.e." >&2
+                    foreach summand ( $real_branches[@] ) {
+                        print "\t${summand#refs/heads/}" >&2
+                    }
                     exit -2
                 fi
             fi
