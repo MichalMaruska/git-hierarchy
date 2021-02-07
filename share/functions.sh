@@ -456,11 +456,15 @@ test_commit_parents()
     }
 
     # situation:
-    local commit_ids_sum_parents
-    commit_ids_sum_parents=($(git show -s --format=format:"%P" $sum_branch))
+    local parents_commit_ids
+    parents_commit_ids=($(git show -s --format=format:"%P" $sum_branch))
 
-
-    test $debug = y && echo "Parents: $commit_ids_sum_parents" >&2
+    test $debug = y && {
+        echo "Parents:"
+        foreach commit ($parents_commit_ids) {
+            echo "\t$commit" >&2
+        }
+    } >&2
 
     # new criterion:
     # the parents "include" all summands, and each parent is one of the summands.
