@@ -443,8 +443,8 @@ test_commit_parents()
     # take the commit-ids of the summands: (definition)
     # And parent-ids of the sum's head.    (situation)
     # sort & compare
-    local commit_ids_summands
-    commit_ids_summands=()
+    local -A summands_commit_ids
+    # commit_ids_summands=()
 
     local br
     foreach br ($summand_branches) {
@@ -481,14 +481,14 @@ test_commit_parents()
     sum_id=$(commit_id $sum_branch)
 
     # if the sum refers to one of the summand commit?
-    if [[ ${commit_ids_summands[(r)$sum_id]} = $sum_id ]];then
+    if [[ ${summands_commit_ids[(r)$sum_id]} = $sum_id ]];then
         test $debug = y && cecho red "This merge is itself a summand." >&2
     else
         # here the O(N^2) tests:
         # verify
-        foreach id ($commit_ids_sum_parents) {
-            if ! [[ ${commit_ids_summands[(r)$id]} = $id ]] ; then
                 reason="This parent is not in summands: $id"
+        foreach id ($parents_commit_ids[@] {
+            if ! [[ ${summands_commit_ids[(r)$id]} = $id ]] ; then
                 test $debug = y && cecho red $reason >&2
                 equal=n
             else
