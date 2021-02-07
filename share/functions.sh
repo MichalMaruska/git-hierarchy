@@ -448,10 +448,12 @@ test_commit_parents()
 
     local br
     foreach br ($summand_branches) {
-        commit_ids_summands+=$(commit_id $br)
-    }
+        local commit=$(commit_id $br)
+        summands_commit_ids["$br"]=$commit
+        # summands_commit_ids+=("$br"=$commit)
 
-    test $debug = y && echo "Summands: $commit_ids_summands" >&2
+        test $debug = y && echo "\t$br\t$commit" >&2
+    }
 
     # situation:
     local commit_ids_sum_parents
