@@ -54,7 +54,7 @@ segment_format=$dump_format
 
 keep_graph=n
 verbose=n
-DEBUG=n
+debug=n
 typeset -a draw_options
 
 
@@ -100,7 +100,7 @@ while getopts :df:ghi:klrstx OPT; do
             exit 0
             ;;
         d)
-            DEBUG=y
+            debug=y
             verbose=y
             ;;
         *)
