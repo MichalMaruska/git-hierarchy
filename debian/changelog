@@ -1,3 +1,29 @@
+git-hierarchy (5.30) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * git-sum -n   to number the summands.
+  * Use columnt(1) for segment list
+  * new zsh/_git-sum-branches
+  * rename to git-segment-split
+  * symbolic format: drop space
+  * symbolic: use column(1)
+  * symbolic sum
+  * test_commit_parents: set $reason
+  * dump_sum: print $reason on failure
+  * symbolic format: use color for the sum names
+  * use proper debug variable
+  * git-rebase-poset: use 'debug' variable, and pass it down
+  * rename commit_ids_summands -> summands_commit_ids
+  * sq + debug on separate lines
+  * rename commit_ids_sum_parents -> parents_commit_ids
+  * test_commit_parents: don't fail when summands moved forward, or rebased.
+  * use TEMPDIR for mktemp -t
+  * git-sum-branches is the only user of the strict check
+  * fix shell
+  * git-rebase-poset: fix passing the debug option
+
+ --  <mmaruska@gmail.com>  Mon, 08 Feb 2021 23:37:51 +0100
+
 git-hierarchy (5.29) unstable; urgency=medium
 
   * git-sum-branches: compare with test_sum_is_intact !
