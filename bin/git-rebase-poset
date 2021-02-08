@@ -111,7 +111,8 @@ if [ $# -gt 0 ]; then
         ignore_options=()
     fi
 
-    WHAT_TO_REBASE=($(git-walk-down $ignore_options ${debug+-d} -g $1))
+    if [[ $debug = y ]]; then debug_option="-d"; else debug_option=();  fi
+    WHAT_TO_REBASE=($(git-walk-down $ignore_options $debug_option -g $1))
     # if [[ $? != 0 ]]; then die "";fi
 else
     # who checks the sums?
