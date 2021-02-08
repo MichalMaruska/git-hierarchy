@@ -133,7 +133,7 @@ clean()
     fi
 }
 
-GRAPH=$(mktemp graph.XXX)
+GRAPH=$(mktemp -t graph.XXX)
 
 sum_format=$segment_format
 walk_down_from $ref_name $segment_format $sum_format > $GRAPH

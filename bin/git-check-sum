@@ -29,13 +29,13 @@ dump_parent_shas()
 
 commit=$1
 
-temp1=$(mktemp)
+temp1=$(mktemp -t)
 dump_parent_shas $commit > $temp1
 
 trap "echo error; clean" ERR
 trap "clean" EXIT
 
-temp2=$(mktemp)
+temp2=$(mktemp -t)
 
 typeset -a summands
 summands=($(git-sum $1))

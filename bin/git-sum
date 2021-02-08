@@ -184,7 +184,7 @@ then
 
 elif [ $# = 0 ]; then
     if [ $correct = y ]; then
-        TEMP=$(mktemp)
+        TEMP=$(mktemp -t)
         show_prune_definition $name "silent" > $TEMP
         # todo!
         # delete those that don't exist.
