@@ -426,6 +426,15 @@ EOF
     fi
 }
 
+dump_array()
+{
+    local prefix=$1
+    shift
+    local element
+    foreach element ($@) {
+        print "$prefix$element"
+    }
+}
 
 ######################################## Test if up-to-date
 test_commit_parents()
@@ -437,32 +446,38 @@ test_commit_parents()
 # `returns' the $equal variable is set.
 # $reason
 {
+    local strict=n
+    if [[ $1 = "--strict" ]]; then
+        strict=y
+        shift
+    fi
     local sum_branch=$1
     shift
-    summand_branches=($@)
-    # take the commit-ids of the summands: (definition)
+    summand_branches=($@)  # this is supposedly taken from the definition.
+
+    # Take the commit-ids of the summands: (definition)
     # And parent-ids of the sum's head.    (situation)
     # sort & compare
     local -A summands_commit_ids
-    # commit_ids_summands=()
 
     local br
+    test $debug = y && echo "Summands:" >&2
     foreach br ($summand_branches) {
         local commit=$(commit_id $br)
-        summands_commit_ids["$br"]=$commit
+        summands_commit_ids[$br]=$commit
         # summands_commit_ids+=("$br"=$commit)
 
         test $debug = y && echo "\t$br\t$commit" >&2
     }
 
-    # situation:
-    local parents_commit_ids
+    # situation around the sum:
+    typeset -la parents_commit_ids
     parents_commit_ids=($(git show -s --format=format:"%P" $sum_branch))
 
     test $debug = y && {
         echo "Parents:"
         foreach commit ($parents_commit_ids) {
-            echo "\t$commit" >&2
+            echo "\t$commit"
         }
     } >&2
 
@@ -475,67 +490,113 @@ test_commit_parents()
     # git merge-base
 
     equal=y
-
+    reason=""
     # 1/ each parent is one of summands.
     # But, if the merge is itself one of summands -> should be ok!
 
     set +u # here we risk the "var. lookup" fails, so we treat it explicitly!
 
-
     # Check that parents are subset of "summands" -- i.e. the sum is not AHEAD....btw.
-    local sum_id
-    sum_id=$(commit_id $sum_branch)
+    local sum_commit_id
+    sum_commit_id=$(commit_id $sum_branch)
+
+    missing_parents=()
+    missing_summands=()
 
     # if the sum refers to one of the summand commit?
-    if [[ ${summands_commit_ids[(r)$sum_id]} = $sum_id ]];then
+    # (r)
+    if [[ ${summands_commit_ids[(r)$sum_commit_id]} = $sum_commit_id ]];then
         test $debug = y && cecho red "This merge is itself a summand." >&2
     else
         # here the O(N^2) tests:
         # verify
-                reason="This parent is not in summands: $id"
-        foreach id ($parents_commit_ids[@] {
+        # fixme:  keys:
+        foreach id ($parents_commit_ids[@]) {
             if ! [[ ${summands_commit_ids[(r)$id]} = $id ]] ; then
+                reason="This parent is not in summands: $id"
+
                 test $debug = y && cecho red $reason >&2
-                equal=n
+                missing_parents+=($id)
+                # append & then check it!
+                # equal=n
             else
-                test $debug = y && cecho green "found $id" >&2
+                test $debug = y && \
+                    cecho green "found $id:  ${(k)summands_commit_ids[(r)$id]}" >&2
+                # fixme: I could remove it!
+                # $parents_commit_ids[(r)$id]
             fi
         }
     fi
     set -u # here again we don't (intend to) risk it.
 
+    # todo: missing_parents
 
 
     # if test $equal = y
     # then
 
     # 2/ each summand is less than the sum. not -> N
-    foreach id ($commit_ids_summands) {
+    foreach id ($summands_commit_ids[@]) {
         #if still a chance to win:
-        if test $id = $sum_id; then
+        if test $id = $sum_commit_id; then
             test $debug = y && echo ignoring ;  # for example S=a+b  but b>a.
         else
-            if test $equal = y;
-            then
-                reason="some summand is equal to the sum itself?"
-                equal=n
-                # SOME of the parent covers it:
-                foreach parent ($commit_ids_sum_parents) {
-                    if test $(git merge-base $parent $id) = $id
-                    then
-                        test $debug = y && cecho green "$parent is greater than $id" >&2
-                        equal=y
-                    else
-                        # cecho green "found $id" >&2
-                        :
-                    fi
-                }
-            else
-            # no need to check further
-                break;
+#            if test $equal = y;
+#            then
+            # SOME of the parent covers it:
+            if [[ $parents_commit_ids[(i)$id] -gt $#parents_commit_ids  ]]; then
+                summand=${(k)summands_commit_ids[(r)$id]}
+                missing_summands+=($summand)
+                test $debug = y && cecho green "summand $summand is not a parent" >&2
             fi
         fi
     }
+
+    if [[ $debug = y ]]; then
+        { cecho red "the remaining are: "
+          dump_array "\t" $missing_summands
+          dump_array "\t" $missing_parents
+        } >&2
+    fi
+
+    if [[ $strict = y && ( $#missing_summands -gt 0 || $#missing_parents -gt 0 ) ]]; then
+        equal=n
+        return
+    fi
+
+    local unsolved=($missing_summands)
+    foreach summand ($missing_summands) {
+        foreach parent ($missing_parents) {
+            if test $(git merge-base $summand $parent) = $parent
+            then
+                test $debug = y && cecho green "summand $summand is greater than parent $parent" >&2
+                # equal=y
+            elif
+                # reflog:
+                git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
+                unsolved[(r)$summand]=()
+            then
+                test $debug = y && cecho green "summand $summand has moved since $parent" >&2
+                unsolved[(r)$summand]=()
+            else
+                # cecho green "found $id" >&2
+                :
+            fi
+        }
+    }
+
+    if [[ $#unsolved -gt 0 ]]
+    then
+        {
+            cecho red "$#unsolved missing summands: "
+            dump_array "\t" $unsolved[@]
+        } >&2
+        equal=n
+    fi
+        # no need to check further
+        #    break;
+        # fi
+        #fi
 }
 
 
