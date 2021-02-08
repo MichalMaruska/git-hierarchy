@@ -211,7 +211,8 @@ foreach ref ($WHAT_TO_REBASE)
     then
         git-drop-in-hierarchy $skip_over $ref $replacement
     else
-        if [[ $excluded[(i)${(q)ref}] -le $#excluded ]] then
+        if [[ $excluded[(i)${(q)ref}] -le $#excluded ]];
+        then
             continue
         fi
 
