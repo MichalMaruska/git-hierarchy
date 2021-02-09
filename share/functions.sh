@@ -565,6 +565,7 @@ test_commit_parents()
     fi
 
     local unsolved=($missing_summands)
+    local copy_missing_parents=($missing_parents)
     foreach summand ($missing_summands) {
         foreach parent ($missing_parents) {
             if test $(git merge-base $summand $parent) = $parent
@@ -575,9 +576,11 @@ test_commit_parents()
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
                 unsolved[(r)$summand]=()
+                copy_missing_parents[(r)$parent]=()
             then
                 test $debug = y && cecho green "summand $summand has moved since $parent" >&2
                 unsolved[(r)$summand]=()
+                copy_missing_parents[(r)$parent]=()
             else
                 # cecho green "found $id" >&2
                 :
@@ -592,11 +595,10 @@ test_commit_parents()
             dump_array "\t" $unsolved[@]
         } >&2
         equal=n
+    elif [[ $#copy_missing_parents ]]; then
+        cecho red "parents missing" >&2
+        equal=n
     fi
-        # no need to check further
-        #    break;
-        # fi
-        #fi
 }
 
 
