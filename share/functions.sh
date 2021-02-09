@@ -829,7 +829,7 @@ test_sum_is_intact()
     fi
 }
 
-# in environment:  DEBUG
+# in environment:  debug
 # typeset -a known_divergent
 # Breadth first search
 # output to STDOUT ?
@@ -858,7 +858,7 @@ walk_down_from()
         # take the first, and append the base(s)
         # also remove "first" if it's repeated.
 
-        test "$DEBUG" = y && \
+        test "$debug" = y && \
             cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
 
         # append the base(s), or summands:
@@ -873,12 +873,12 @@ walk_down_from()
             dump_segment $segment_format $name
             queue+=($(segment_base $name))
         else
-            if test "$DEBUG" = y; then
+            if test "$debug" = y; then
                 cecho red "stopping @ $name" >&2
             fi
         fi
 
-        if test "$DEBUG" = y; then
+        if test "$debug" = y; then
             cecho green "iterate $queue -- ${#queue}" >&2
         fi
     done
