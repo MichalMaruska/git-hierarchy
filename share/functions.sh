@@ -531,9 +531,9 @@ test_commit_parents()
 
     # todo: missing_parents
 
-
-    # if test $equal = y
-    # then
+    if [[ $#missing_parents = 0 && $#missing_summands = 0 ]]; then
+       return 0
+    fi
 
     # 2/ each summand is less than the sum. not -> N
     foreach id ($summands_commit_ids[@]) {
