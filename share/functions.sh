@@ -570,20 +570,16 @@ test_commit_parents()
         foreach parent ($missing_parents) {
             if test $(git merge-base $summand $parent) = $parent
             then
-                test $debug = y && cecho green "summand $summand is greater than parent $parent" >&2
-                # equal=y
+                cecho green "summand $summand is greater than parent $parent" >&2
             elif
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             then
-                test $debug = y && cecho green "summand $summand has moved since $parent" >&2
+                cecho green "summand $summand has moved since $parent" >&2
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
-            else
-                # cecho green "found $id" >&2
-                :
             fi
         }
     }
