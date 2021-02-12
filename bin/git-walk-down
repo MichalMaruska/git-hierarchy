@@ -17,7 +17,7 @@ extern_color=pink
 
 # fixme: this does not dump the TYPE of the relationship. (sum vs segment-base)
 source /usr/share/git-hierarchy/functions.sh
-
+test_option=()
 usage()
 {
     setopt POSIX_ARGZERO
@@ -36,6 +36,7 @@ Format:
 -f  format --- explicitly select (dot raw tsort)
 
 -i ignore broken defition
+-n don't test (sum) definitions!
 
 -d  turn on Debugging
 
@@ -58,7 +59,7 @@ debug=n
 typeset -a draw_options
 
 
-while getopts :df:ghi:klrstx OPT; do
+while getopts :df:ghi:klnrstx OPT; do
     case $OPT in
         x|+x)
             display_gui=y
@@ -70,6 +71,9 @@ while getopts :df:ghi:klrstx OPT; do
             ;;
         i)
             known_divergent+=($OPTARG)
+            ;;
+        n)
+            test_option=(--notest)
             ;;
         t)
             segment_format=tsort
@@ -136,7 +140,7 @@ clean()
 GRAPH=$(mktemp -t graph.XXX)
 
 sum_format=$segment_format
-walk_down_from $ref_name $segment_format $sum_format > $GRAPH
+walk_down_from $test_option $ref_name $segment_format $sum_format > $GRAPH
 
 # cat $GRAPH
 
