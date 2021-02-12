@@ -132,7 +132,7 @@ then
 
     readonly GRAPH=$(mktemp -t gitk-graph.XXX)
 
-    git-walk-down $ignore_options -t $ref_name >! $GRAPH
+    git-walk-down -n $ignore_options -t $ref_name >! $GRAPH
     # dump_whole_graph "tsort"
     gitk_from_graph $GRAPH
     exit 0
