@@ -833,6 +833,12 @@ test_sum_is_intact()
 # output to STDOUT ?
 walk_down_from()
 {
+    test_option=(--test)
+    if [[ $1 = "--notest" ]]
+    then
+        test_option=()
+        shift
+    fi
     ref_name=$1
     segment_format=$2
     sum_format=${3-$segment_format}
@@ -864,7 +870,7 @@ walk_down_from()
 
         if is_sum $name; then
             # fixme: this should _test_
-            dump_sum --test ${sum_format} $name
+            dump_sum $test_option ${sum_format} $name
 
             queue+=($(summands_of $name))
         elif is_segment $name; then
