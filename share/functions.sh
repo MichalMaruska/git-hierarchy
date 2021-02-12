@@ -529,12 +529,6 @@ test_commit_parents()
     fi
     set -u # here again we don't (intend to) risk it.
 
-    # todo: missing_parents
-
-    if [[ $#missing_parents = 0 && $#missing_summands = 0 ]]; then
-       return 0
-    fi
-
     # 2/ each summand is less than the sum. not -> N
     foreach id ($summands_commit_ids[@]) {
         #if still a chance to win:
@@ -551,6 +545,12 @@ test_commit_parents()
             fi
         fi
     }
+
+    # todo: missing_parents
+    if [[ $#missing_parents = 0 && $#missing_summands = 0 ]]; then
+       return 0
+    fi
+
 
     if [[ $debug = y ]]; then
         { cecho red "the remaining are: "
