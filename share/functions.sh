@@ -10,6 +10,7 @@ colors
 # apps can add into here!
 typeset -a known_divergent
 known_divergent=()
+global_test_off=n
 
 
 # obsolete:
@@ -340,8 +341,13 @@ dump_sum()
 {
     local test=n
     if [[ $1 = "--test" ]]; then
-        test=y
         shift
+        test=y
+    fi
+
+    if [[ $global_test_off = y ]]; then
+        echo "tests is off!">&2
+        test=n
     fi
 
     readonly dump_format=$1
@@ -367,7 +373,7 @@ dump_sum()
 
 
     local up_to_date=y
-    if [[ $test = y ]]; then
+    if [[ $test == y ]]; then
         if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
         then
             equal=n
