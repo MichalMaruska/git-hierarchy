@@ -1,0 +1,39 @@
+#!/bin/zsh -feu
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-h] [--]  segment1 segment2
+
+******
+Invokes  git-range-diff on the 2 segment intervals.
+
+EOF
+}
+
+while getopts :h OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [[ $# -lt 2 ]]; then
+    usage >&2
+    exit 1
+fi
+
+segment1=$1
+segment2=$2
+shift 2
+
+
+git range-diff start/$segment1..$segment1  start/$segment2..$segment2 $@
+
