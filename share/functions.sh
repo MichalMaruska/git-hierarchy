@@ -300,7 +300,7 @@ dump_segment()
 
             # show the vertex
             cat <<EOF
-"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,
+"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://$segment_name",
             fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
         # if the base is `external', dump it:
@@ -424,7 +424,7 @@ dump_sum()
             color=red
         fi
         cat <<EOF
-"${sum//-/_}" [label="$sum",color=$color,fontsize=14,
+"${sum//-/_}" [label="$sum",color=$color,fontsize=14,URL="gitk://$sum",
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
     elif [[ $dump_format = symbolic ]]; then
