@@ -16,12 +16,14 @@ segment_format=tsort
 verbose=n
 typeset -a draw_options
 
-DEBUG=no
+debug=no
 usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-k]  choose-format  [--]
+-d debug
+
 -i ignore mis-alignment
 
 -x display using  dot(1)
@@ -46,6 +48,7 @@ while getopts :dgi:klrstx OPT; do
     case $OPT in
         d)
             verbose=y
+            debug=y
             ;;
         g)
             just_graph=y
