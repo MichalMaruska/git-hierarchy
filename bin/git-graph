@@ -101,23 +101,24 @@ setopt NULL_GLOB
 
 
 # only 1?
-if [ $# -gt 1 ]; then
-    usage >&2
-    exit 1
-elif [ $# = 0 ]; then
+if [ $# = 0 ]; then
     # default:
     # fixme: this must SORT topologically!
     global_test_off=y
     dump_whole_graph_tsort $segment_format > $GRAPH
 else
-    ref_name=$1
-    ref_name=${ref_name#refs/heads/}
-    # ref_name=$(git rev-parse --symbolic-full-name "HEAD")
+    # touch $GRAPH
+    foreach top ($@)
+    {
+        ref_name=$top
+        ref_name=${ref_name#refs/heads/}
+        # ref_name=$(git rev-parse --symbolic-full-name "HEAD")
 
-    # title="full down from $ref_name"
-    sum_format=$segment_format
-    walk_down_from $ref_name $segment_format $sum_format > $GRAPH
-    # git-walk-down -f $segment_format $ref_name > $GRAPH
+        # title="full down from $ref_name"
+        sum_format=$segment_format
+        walk_down_from $ref_name $segment_format $sum_format >> $GRAPH
+        # git-walk-down -f $segment_format $ref_name > $GRAPH
+    }
 fi
 
 
