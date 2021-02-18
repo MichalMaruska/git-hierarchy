@@ -17,6 +17,8 @@ extern_color=pink
 
 # fixme: this does not dump the TYPE of the relationship. (sum vs segment-base)
 source /usr/share/git-hierarchy/functions.sh
+check_getopt
+
 test_option=()
 usage()
 {
@@ -59,61 +61,80 @@ debug=n
 typeset -a draw_options
 
 
-while getopts :df:ghi:klnrstx OPT; do
-    case $OPT in
-        x|+x)
+cmd_options=$(getopt --name $0 --shell bash \
+                     --longoptions debug,x,keep-graph,ignore,notest,raw,tsort,graph,symbolic,log,format:,help \
+        --options     df:ghi:klnrstx  \
+        -- "$@") || { usage && exit 1 }
+eval set -- "$cmd_options"
+
+
+# todo: convert to `getopt'
+while (( $# > 0 )); do
+    case $1 in
+        -x|--x)
             display_gui=y
             dump_format=dot
             segment_format=$dump_format
             ;;
-        k)
+        -k|--keep-graph)
             keep_graph=y
             ;;
-        i)
+        -i|--ignore)
             known_divergent+=($OPTARG)
             ;;
-        n)
+        -n|--notest)
             test_option=(--notest)
             ;;
-        t)
+        -t|--tsort)
             segment_format=tsort
             dump_format=raw
             ;;
-        g|+g)
+        -g|--graph)
             dump_format=tsort
             segment_format=$dump_format
             ;;
-        r|+r)
+        -r|--raw)
             dump_format=raw
             segment_format=$dump_format
             ;;
-        s)
+        -s|--symbolic)
             dump_format=symbolic
             segment_format=$dump_format
             ;;
-        l)
+        -l|--log)
             segment_format=tsort
             dump_format=log
             ;;
-        f)
-            dump_format=$OPTARG
+        -f|--format)
+            shift
+            dump_format=$1
             segment_format=$dump_format
             ;;
-        h|+h)
+        -h|--help)
             usage
             exit 0
             ;;
-        d)
+        -d|--debug)
             debug=y
             verbose=y
             ;;
+        --)
+            shift
+            break
+            ;;
         *)
-            usage
+            {
+                echo "bad option $1"
+                usage
+            } >&2
             exit 2
     esac
+    shift
 done
+
 shift OPTIND-1
 OPTIND=1
+
 
 if [ $# = 0 ]; then
     # default is the current branch
