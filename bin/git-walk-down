@@ -62,8 +62,8 @@ typeset -a draw_options
 
 
 cmd_options=$(getopt --name $0 --shell bash \
-                     --longoptions debug,x,keep-graph,ignore,notest,raw,tsort,graph,symbolic,log,format:,help \
-        --options     df:ghi:klnrstx  \
+                     --longoptions debug,x,keep-graph,ignore::,notest,raw,tsort,graph,symbolic,log,format:,help \
+        --options     df::ghi::klnrstx  \
         -- "$@") || { usage && exit 1 }
 eval set -- "$cmd_options"
 
@@ -80,7 +80,8 @@ while (( $# > 0 )); do
             keep_graph=y
             ;;
         -i|--ignore)
-            known_divergent+=($OPTARG)
+            shift
+            known_divergent+=($1)
             ;;
         -n|--notest)
             test_option=(--notest)
