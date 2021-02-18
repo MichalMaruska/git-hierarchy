@@ -24,19 +24,7 @@ EOF
 
 }
 
-DEBUG()
-{
-    if [ $DEBUG = y ]; then
-        cecho blue "$@" >&2
-    fi
-}
-
-INFO()
-{
-    cecho blue "$@" >&2
-}
-
-DEBUG=n
+# debug=n
 fetch=yes
 dry_only=no
 
@@ -57,7 +45,7 @@ while getopts :hi:fvd OPT; do
             fetch=no
             ;;
         v)
-            DEBUG=y
+            debug=y
             ;;
         *)
             usage

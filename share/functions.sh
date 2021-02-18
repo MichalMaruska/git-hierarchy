@@ -27,6 +27,18 @@ global_test_off=n
 # mmc: so this should EXIT afterwards!
 trap 'print ${PROGRAM-$0} Error: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2; dump_stack; exit 1' ZERR
 
+DEBUG()
+{
+    if [ $debug = y ]; then
+        cecho blue "$@" >&2
+    fi
+}
+
+INFO()
+{
+    cecho blue "$@" >&2
+}
+
 cherry_pick_in_progress()
 {
     test -d $(git rev-parse --git-common-dir)/sequencer
