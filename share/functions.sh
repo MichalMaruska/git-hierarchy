@@ -886,7 +886,7 @@ walk_down_from()
         # also remove "first" if it's repeated.
 
         test "$debug" = y && \
-            cecho yellow "processing $this, remain $queue ${#queue}" >&2 || : ok
+            cecho yellow "processing $this, (queue is $queue ${#queue}" >&2 || : ok
 
         # append the base(s), or summands:
         name=${this#refs/heads/}
