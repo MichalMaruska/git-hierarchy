@@ -62,8 +62,8 @@ typeset -a draw_options
 
 
 cmd_options=$(getopt --name $0 --shell bash \
-                     --longoptions debug,x,keep-graph,ignore::,notest,raw,tsort,graph,symbolic,log,format:,help \
-        --options     df::ghi::klnrstx  \
+                     --longoptions debug,x,keep-graph,ignore:,notest,raw,tsort,graph,symbolic,log,format:,help \
+        --options     df::ghi:klnrstx  \
         -- "$@") || { usage && exit 1 }
 eval set -- "$cmd_options"
 
@@ -132,9 +132,6 @@ while (( $# > 0 )); do
     esac
     shift
 done
-
-shift OPTIND-1
-OPTIND=1
 
 
 if [ $# = 0 ]; then
