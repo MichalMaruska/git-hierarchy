@@ -430,18 +430,23 @@ dump_sum()
         esac
     }
 
-    if [ $dump_format = dot ]; then
-        local color=green
-        if [[ $up_to_date = n ]]; then
-            color=red
-        fi
-        cat <<EOF
+    # close:
+    case $dump_format in
+        dot)
+            local color=green
+            if [[ $up_to_date = n ]]; then
+                color=red
+            fi
+            cat <<EOF
 "${sum//-/_}" [label="$sum",color=$color,fontsize=14,URL="gitk://$sum",
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
-    elif [[ $dump_format = symbolic ]]; then
-        echo
-    fi
+            ;;
+        symbolic | tsort |raw)
+            echo
+            ;;
+        *)
+    esac
 }
 
 dump_array()
