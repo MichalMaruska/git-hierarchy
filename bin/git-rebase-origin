@@ -111,7 +111,7 @@ function rebase_one()
             set -x
             local -r old=$(git rev-parse ${base#refs/})
             $GIT_P4 sync --branch $REMOTE_BRANCH --git-dir $(git rev-parse --git-common-dir)
-            git log $old..${base#refs/}
+            git log --oneline $old..${base#refs/}
         fi
         git_fetch=no
     elif expr match $base 'refs/remotes/' >/dev/null ;
@@ -149,7 +149,7 @@ function rebase_one()
             if [ $dry_only = no ]; then
                 local old_head=$(git rev-parse $remote/$remote_branch)
                 git fetch $remote $remote_branch
-                git log $old_head..FETCH_HEAD
+                git log --oneline $old_head..FETCH_HEAD
 
                 # funny:
                 # $(basename $base)
