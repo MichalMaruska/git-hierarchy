@@ -15,11 +15,14 @@ all:
 
 .PHONY:	all install install-zsh
 
-install: install-zsh all
+install: install-zsh install-libs all
 	$(INSTALL) -v -D --directory $(DESTDIR)$(BIN_INSTALL_DIR)
 	for p in $(BINFILES); do \
 	  $(INSTALL) -v -m 555 $$p $(DESTDIR)$(BIN_INSTALL_DIR) ; \
 	done
+
+
+install-libs:
 # todo: permissions!
 	$(INSTALL) -v -D --directory $(DESTDIR)$(SHARED_INSTALL_DIR)
 	for p in share/*; do \
