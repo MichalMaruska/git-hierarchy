@@ -1,8 +1,8 @@
-#compdef git-split-segment
+#compdef git-segment-split
 #description reset git-rebase state & reset the start to base (of a Segment)
 
 # I need this as I invoke other _functions:
-_git-split-segment()
+_git-segment-split()
 {
     local curcontext="$curcontext" state line
     typeset -A opt_args
@@ -47,7 +47,7 @@ _git-split-segment()
 
 if [[ ! $words[1] = 'git' ]]
 then
-    words[1]=(git "-split-segment")
+    words[1]=(git "-segment-split")
     (( CURRENT++ ))
 else
     echo "already divided: $words[1] vs $words[2]">&2
