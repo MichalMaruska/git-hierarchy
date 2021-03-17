@@ -1,3 +1,41 @@
+git-hierarchy (5.31) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * sq rename DEBUG->debug
+  * Detect missing parent !
+  * test_commit_parents: exit if bijection is found!
+  * print the hints!
+  * fix: test the missing summand after trying them
+  * walk_down_from: accept --notest option
+  * git-walk-down: -t to avoid tests
+  * and gitk-poset to take advantage of that!
+  * global_test_off:
+  * new git-range-diff-segments
+  * Provide URL=gitk:// for dot format
+  * git-graph: rename to "debug"
+  * git-graph: support multiple top nodes (on cli)
+  * drop git-check-sum
+  * git-rebase-origin: move DEBUG/INFO to functions
+  * git-walk-down: migrate to geteopt
+  * dump_sum: correctly close with newline for ...raw & tsort
+  * git-walk-down: still fix the getopt migration
+  * walk_down_from: improve logging
+  * still more fixes:  ::  is for optional!
+  * emit proper (red) error messages
+  * git-rebase-origin: use --oneline logs to report upstream changes
+  * add install-libs Makefile target
+  * adapt the zsh completion to rename of segment-split!
+  * git-walk-down: document long options in usage
+  * debug_trace: use in git-sum-branches
+  * git-rebase-poset: use long options for git-walk-down
+  * git-graph: invoke walk_down_from with --notest
+  * test_commit_parents: if summand moved ahead, mark as solved
+  * test_commit_parents: summand as moved parent is ok
+  * test_commit_parents: fix the missing parent detection.
+  * At least regroup the cecho-related functions. Limit use of $reason
+
+ --  <mmaruska@gmail.com>  Wed, 17 Mar 2021 04:05:03 +0100
+
 git-hierarchy (5.30) unstable; urgency=medium
 
   [ Michal Maruska ]
