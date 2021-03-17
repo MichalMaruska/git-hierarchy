@@ -606,10 +606,8 @@ test_commit_parents()
             elif
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
-                unsolved[(r)$summand]=()
-                copy_missing_parents[(r)$parent]=()
             then
-                cecho green "summand $summand has moved since $parent" >&2
+                cecho green "summand $summand\thas moved since $parent" >&2
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             fi
