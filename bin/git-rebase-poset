@@ -105,14 +105,14 @@ if [ $# -gt 0 ]; then
 
     if [[ ${#known_divergent} -gt 0 ]]
     then
-        ignore_options=("-i")
+        ignore_options=("--ignore")
         ignore_options=(${ignore_options:^^known_divergent})
     else
         ignore_options=()
     fi
 
-    if [[ $debug = y ]]; then debug_option="-d"; else debug_option=();  fi
-    WHAT_TO_REBASE=($(git-walk-down $ignore_options $debug_option -g $1))
+    if [[ $debug = y ]]; then debug_option="--debug"; else debug_option=();  fi
+    WHAT_TO_REBASE=($(git-walk-down $ignore_options $debug_option --graph $1))
     # if [[ $? != 0 ]]; then die "";fi
 else
     # who checks the sums?
