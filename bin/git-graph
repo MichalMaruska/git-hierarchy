@@ -116,7 +116,7 @@ else
 
         # title="full down from $ref_name"
         sum_format=$segment_format
-        walk_down_from $ref_name $segment_format $sum_format >> $GRAPH
+        walk_down_from --notest $ref_name $segment_format $sum_format >> $GRAPH
         # git-walk-down -f $segment_format $ref_name > $GRAPH
     }
 fi
