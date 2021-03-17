@@ -29,8 +29,15 @@ trap 'print ${PROGRAM-$0} Error: $LINENO:  $ZSH_EVAL_CONTEXT $0 >&2; dump_stack;
 
 DEBUG()
 {
-    if [ $debug = y ]; then
+    if [[ $debug = y ]]; then
         cecho blue "$@" >&2
+    fi
+}
+
+debug_trace()
+{
+    if [[ $debug = y ]]; then
+        cecho green $@ >&2
     fi
 }
 
