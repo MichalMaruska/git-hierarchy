@@ -41,10 +41,34 @@ debug_trace()
     fi
 }
 
+CRITICAL()
+{
+    if [[ $debug = y ]] ; then
+        cecho red "This merge is itself a summand." >&2
+    fi
+}
+
 INFO()
 {
     cecho blue "$@" >&2
 }
+
+function INFO()
+{
+    cecho yellow "$@"
+}
+
+function STEP()
+{
+    cecho blue "$@"
+}
+
+function WARN()
+{
+    cecho red "$@"
+}
+
+
 
 cherry_pick_in_progress()
 {
@@ -536,16 +560,16 @@ test_commit_parents()
     # if the sum refers to one of the summand commit?
     # (r)
     if [[ ${summands_commit_ids[(r)$sum_commit_id]} = $sum_commit_id ]];then
-        test $debug = y && cecho red "This merge is itself a summand." >&2
+        CRITICAL "This merge is itself a summand."
     else
         # here the O(N^2) tests:
         # verify
         # fixme:  keys:
         foreach id ($parents_commit_ids[@]) {
             if ! [[ ${summands_commit_ids[(r)$id]} = $id ]] ; then
-                reason="This parent is not in summands: $id"
+                reason="parents not in summand"
 
-                test $debug = y && cecho red $reason >&2
+                CRITICAL "This parent is not in summands: $id"
                 missing_parents+=($id)
                 # append & then check it!
                 # equal=n
@@ -909,9 +933,7 @@ walk_down_from()
             dump_segment $segment_format $name
             queue+=($(segment_base $name))
         else
-            if test "$debug" = y; then
-                cecho red "stopping @ $name" >&2
-            fi
+            CRITICAL "stopping @ $name"
         fi
 
         if test "$debug" = y; then
@@ -980,22 +1002,6 @@ mark_rebase_poset()
 {
     echo "$@" > $GIT_DIR/$git_poset_mark
 }
-
-function INFO()
-{
-    cecho yellow "$@"
-}
-
-function STEP()
-{
-    cecho blue "$@"
-}
-
-function WARN()
-{
-    cecho red "$@"
-}
-
 
 # 1 key/value pair per line.
 dump_associative_array()
