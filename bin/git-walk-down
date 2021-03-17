@@ -29,21 +29,22 @@ usage: ${0##*/} [-g | x | r | l | s] | [-f format]  [-dh] [--] {REF}
 Output or Display the order of segments & sums below REF
 
 Format:
--g  dump the graph (default)
--r  raw format
--x  display the graph w/ ImageMagick
--l  log with --graph
--s  symbolic
+-g --graph dump the graph (default)
+-r --raw   raw format
+-x --x     display the graph w/ ImageMagick
+-l --log    log with --graph
+-s --symbolic  symbolic ??
 
--f  format --- explicitly select (dot raw tsort)
+-f --format XX --- explicitly select (dot raw tsort)
 
--i ignore broken defition
--n don't test (sum) definitions!
 
--d  turn on Debugging
+-i --ignore   ignore broken defition
+-n --notest   don't test (sum) definitions!
 
--k keep the graph file
--h  help
+-d --debug    turn on Debugging
+
+-k --keep     keep the graph file
+-h  --help
 
 REF ... top segment/sum
 EOF
