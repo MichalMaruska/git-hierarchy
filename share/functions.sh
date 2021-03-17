@@ -601,6 +601,8 @@ test_commit_parents()
             if test $(git merge-base $summand $parent) = $parent
             then
                 cecho green "summand $summand is greater than parent $parent" >&2
+                unsolved[(r)$summand]=()
+                copy_missing_parents[(r)$parent]=()
             elif
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
