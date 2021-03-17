@@ -610,6 +610,8 @@ test_commit_parents()
                 cecho green "summand $summand\thas moved since $parent" >&2
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
+            else
+                : unsolved
             fi
         }
     }
@@ -621,8 +623,8 @@ test_commit_parents()
             dump_array "\t" $unsolved[@]
         } >&2
         equal=n
-    elif [[ $#copy_missing_parents ]]; then
-        cecho red "parents missing" >&2
+    elif [[ $#copy_missing_parents -gt 0 ]]; then
+        cecho red "($sum_branch) parents missing (did the sum-branch move?)" >&2
         equal=n
     fi
 }
