@@ -468,7 +468,9 @@ dump_sum()
             if [[ $up_to_date = n ]]; then
                 color="red"
             elif [[ $up_to_date = dontknow ]]; then
-                 color="blue"
+                color="blue"
+            elif [[ $equal = old ]]; then
+                color="olive"
             fi
             cat <<EOF
 "${sum//-/_}" [label="$sum",color=$color,fontsize=14,URL="gitk://$sum",
@@ -631,6 +633,8 @@ test_commit_parents()
             if test $(git merge-base $summand $parent) = $parent
             then
                 INFO "summand $summand is greater than parent $parent"
+
+                equal=old
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             elif
@@ -638,6 +642,7 @@ test_commit_parents()
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
             then
                 cecho green "$sum_branch: summand $summand\thas moved since $parent" >&2
+                equal=old
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             else
