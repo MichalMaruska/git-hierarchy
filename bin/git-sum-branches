@@ -135,15 +135,16 @@ test $debug = y && echo "checkout & merge" >&2
 first=$real_branches[1]
 first_branch=$(expand_ref $first)
 
+work_branch="tmp"
 if [ $reset = "y" ]; then
     # Is this really necessary? only if
     #if [ $sum_branch = $(git branch) ]; then
     eval $cmd git checkout --detach $first
     #fi
-    eval $cmd git branch --force $sum_name HEAD
-    eval $cmd git checkout $sum_name
+    eval $cmd git branch --force $work_branch HEAD
+    eval $cmd git checkout $work_branch
 else
-    eval $cmd git checkout $sum_name
+    eval $cmd git checkout $work_branch $sum_name
     # but here it is needed:
     eval $cmd git merge $first_branch
 fi
@@ -170,6 +171,7 @@ else
             eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate "'$next'";
         }
     fi
+    git branch --force $sum_name $work_branch
     unstash_if_stashed
 fi
 exit 0
