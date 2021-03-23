@@ -108,6 +108,8 @@ if [ $# = 0 ]; then
     dump_whole_graph_tsort $segment_format > $GRAPH
 else
     # touch $GRAPH
+    typeset -a processed
+    processed=()
     foreach top ($@)
     {
         ref_name=$top

@@ -891,6 +891,9 @@ test_sum_is_intact()
     fi
 }
 
+typeset -a processed
+processed=()
+
 # in environment:  debug
 # typeset -a known_divergent
 # Breadth first search
@@ -910,19 +913,24 @@ walk_down_from()
     # local
     typeset -a queue
     queue=($ref_name)
-    typeset -a processed
 
     local this
     local name
     while [[ ${#queue} -ge 1 ]];
     do
+        queue=(${queue:|processed}) # A:|B is A-B. fixme: processed ?
+
+        if [[ $#queue = 0 ]]; then
+            break;
+        fi
+
         this=${queue[1]}
         # remove "first" if it's repeated:
         # we don't need += here, since all previously processed cannot be in `queue' anymore,
         # if the graph is DAG (acyclic!):
-        processed=($this)
+        processed+=($this)
 
-        queue=(${queue:|processed})# A:|B is A-B. fixme: processed ?
+
         # take the first, and append the base(s)
         # also remove "first" if it's repeated.
 
