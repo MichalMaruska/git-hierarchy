@@ -468,7 +468,9 @@ dump_sum()
         dot)
             local color=green
             if [[ $up_to_date = n ]]; then
-                color=red
+                color="red"
+            elif [[ $up_to_date = dontknow ]]; then
+                 color="blue"
             fi
             cat <<EOF
 "${sum//-/_}" [label="$sum",color=$color,fontsize=14,URL="gitk://$sum",
