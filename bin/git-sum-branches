@@ -161,10 +161,10 @@ else
     {cecho green -n "re-merging sum ";cecho cyan $sum_name} >&2
     set -x
     if [ $stepwise = 0 ]; then
-    eval $cmd git merge -m '"Sum: $sum_name = $first + $others"' \
-        --rerere-autoupdate \
-        -s octopus \
-        -s recursive -X patience -X ignore-space-change $others
+        eval $cmd git merge -m '"Sum: $sum_name = $first + $others"' \
+             --rerere-autoupdate \
+             --strategy octopus \
+             --strategy recursive --strategy-option patience --strategy-option ignore-space-change $others
     else
         foreach next ($others)
         {
