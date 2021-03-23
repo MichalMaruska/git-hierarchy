@@ -43,9 +43,7 @@ debug_trace()
 
 CRITICAL()
 {
-    if [[ $debug = y ]] ; then
-        cecho red $@ >&2
-    fi
+    cecho red $@ >&2
 }
 
 function INFO()
@@ -575,13 +573,12 @@ test_commit_parents()
             if ! [[ ${summands_commit_ids[(r)$id]} = $id ]] ; then
                 reason="parents not in summand"
 
-                CRITICAL "This parent is not in summands: $id"
+                CRITICAL "$sum_branch: This parent is not in summands: $id"
                 missing_parents+=($id)
                 # append & then check it!
                 # equal=n
             else
-                test $debug = y && \
-                    cecho green "found $id:  ${(k)summands_commit_ids[(r)$id]}" >&2
+                debug_trace "found $id:  ${(k)summands_commit_ids[(r)$id]}"
                 # fixme: I could remove it!
                 # $parents_commit_ids[(r)$id]
             fi
@@ -599,7 +596,7 @@ test_commit_parents()
             if [[ $parents_commit_ids[(i)$id] -gt $#parents_commit_ids  ]]; then
                 summand=${(k)summands_commit_ids[(r)$id]}
                 missing_summands+=($summand)
-                test $debug = y && cecho green "summand $summand is not a parent" >&2
+                debug_trace "summand $summand is not a parent"
             fi
         fi
     }
@@ -629,17 +626,18 @@ test_commit_parents()
     local unsolved=($missing_summands)
     local copy_missing_parents=($missing_parents)
     foreach summand ($missing_summands) {
+        debug_trace "Trying to understand where summand $summand is"
         foreach parent ($missing_parents) {
             if test $(git merge-base $summand $parent) = $parent
             then
-                cecho green "summand $summand is greater than parent $parent" >&2
+                INFO "summand $summand is greater than parent $parent"
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             elif
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
             then
-                cecho green "summand $summand\thas moved since $parent" >&2
+                cecho green "$sum_branch: summand $summand\thas moved since $parent" >&2
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
             else
@@ -651,7 +649,7 @@ test_commit_parents()
     if [[ $#unsolved -gt 0 ]]
     then
         {
-            cecho red "$#unsolved missing summands: "
+            cecho red "$sum_branch: $#unsolved missing summands: "
             dump_array "\t" $unsolved[@]
         } >&2
         equal=n
@@ -935,7 +933,7 @@ walk_down_from()
         # also remove "first" if it's repeated.
 
         # STEP
-        WARN "processing $this, (queue is $queue ${#queue}" || : ok
+        STEP "processing $this, (queue is $queue ${#queue}" || : ok
 
         # append the base(s), or summands:
         name=${this#refs/heads/}
