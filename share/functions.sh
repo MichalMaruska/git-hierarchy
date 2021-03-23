@@ -391,7 +391,7 @@ dump_sum()
     fi
 
     if [[ $global_test_off = y ]]; then
-        echo "tests is off!">&2
+        DEBUG "tests is off!"
         test=n
     fi
 
@@ -517,13 +517,13 @@ test_commit_parents()
     local -A summands_commit_ids
 
     local br
-    test $debug = y && echo "Summands:" >&2
+    DEBUG "Summands:"
     foreach br ($summand_branches) {
         local commit=$(commit_id $br)
         summands_commit_ids[$br]=$commit
         # summands_commit_ids+=("$br"=$commit)
 
-        test $debug = y && echo "\t$br\t$commit" >&2
+        DEBUG "\t$br\t$commit"
     }
 
     # situation around the sum:
@@ -920,8 +920,8 @@ walk_down_from()
         # take the first, and append the base(s)
         # also remove "first" if it's repeated.
 
-        test "$debug" = y && \
-            cecho yellow "processing $this, (queue is $queue ${#queue}" >&2 || : ok
+        # STEP
+        WARN "processing $this, (queue is $queue ${#queue}" || : ok
 
         # append the base(s), or summands:
         name=${this#refs/heads/}
@@ -938,9 +938,7 @@ walk_down_from()
             CRITICAL "stopping @ $name"
         fi
 
-        if test "$debug" = y; then
-            cecho green "iterate $queue -- ${#queue}" >&2
-        fi
+        debug_trace "iterate ${#queue}: $queue"
     done
 }
 
