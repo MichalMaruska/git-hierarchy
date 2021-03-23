@@ -496,9 +496,11 @@ dump_array()
 
 ######################################## Test if up-to-date
 test_commit_parents()
-# input:  the $summand_branches variable.
-# $sum_branch
-# $debug
+# options:  --strict to exit when any deviation noticed!
+
+# input: sum_branch summand_branches...
+#
+# $debug variable!
 #
 # output
 # `returns' the $equal variable is set.
@@ -528,7 +530,10 @@ test_commit_parents()
         DEBUG "\t$br\t$commit"
     }
 
-    # situation around the sum:
+    # fixme: maybe the sum is NOT a merge. Then either it's one of the summands -- no need to look at parents!
+    # But, if the merge is itself one of summands -> should be ok!
+
+    # Parents: situation around the sum:
     typeset -la parents_commit_ids
     parents_commit_ids=($(git show -s --format=format:"%P" $sum_branch))
 
@@ -544,13 +549,10 @@ test_commit_parents()
     # that is, each parent is fast-forward of summands and a summand itself.
     # fixme!
 
-    # how to get common base for merge:
-    # git merge-base
-
     equal=y
     reason=""
-    # 1/ each parent is one of summands.
-    # But, if the merge is itself one of summands -> should be ok!
+
+    # Verify whether ...each parent is one of summands.
 
     set +u # here we risk the "var. lookup" fails, so we treat it explicitly!
 
@@ -593,8 +595,6 @@ test_commit_parents()
         if test $id = $sum_commit_id; then
             test $debug = y && echo ignoring ;  # for example S=a+b  but b>a.
         else
-#            if test $equal = y;
-#            then
             # SOME of the parent covers it:
             if [[ $parents_commit_ids[(i)$id] -gt $#parents_commit_ids  ]]; then
                 summand=${(k)summands_commit_ids[(r)$id]}
@@ -622,6 +622,10 @@ test_commit_parents()
         return
     fi
 
+    # how to get common base for merge:
+    # git merge-base
+
+    # analyze the mismatch:
     local unsolved=($missing_summands)
     local copy_missing_parents=($missing_parents)
     foreach summand ($missing_summands) {
