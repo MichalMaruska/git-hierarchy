@@ -44,28 +44,30 @@ debug_trace()
 CRITICAL()
 {
     if [[ $debug = y ]] ; then
-        cecho red "This merge is itself a summand." >&2
+        cecho red $@ >&2
     fi
-}
-
-INFO()
-{
-    cecho blue "$@" >&2
 }
 
 function INFO()
 {
-    cecho yellow "$@"
+    cecho blue "$@" >&2
 }
+
+# function INFO()
+# {
+#     cecho yellow "$@"
+# }
 
 function STEP()
 {
-    cecho blue "$@"
+    if [[ $debug = y ]]; then
+        cecho blue "$@" >&2
+    fi
 }
 
 function WARN()
 {
-    cecho red "$@"
+    cecho red "$@" >&2
 }
 
 
