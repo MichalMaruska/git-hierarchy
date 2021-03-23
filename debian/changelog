@@ -1,3 +1,18 @@
+git-hierarchy (5.32) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * git-graph: use -x option for draw-tsort-graph
+  * fix the logging/tracing functions
+  * git-sum-branches: use a temporary branch to limit the reflog
+  * git-sum-branches: use long options to invoke git-merge
+  * Use the logging/tracing functions
+  * dump_sum: always check the up-to-date status
+  * dot: Use blue color for ignored-status sums.
+  * test_commit_parents: comments & reformat
+  * git-graph: Use the "processed" array to avoid duplicated edges/nodes
+
+ --  <mmaruska@gmail.com>  Tue, 23 Mar 2021 02:27:58 +0100
+
 git-hierarchy (5.31) unstable; urgency=medium
 
   [ Michal Maruska ]
