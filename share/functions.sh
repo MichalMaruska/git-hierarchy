@@ -418,25 +418,25 @@ dump_sum()
 
 
     local up_to_date=y
-    if [[ $test == y ]]; then
-        if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
+    if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
+    then
+        equal=n
+        test_commit_parents $sum $real_branches[@]
+        if [[ "$equal" = n ]]
         then
-            equal=n
-            test_commit_parents $sum $real_branches[@]
-            if test "$equal" = n;
-            then
-                if [[ $dump_format = dot ]]; then
-                    up_to_date=n
-                else
-                    echo $reason >&2
-                    echo "sum $sum is not the merge of other branches! i.e." >&2
-                    foreach summand ( $real_branches[@] ) {
-                        print "\t${summand#refs/heads/}" >&2
-                    }
-                    exit -2
-                fi
+            if [[ $test == n ]]; then
+                up_to_date=n
+            else
+                echo $reason >&2
+                echo "sum $sum is not the merge of other branches! i.e." >&2
+                foreach summand ( $real_branches[@] ) {
+                    print "\t${summand#refs/heads/}" >&2
+                }
+                exit -2
             fi
         fi
+    else
+        up_to_date="dontknow"
     fi
 
     # git for-each-ref "refs/sums/$sum/" --format "%(refname)"
