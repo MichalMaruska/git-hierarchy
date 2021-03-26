@@ -11,8 +11,15 @@ GIT_DIR=$(git_dir)
 keep_graph_file="n"
 just_graph=n
 
-dump_action=log
-segment_format=tsort
+if [[ -n "${DISPLAY-}" ]]
+then
+    segment_format=dot
+    dump_action=x
+else
+    dump_action=log
+    segment_format=tsort
+fi
+
 verbose=n
 typeset -a draw_options
 
