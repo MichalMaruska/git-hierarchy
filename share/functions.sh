@@ -12,6 +12,8 @@ typeset -a known_divergent
 known_divergent=()
 global_test_off=n
 
+typeset -a MOVED_SINCE
+typeset -a GREATER_SINCE
 
 # obsolete:
 # report_error()
@@ -443,8 +445,16 @@ dump_sum()
     {
         case $dump_format in
             dot)
-                echo -n "\"${sum//-/_}\"" "->"
-                echo "\"${${summand#refs/heads/}//-/_}\""
+                color=red
+                arrowsize=1
+                if [[ ${MOVED_SINCE[(i)$summand]} -le ${#MOVED_SINCE} ]]; then
+                    color=blue
+                    arrowsize=2
+                elif [[ ${GREATER_SINCE[(i)$summand]} -le ${#GREATER_SINCE} ]]; then
+                    color=yellow
+                    arrowsize=3
+                fi
+                echo -n "\"${sum//-/_}\"" "->" "\"${${summand#refs/heads/}//-/_}\" [color=$color, arrowsize=$arrowsize]"
                 ;;
             tsort)
                 echo "refs/heads/$sum\t$summand"
@@ -515,6 +525,8 @@ test_commit_parents()
     shift
     summand_branches=($@)  # this is supposedly taken from the definition.
 
+    MOVED_SINCE=()
+    GREATER_SINCE=()
     # Take the commit-ids of the summands: (definition)
     # And parent-ids of the sum's head.    (situation)
     # sort & compare
@@ -634,6 +646,7 @@ test_commit_parents()
             then
                 INFO "summand $summand is greater than parent $parent"
 
+                GREATER_SINCE+=($summand)
                 equal=old
                 unsolved[(r)$summand]=()
                 copy_missing_parents[(r)$parent]=()
@@ -641,6 +654,7 @@ test_commit_parents()
                 # reflog:
                 git log --walk-reflogs --pretty=oneline $summand |grep $parent >/dev/null
             then
+                MOVED_SINCE+=($summand)
                 cecho green "$sum_branch: summand $summand\thas moved since $parent" >&2
                 equal=old
                 unsolved[(r)$summand]=()
