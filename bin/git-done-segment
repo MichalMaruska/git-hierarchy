@@ -60,8 +60,12 @@ then
     git-reset-segment $branch
     git branch --delete $TEMP
 else
-    echo -n "was rebasing "
-    cat ${FILE=$GIT_DIR/.segment-cherry-pick}
+    segment=$(cat ${FILE=$GIT_DIR/.segment-cherry-pick})
+    echo -n "was rebasing $segment"
+
+    git cherry-pick --abort
     rm -vf $FILE
     echo "remaining on temp branch possibly?" >&2
+    set -x
+    git switch $segment
 fi
