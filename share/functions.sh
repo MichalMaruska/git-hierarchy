@@ -859,36 +859,32 @@ dump_whole_graph()
 
 # output with this format $1
 # todo: should accept sum-format as $2
+# in topological order!
 dump_whole_graph_tsort()
 {
     readonly segment_format=$1
 
+    dump_whole_graph tsort | tsort | tac | \
+        {
+            # now in this order!
+            while read ref;
+            do
+                ref=${ref#refs/heads/}
+                # echo $ref >&2
+                if is_segment $ref; then
+                    dump_segment $segment_format $ref
+                elif is_sum $ref; then
+                    name=$ref
 
-    local graph=$(mktemp -t whole_graph_order.XXX)
-    dump_whole_graph tsort | tsort | tac > $graph
-
-    # now in this order!
-    {
-        while read ref;
-        do
-            ref=${ref#refs/heads/}
-            # echo $ref >&2
-            if is_segment $ref; then
-                dump_segment $segment_format $ref
-            elif is_sum $ref; then
-                name=$ref
-
-                # todo: delegate dump_sum to make the check
-                # check the sum is up-to-date:
-                dump_sum --test $segment_format $ref
-            else
-                :
-                # base might be just a branch!
-            fi
-        done
-    } < $graph
-
-    rm -f $graph
+                    # todo: delegate dump_sum to make the check
+                    # check the sum is up-to-date:
+                    dump_sum --test $segment_format $ref
+                else
+                    :
+                    # base might be just a branch!
+                fi
+            done
+        }
 }
 
 test_sum_is_intact()
