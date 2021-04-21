@@ -138,7 +138,12 @@ test $debug = y && echo "checkout & merge" >&2
 first=$real_branches[1]
 first_branch=$(expand_ref $first)
 
-work_branch="tmp"
+get_temp_branch()
+{
+    echo "_tmp"
+}
+
+readonly work_branch=$(get_temp_branch)
 if [ $reset = "y" ]; then
     # Is this really necessary? only if
     #if [ $sum_branch = $(git branch) ]; then
@@ -176,6 +181,7 @@ else
     fi
     git branch --force $sum_name $work_branch
     git switch $sum_name
+    git branch --delete $work_branch
     unstash_if_stashed
 fi
 exit 0
