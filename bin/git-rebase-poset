@@ -251,12 +251,11 @@ foreach ref ($WHAT_TO_REBASE)
 
     if [[ -n $skip_over ]]
     then
-    else
-        if [[ $excluded[(i)${(q)ref}] -le $#excluded ]];
-        then
-            continue
-        fi
         git_replace_in_hierarchy $skip_over $ref $replacement
+    elif [[ $excluded[(i)${(q)ref}] -le $#excluded ]];
+    then
+        continue
+    fi
 
         if ! git-rebase-ref $dry_option $GIT_DEBUG_OPTIONS $ref;
         then
