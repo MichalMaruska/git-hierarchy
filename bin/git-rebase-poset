@@ -29,10 +29,14 @@ usage: ${0##*/} [+-h] [-d] [-i ref] [-n] [--]  [sum|segment] ...
 --skip  -s   old-name
 --replace -t new-name
 Replace old-name as summands/segment-bases with new-name.
+
+--clone -c prefix
+Create a clone hierarchy, rebasing at the same time.
 EOF
     unsetopt POSIX_ARGZERO
 }
 
+clone_hierarchy=no
 debug=n
 dry_only=n
 dry_option=()
@@ -40,8 +44,8 @@ skip_over=""
 typeset -a excluded
 excluded=()
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions debug,exclude,ignore,dry,skip,replace,help \
-        --options     :dhi:ns:t:x: \
+        --longoptions clone,debug,exclude,ignore,dry,skip,replace,help \
+        --options     :c:dhi:ns:t:x: \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
@@ -60,6 +64,11 @@ while (( $# > 0 )); do
         -x | --exclude)
             shift
             excluded+=($1)
+            ;;
+        -c | --clone)
+            clone_hierarchy=yes
+            shift
+            prefix=$1
             ;;
         -s | --skip)
             # ref = another_ref
@@ -203,6 +212,34 @@ git_replace_in_hierarchy()
             fi
         fi
     fi
+}
+
+# This contains full references
+# refs/heads/xx -> yyy
+# or               refs/heads/yy ???
+typeset -A rewritten_bases
+
+# Create a new sum with the summands the Image under mapping $rewritten_bases()
+git-clone-sum()
+{
+    sum=$1
+    name=$2
+    # Absolutely the same:
+    summands=($(summands_of $sum))
+    echo "$summands"
+    # refs/heads/pinning refs/heads/protectme refs/heads/build refs/heads/colorize-tools
+    # refs/heads/pinning refs/heads/protectme refs/heads/build refs/heads/colorize-tools
+    summands=($(git-sum $sum))
+    echo "$summands"
+
+    new_summands=()
+    foreach ref ($summands) {
+        #if found ...
+        new_summands+=$rewritten_bases[$ref]
+    }
+    set -x
+    git-sum $name $new_summands
+    #rewritten_bases[$ref]=$new_name
 }
 
 foreach ref ($WHAT_TO_REBASE)
