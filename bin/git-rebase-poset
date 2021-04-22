@@ -19,14 +19,15 @@ usage()
     setopt POSIX_ARGZERO
     cat <<EOF
 usage: ${0##*/} [+-h] [-d] [-i ref] [-n] [--]  [sum|segment] ...
--d debug
+--debug -d debug
 
--n .. dry
+--dry -n .. dry
 
 
--i ... ignore misalignment
--s old-name
--t new-name
+--ignore -i ... ignore misalignment
+
+--skip  -s   old-name
+--replace -t new-name
 Replace old-name as summands/segment-bases with new-name.
 EOF
     unsetopt POSIX_ARGZERO
