@@ -1,3 +1,23 @@
+git-hierarchy (5.34) unstable; urgency=medium
+
+  [ Michal Maruska ]
+  * reduce verbosity (on sums when rebase -n)
+  * Improve logging during test_commit_parents()
+  * test_commit_parents: start to set "equal=old", and present it in xdot
+  * git-graph: default to xdot on X
+  * Make the outdated edges colored & bolder
+  * git-done-segment: on -a properly abort cherry-pick
+  * Don't use ascii colors for 'symbolic' format on sums
+  * Drop the temporary branch used for summing
+  * dump_whole_graph_tsort: don't use temporary file
+  * Mention long options in usage()
+  * git-rebase-poset: rename git-drop-in-hierarchy to git_replace_in_hierarchy
+  * git-rebase-poset: git-clone-sum
+  * Even if we skip over, we still have to rebase, don't we?
+  * git-rebase-poset: clone-hierarchy at once
+
+ --  <mmaruska@gmail.com>  Thu, 22 Apr 2021 14:41:28 +0200
+
 git-hierarchy (5.32) unstable; urgency=medium
 
   [ Michal Maruska ]
