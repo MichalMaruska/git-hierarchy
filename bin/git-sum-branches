@@ -179,9 +179,12 @@ else
             eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate "'$next'";
         }
     fi
-    git branch --force $sum_name $work_branch
-    git switch $sum_name
-    git branch --delete $work_branch
-    unstash_if_stashed
 fi
+
+# Even in the trivial case!
+git branch --force $sum_name $work_branch
+git switch $sum_name
+git branch --delete $work_branch
+unstash_if_stashed
+
 exit 0
