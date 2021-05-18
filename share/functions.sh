@@ -456,7 +456,8 @@ dump_sum()
                     color=yellow
                     arrowsize=3
                 fi
-                echo -n "\"${sum//-/_}\"" "->" "\"${${summand#refs/heads/}//-/_}\" [color=$color, arrowsize=$arrowsize]"
+                # mmc: why -n?
+                echo  "\"${sum//-/_}\"" "->" "\"${${summand#refs/heads/}//-/_}\" [color=$color, arrowsize=$arrowsize];"
                 ;;
             tsort)
                 echo "refs/heads/$sum\t$summand"
