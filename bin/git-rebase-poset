@@ -104,7 +104,7 @@ if [ -e $GIT_DIR/.rebasing-segment ]; then
 fi
 
 if [[ $dry_only != y ]]; then
-   stash_if_non_clean "git-rebase-poset"
+   mmc_stash_if_non_clean "git-rebase-poset"
 fi
 
 
@@ -302,4 +302,4 @@ foreach ref ($WHAT_TO_REBASE)
     fi
 }
 
-unstash_if_stashed
+mmc_unstash_if_stashed

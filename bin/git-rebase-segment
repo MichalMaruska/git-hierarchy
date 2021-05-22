@@ -95,7 +95,7 @@ then
 fi
 
 ### STASH:
-stash_if_non_clean "git-rebase-segment saving"
+mmc_stash_if_non_clean "git-rebase-segment saving"
 
 rebase_empty_segment()
 {
@@ -146,6 +146,6 @@ else
     mark_rebase_segment $branch
 fi
 
-unstash_if_stashed
+mmc_unstash_if_stashed
 
 exit $exit_status

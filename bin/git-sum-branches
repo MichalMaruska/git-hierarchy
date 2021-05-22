@@ -136,7 +136,7 @@ then
 fi
 
 
-stash_if_non_clean "git-sum-branches saving"
+mmc_stash_if_non_clean "git-sum-branches saving"
 
 
 test $debug = y && echo "checkout & merge" >&2
@@ -193,6 +193,6 @@ fi
 git branch --force $sum_name $work_branch
 git switch $sum_name
 git branch --delete $work_branch
-unstash_if_stashed
+mmc_unstash_if_stashed
 
 exit 0
