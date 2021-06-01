@@ -1,0 +1,11 @@
+#!/bin/zsh -feu
+
+lower=$1
+top=$2
+N=$3
+
+set -x
+git branch --force $lower "$lower~$N"
+
+
+git-segment -r $top $lower
