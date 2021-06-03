@@ -1,0 +1,36 @@
+#compdef git-shift-border
+#description shift the border between 2 dependent segments by N
+
+# I need this as I invoke other _functions:
+_git-shift-border()
+{
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+               '-h[help]'  \
+               '1:source :->git_segment_name' \
+               '2:commit :->git_segment_name' \
+               '*:count :' \
+        && return 0
+
+
+    case $state in
+        git_segment_name)
+            _alternative \
+                'segment:segment:_git-segment-name'
+            ;;
+        *)
+            _files
+    esac
+}
+
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-shift-border")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git
