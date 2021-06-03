@@ -1,11 +1,40 @@
 #!/bin/zsh -feu
 
+usage()
+{
+cat <<EOF
+usage: ${0##*/} [+-h] [--]  lower top N
+
+top must be a segment based on lower.
+lower is moved N commits down, top absorbs them (has its start moved too)
+EOF
+}
+
+
+while getopts :h OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage>&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+if [[ $# -lt 3 ]]; then
+    usage >&2
+    exit 1
+fi
+
 lower=$1
 top=$2
 N=$3
 
 set -x
 git branch --force $lower "$lower~$N"
-
 
 git-segment -r $top $lower
