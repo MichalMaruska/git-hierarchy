@@ -8,6 +8,7 @@ Usage: ${0##*/} [+-h] [-s] [--] ARGS...
 Delete a branch, and any mention of it  -- symbolic references.
 -s  ... first check & abort if it's a summand.
 -D  ... option to delete the branch. (git branch -D vs -d)
+-r  ... use the base to rebase upon.
 EOF
 }
 
@@ -15,10 +16,11 @@ source /usr/share/git-hierarchy/functions.sh
 
 GIT_DIR=$(git_dir)
 delete_from_sum=yes
+rebase_segments=no
 
 git_branch_delete_option="-d"
 
-while getopts :hsD OPT; do
+while getopts :Dhrs OPT; do
     case $OPT in
         h|+h)
             usage
@@ -26,6 +28,9 @@ while getopts :hsD OPT; do
             ;;
         s)
             delete_from_sum=no
+            ;;
+        r)
+            rebase_segments=yes
             ;;
         D)
             git_branch_delete_option="-D"
@@ -63,13 +68,22 @@ delete_one()
         fi
     }
 
+    if [[ $rebase_segments = yes ]] && is_segment $victim; then
+       the_base=$(segment_base $victim)
+    fi
+
 ## Check dependency: segment bases & other refs?
     foreach ref ($(git for-each-ref --format="%(refname)" \
         'refs/base/*'))
     {
         if [ "$(dump_ref_without_ref $ref)" = "$victim_full" ]; then
-            cecho red "it's a base for $ref"
-            exit -1
+            segment=${ref#refs/base/}
+            cecho red "it's a base for $segment"
+            if [[ $rebase_segments = yes ]]; then
+                git-segment -u $segment $the_base
+            else
+                exit -1
+            fi
         fi
     }
 
