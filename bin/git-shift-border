@@ -35,6 +35,11 @@ top=$2
 N=$3
 
 set -x
-git branch --force $lower "$lower~$N"
+
+if [[ $N -eq 0 ]]; then
+    git branch --force $lower $N
+else
+    git branch --force $lower "$lower~$N"
+fi
 
 git-segment -r $top $lower
