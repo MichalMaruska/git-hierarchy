@@ -7,37 +7,40 @@ _git-segment() {
     local curcontext="$curcontext" state line
     typeset -A opt_args
 
+#        '-b[rebase]:segment:_git-segment-name'
+#        '-r[restart]:segment:_git-segment-name'
+
     _arguments -C \
-        '-h[help]'  \
-        '-s[short]'  \
-        '-u[update]' \
-        '-d[Segment to drop]:segment:_git-segment-name' \
-        '-b[rebase]:segment:_git-segment-name' \
-        '-r[restart]:segment:_git-segment-name' \
-        ': :->git_segment_name' \
-        ': :->branch' \
-        ': :->branch-or-tree-ish-or-file' \
-        ': :->branch-or-tree-ish-or-file' \
-        && return 0
+	'-h[help]'  \
+	'-s[short]'  \
+	'-u[update]' \
+	'-b[rebase]' \
+	'-r[restart]' \
+	'-d[Segment to drop]:segment:_git-segment-name' \
+	': :->git_segment_name' \
+	': :->branch' \
+	': :->branch-or-tree-ish-or-file' \
+	': :->branch-or-tree-ish-or-file' \
+	&& return 0
 
     # base ... from git branches remotes included (segments & sums prefered?).
     # start
     # head
 
     case $state in
-        git_segment_name)
-            _git-segment-name
-            ;;
-        branch)
-            __git_remote_branch_names
-            # todo: also:
-            # __git_branch_names
-            ;;
-        branch-or-tree-ish-or-file)
-            __git_commits_prefer_recent
-            ;;
-        *)
-            ;;
+	git_segment_name)
+	    _git-segment-name
+	    ;;
+	branch)
+	    __git_remote_branch_names
+	    # todo: also:
+	    # __git_branch_names
+	    ;;
+	branch-or-tree-ish-or-file)
+	    __git_commits_prefer_recent
+	    ;;
+	*)
+	    ;;
     esac
 }
 
