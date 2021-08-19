@@ -10,7 +10,7 @@ _git-segment() {
 #        '-b[rebase]:segment:_git-segment-name'
 #        '-r[restart]:segment:_git-segment-name'
 
-    _arguments -C \
+     _arguments -s -C \
 	'-h[help]'  \
 	'-s[short]'  \
 	'-u[update]' \
