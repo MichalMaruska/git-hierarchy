@@ -63,7 +63,7 @@ while (( $# > 0 )); do
             ;;
         -x | --exclude)
             shift
-            excluded+=($1)
+            excluded+=($(expand_ref $1))
             ;;
         -c | --clone)
             clone_hierarchy=yes
@@ -171,13 +171,13 @@ is_summand()
 # @skip is a reference we want to Eliminate from the hierarchy:
 # We want @replacement to play its role: either base for for some segments, or
 # a summand (only removal!)
+# This modifies the definition of @ref to replace @skip with @replacement
 git_replace_in_hierarchy()
 {
     local skip=$1
     local ref=$2
     local replacement=$3
 
-    ref=$2
     name=${ref#refs/heads/}
 
     if is_segment $name
@@ -186,7 +186,7 @@ git_replace_in_hierarchy()
 
         if [[ $skip == $ref ]]
         then
-            log "skip over"
+            log "skip over $ref"
         elif [[ $skip = $(segment_base $name) ]]
         then
             log "This $ref is affected by $skip -> $replacement graft"
@@ -254,6 +254,13 @@ foreach ref ($WHAT_TO_REBASE)
         git_replace_in_hierarchy $skip_over $ref $replacement
     elif [[ $excluded[(i)${(q)ref}] -le $#excluded ]];
     then
+        continue
+    fi
+
+
+    if [[ $excluded[(i)${(q)ref}] -le $#excluded ]];
+    then
+        log "skipping over excluded $ref\n"
         continue
     fi
 
