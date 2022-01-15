@@ -973,6 +973,74 @@ walk_down_from()
 }
 
 
+
+# in environment:  debug
+# typeset -a known_divergent
+# Breadth first search
+# output to STDOUT ?
+walk_up_from()
+# Given a name
+# dump info on all segments based on that one, sums containing that one.
+#
+{
+    test_option=(--test)
+    if [[ $1 = "--notest" ]]
+    then
+        test_option=()
+        shift
+    fi
+    ref_name=$1
+    segment_format=$2
+    sum_format=${3-$segment_format}
+
+    # local
+    typeset -a queue
+    queue=($ref_name)
+
+    local this
+    local name
+    while [[ ${#queue} -ge 1 ]];
+    do
+        queue=(${queue:|processed}) # A:|B is A-B. fixme: processed ?
+
+        if [[ $#queue = 0 ]]; then
+            break;
+        fi
+
+        this=${queue[1]}
+        # remove "first" if it's repeated:
+        # we don't need += here, since all previously processed cannot be in `queue' anymore,
+        # if the graph is DAG (acyclic!):
+        processed+=($this)
+
+
+        # take the first, and append the base(s)
+        # also remove "first" if it's repeated.
+
+        # STEP
+        STEP "processing $this, (queue is $queue ${#queue}" || : ok
+
+        # append the base(s), or summands:
+        name=${this#refs/heads/}
+
+        if is_sum $name; then
+            # fixme: this should _test_
+            dump_sum $test_option ${sum_format} $name
+
+            queue+=($(summands_of $name))
+        elif is_segment $name; then
+            dump_segment $segment_format $name
+            queue+=($(segment_base $name))
+        else
+            CRITICAL "stopping @ $name"
+        fi
+
+        debug_trace "iterate ${#queue}: $queue"
+    done
+}
+
+
+
 # use $debug
 # set roots and tops.
 find_roots_and_tops()
