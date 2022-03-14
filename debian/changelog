@@ -1,3 +1,24 @@
+git-hierarchy (5.35) unstable; urgency=medium
+
+  * git-sum-branches: treat the trivial case correctly
+  * git-sum-branches: --quiet option to suppress info
+  * dot format for sums: leave newline
+  * debian: require xdot
+  * Replace stash_if_non_clean with mmc_stash_if_non_clean
+  * new command: git-shift-border
+  * git-shift-border: provide usage, check params#
+  * Zsh completion _git-shift-border
+  * git-delete: -r option to rebase (depending segments) on the base
+  * Support non-numeric shift
+  * Zsh tab: git-segment -b
+  * Zsh tab: revert wrong interpretation of git-segment -r -u
+  * Zsh tab: enable stacking
+  * Un-used function walk_up_from
+  * git-rebase-poset: fix handling of 'excluded' refs
+  * git-shift-border: document what the STEP is, support number correctly
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 14 Mar 2022 15:05:53 +0100
+
 git-hierarchy (5.34) unstable; urgency=medium
 
   [ Michal Maruska ]
