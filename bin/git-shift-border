@@ -2,11 +2,16 @@
 
 usage()
 {
-cat <<EOF
+    cat <<EOF
 usage: ${0##*/} [+-h] [--]  lower top N
 
-top must be a segment based on lower.
-lower is moved N commits down, top absorbs them (has its start moved too)
+TOP must be a 'segment' based on LOWER.
+Lower is moved N commits down, top absorbs them (has its start moved too)
+
+N can be:
+* number
+* negative number
+* commit id
 EOF
 }
 
@@ -36,7 +41,8 @@ N=$3
 
 set -x
 
-if [[ $N -eq 0 ]]; then
+# this should test if it's a 'commit'
+if [[ "$N" =~ '[[:digit:]]+' ]]; then
     git branch --force $lower $N
 else
     git branch --force $lower "$lower~$N"
