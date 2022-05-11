@@ -175,12 +175,14 @@ foreach base ($bases)
 }
 
 if [ $dry_only = no ]; then
-    if [[ ${#known_divergent} -gt 0 ]]
-    then
-        ignore_options=("-i")
-        ignore_options=(${ignore_options:^^known_divergent})
-    else
-        ignore_options=()
+    #local
+    poset_options=()
+    poset_options+=($ignore_options )
+
+    if [[ $debug = y ]]; then
+        poset_options+=(--debug)
     fi
-    git-rebase-poset $ignore_options $top
+
+    if [[ $debug = y ]]; then set -x;fi
+    git-rebase-poset $poset_options $top
 fi
