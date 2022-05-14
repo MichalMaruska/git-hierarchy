@@ -47,7 +47,7 @@ typeset -a excluded
 excluded=()
 
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions clone,debug,exclude,ignore,dry,skip,replace,help \
+        --longoptions clone:,debug,exclude,ignore:,dry,skip:,replace:,help \
         --options     :c:dhi:ns:t:x: \
         -- "$@") || { usage && exit 1 }
 
