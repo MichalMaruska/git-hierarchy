@@ -78,7 +78,7 @@ while (( $# > 0 )); do
             shift
             skip_over=$(expand_ref $1)
             ;;
-        -t | replace )
+        -t | --replace )
             shift
             replacement=$(expand_ref $1)
             #"master"
