@@ -38,7 +38,8 @@ while getopts :ho:pq OPT; do
             output_dir=$OPTARG
             ;;
         *)
-            usage
+            echo "unexpected option $OPT">&2
+            usage>&2
             exit 2
     esac
 done
@@ -47,7 +48,8 @@ OPTIND=1
 
 
 if [ $# -lt 1 ]; then
-    usage
+    echo "missing arguments">&2
+    usage>&2
     exit 2
 fi
 

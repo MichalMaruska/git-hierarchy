@@ -49,6 +49,7 @@ while getopts :fgi:v OPT; do
             verbose=y
             ;;
         *)
+            echo "unexpected option $OPT">&2
             usage >&2
             exit 2
     esac
@@ -114,6 +115,7 @@ fi
 
 # only 1?
 if [ $# -gt 1 ]; then
+    echo "missing arguments">&2
     usage >&2
     exit 1
 elif [ $# = 0 ]; then

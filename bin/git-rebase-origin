@@ -48,7 +48,8 @@ while getopts :hi:fvd OPT; do
             debug=y
             ;;
         *)
-            usage
+            echo "unexpected option $OPT">&2
+            usage>&2
             exit 2
     esac
 done

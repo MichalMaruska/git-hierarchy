@@ -29,6 +29,7 @@ while getopts :bh OPT; do
             ;;
         *)
             # wrong option
+            echo "unexpected option $OPT">&2
             usage >&2
             exit 1
     esac
@@ -38,6 +39,7 @@ OPTIND=1
 
 
 if [[ $# != 3 ]]; then
+    echo "missing arguments">&2
     usage >&2
     exit 1
 fi

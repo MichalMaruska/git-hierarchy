@@ -30,6 +30,7 @@ while getopts :vh OPT; do
             exit 0
             ;;
         *)
+            echo "unexpected option $OPT">&2
             usage >&2
             exit 2
     esac

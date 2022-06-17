@@ -51,7 +51,8 @@ while getopts :hno:qsv OPT; do
             SILENT=n
             ;;
         *)
-            usage
+            echo "unexpected option $OPT">&2
+            usage >&2
             exit 2
     esac
 done

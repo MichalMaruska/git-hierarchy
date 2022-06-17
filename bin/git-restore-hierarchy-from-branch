@@ -105,6 +105,7 @@ while getopts :hlnr: OPT; do
             cat_only=y
             ;;
         *)
+            echo "unexpected option $OPT">&2
             usage>&2
             exit 2
     esac
