@@ -1,3 +1,12 @@
+git-hierarchy (5.36) unstable; urgency=medium
+
+  * git-rebase-origin: pass --debug down to git-rebase-poset
+  * spaces
+  * fix long options spec for getopt to sync with short: colons for arguments
+  * Explain the error due to unexpected option or missing argument
+
+ -- Michal Maruska <mmaruska@gmail.com>  Sat, 18 Jun 2022 00:56:11 +0200
+
 git-hierarchy (5.35) unstable; urgency=medium
 
   * git-sum-branches: treat the trivial case correctly
