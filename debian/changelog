@@ -1,3 +1,11 @@
+git-hierarchy (5.37) unstable; urgency=medium
+
+  * fix the long option
+  * graph: show as tooltip the "description" of the branch-segment
+  * git-rebase-poset: improve usage()
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 19 Dec 2022 01:43:59 +0100
+
 git-hierarchy (5.36) unstable; urgency=medium
 
   * git-rebase-origin: pass --debug down to git-rebase-poset
