@@ -18,20 +18,20 @@ usage()
 {
     setopt POSIX_ARGZERO
     cat <<EOF
-usage: ${0##*/} [+-h] [-d] [-i ref] [-n] [--]  [sum|segment] ...
---debug -d debug
+usage: ${0##*/} [OPTIONS].... [top sum or segment]...
+ -d, --debug    be verbose
+ -n, --dry      dry run
 
---dry -n .. dry
+ -i, --ignore   ignore misalignment
 
+ -s, --skip     [old-name] stop at
+ -t, --replace  [new-name] use a different base INSTEAD
+# todo: should be  --skip old-name:new-name ?
+# or  --skip
 
---ignore -i ... ignore misalignment
-
---skip  -s   old-name
---replace -t new-name
 Replace old-name as summands/segment-bases with new-name.
 
---clone -c prefix
-Create a clone hierarchy, rebasing at the same time.
+ -c, --clone     [prefix] Create a clone hierarchy, rebasing at the same time.
 EOF
     unsetopt POSIX_ARGZERO
 }
