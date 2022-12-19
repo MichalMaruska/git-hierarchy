@@ -343,9 +343,13 @@ dump_segment()
                 color=orange
             fi
 
-            # show the vertex
+            # todo: dump the description
+            if ! description=$(git config branch.${segment_name}.description)
+            then
+                description="segment"
+            fi
             cat <<EOF
-"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://$segment_name",
+"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://$segment_name",tooltip="$description",
             fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
         # if the base is `external', dump it:
