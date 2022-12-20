@@ -1,6 +1,76 @@
 #compdef git-rebase-poset git-rebase-ref
 #description rebase ....
 
-# or
-_git-segment-name
-_git-sum-name
+# /usr/share/zsh/functions/Completion/Unix/_git
+
+# '(-e --excluded-after)'{-c,--cool-option}'[explanation what it does]:message:action'
+# ::message -> optional
+# hence at least a space
+
+
+# ../bin/git-rebase-poset
+
+_git-rebase-poset() {
+
+    local curcontext="$curcontext" state line
+
+    # how to treat the long options?
+    # and the numbered arguments?
+
+    # if --help -> nothing
+    # otherwise
+    _arguments -s -C \
+	       {--help,-h}'[print help]' \
+	       {--dry,-n} \
+	       {--ignore,-i}'[ignore non updated]' \
+	       {-x,--exclude}'[exclude from rebase]:git reference:->ref' \
+	       {--skip,-s}'[fixed bottom]:git reference:->ref' \
+	       \
+	       {--replace,-t}'[new base]:git reference:->ref' \
+	       \
+	       {--clone,-c}'[duplicate with prefixed names]:prefix:' \
+	       '*: :->hierarchy_name' && return 0
+
+# fixme: this should be OR ^^^
+
+    if [[ -n $state ]]
+    then
+	# echo "Continue with state $state" >> $logfile
+	# mmc: this is an array!
+	# and $state_descr contains the MESSAGE.
+	case $state in
+	    ref)
+		# todo: only one below the top ref.
+		#__git_tags
+		__git_references
+		#__git_heads
+		#__git_commits_prefer_recent
+	    ;;
+	    hierarchy_name)
+		# or _sum
+		_alternative \
+		    'segment:segment:_git-segment-name' \
+		    'sum:sum:_git-sum-name'
+		# _arguments "1:Segments:($available)"
+		;;
+	    *)
+	esac
+    fi
+}
+
+
+# standard trick (to support what `git' does)
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-rebase-poset")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+
+
+# When I need access to `git' completions, I call into _git,
+# aftere defining the function above!
+
+service=git;
+_git
