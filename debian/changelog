@@ -1,3 +1,12 @@
+git-hierarchy (5.38) release; urgency=medium
+
+  * _git-rebase-poset: zsh complete
+  * d/control: change provider of column(1) to bsdmainutils
+  * git-graph: improve usage()
+  * fix git-graph: segment formatting with -t
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 21 Dec 2022 16:21:20 +0100
+
 git-hierarchy (5.37) unstable; urgency=medium
 
   * fix the long option
