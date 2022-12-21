@@ -44,9 +44,9 @@ Format:
 -g
 -x   Xdot
 -l   git log
--r   resolved
+-r   resolved .... what does it do with Sums? NOTHING!
 -s   symbolic
--t
+-t   tsort input/output
 EOF
     unsetopt POSIX_ARGZERO
 }
