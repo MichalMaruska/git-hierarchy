@@ -7,6 +7,6 @@ Standards-Version: 3.7.2
 
 Package: git-hierarchy
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, git, gitk (>=1:2.19.1-1-maruska2), zsh, mmc-shell (>=3.47), graphviz,imagemagick,bsdextrautils,xdot
+Depends: ${shlibs:Depends}, ${misc:Depends}, git, gitk (>=1:2.19.1-1-maruska2), zsh, mmc-shell (>=3.47), graphviz,imagemagick,bsdmainutils,xdot(>=1.2-2-maruska)
 Suggested: graphviz
 Description: Tools to maintain extensions for upstream, in git
