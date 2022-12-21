@@ -80,6 +80,10 @@ while getopts :dgi:klrstx OPT; do
             segment_format=symbolic
             ;;
         t)
+            # symbolic vs tsort ?
+            # tsort is input to tsort(1): just the names & their dependency
+            # symbolic is description ... & the sorting is done by some internal tool.
+            segment_format=tsort
             dump_action=tsort
             ;;
 
