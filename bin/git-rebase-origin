@@ -146,7 +146,6 @@ function rebase_one()
         else
             fetched+=($key)
             INFO "Fetching upstream to $base: $remote"
-            set -x
             if [ $dry_only = no ]; then
                 local old_head=$(git rev-parse $remote/$remote_branch)
                 git fetch $remote $remote_branch
