@@ -352,8 +352,12 @@ dump_segment()
 "$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://$segment_name",tooltip="$description",
             fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
+# tooltip of the edge? headtooltip, edgetooltip, tailtooltip
+
         # if the base is `external', dump it:
         # (unfortunately this means multiple times)
+
+        # fixme: what if it's tag:
         if ! git-segment $base_name &>/dev/null &&
             ! git-sum $base_name &>/dev/null; then
             cat <<EOF
@@ -415,6 +419,7 @@ dump_sum()
             echo "$sum"
             return
             ;;
+        # dot does not need anything?
         *)
     esac
 
