@@ -357,7 +357,7 @@ EOF
         if ! git-segment $base_name &>/dev/null &&
             ! git-sum $base_name &>/dev/null; then
             cat <<EOF
-            $dot_base_name [label="$base_name",color=$extern_color,fontsize=14,
+            "$dot_base_name" [label="$base_name",color=$extern_color,fontsize=14,
                 fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
         fi
