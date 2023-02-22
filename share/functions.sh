@@ -330,7 +330,7 @@ dump_segment()
             # remotes/debian/master ->  debian_master.
 
             # the `incidence':
-            echo "\"$dot_name\" -> \"$dot_base_name\""
+            echo "\"$dot_name\" -> \"$dot_base_name\" [tailtooltip=\"tail\", edgetooltip=\"Edge\", edgelabel=\"E\" ]"
 
             # now the label for the vertex:
             local length=$(segment_length $segment_name)
