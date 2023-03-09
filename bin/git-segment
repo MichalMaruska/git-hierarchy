@@ -9,29 +9,33 @@ check_getopt
 
 usage()
 {
+    colors
+
+    local SEGMENT="$fg_bold[red]{segment-name}$reset_color"
+    local program="${PROGRAM##*/}"
     cat <<EOF
 usage:
 
-$PROGRAM [-s| --short] [-f | --full] [ --diff -p ]
+$program [-s| --short] [-f | --full] [ --diff -p ]
   LIST the segments, -s short-format
   Full implies output ref/heads/XXX instead of XXX
 
-$PROGRAM [-i] {segment-name}
+$program [-i] $SEGMENT
   SHOW the definition & dump the commits/history
   Exit with non-zero, if the segment-name is not a segment.
   -i  show the patch-ids instead
 
-$PROGRAM [-d | --delete | -D | --prune] name
+$program [-d | --delete | -D | --prune] $SEGMENT
   DELETE the definition, and even the branch itself.
 
-$PROGRAM -r | --restart  {segment} {start}
+$program -r | --restart  $SEGMENT {start}
   set the start
 
-$PROGRAM [-u | --update ] [-b | --rebase] {segment} symbolic-base [start]
+$program [-u | --update ] [-b | --rebase] $SEGMENT symbolic-base [start]
   change base (start)
   -b  and rebase immediately
 
-$PROGRAM [-c | --checkout] {segment} symbolic-base [start] [head]
+$program [-c | --checkout] $SEGMENT symbolic-base [start] [head]
   DEFINE
 
 EOF
