@@ -9,6 +9,8 @@ check_getopt
 
 usage()
 {
+    # Functions/Misc/colors
+    # NO_COLOR
     colors
 
     local SEGMENT="$fg_bold[red]{segment-name}$reset_color"
@@ -135,60 +137,136 @@ list_segments(){
     done
 }
 
+check_existing_segment()
+{
+    local name
+    name=$1
+    if ! is_segment $name; then
+        die "unknown segment $name"
+    fi
+}
+
 rebase_immediately=n
-delete_segment=n
 delete_branch=n
+
 short_list=n
 show_patch_id=n
 only_table=n
 
+verbose=no
 checkout=n
-update=n
-restart=n
+
+CMD=""
+RESERVED_CMD=""
+
+update_cmd()
+{
+
+    if [[ -n $CMD ]];
+    then
+        echo "" >&2
+        usage
+        exit 1
+    fi
+
+    CMD=$1
+
+    # delayed check:
+    if [[ -n $RESERVED_CMD ]]; then
+        if [[ $CMD != $RESERVED_CMD ]]; then
+            die "mess in options"
+        fi
+    fi
+}
+
+ensure_cmd()
+{
+    # if CMD is not set, use RESERVED_CMD and then check it
+    # can I repeat?
+    if [[ -n $CMD ]]; then
+        if [[ $CMD != $1 ]]; then
+            die "mess in options"
+        fi
+    else
+        RESERVED_CMD=$1
+    fi
+    # update_cmd $1
+}
+
+
+# This inserts '--'?
 cmd_options=$(getopt --name $0 --shell bash \
-        --longoptions checkout,delete,diff,full,help,patch-id,prune,rebase,short,update:,restart \
-        --options     bdDcfihprsu \
+        --longoptions checkout,delete:,diff:,full,help,patch-id,prune:,rebase,short,update:,restart:,verbose \
+        --options     bd:D:cfihp:r:su:v \
         -- "$@") || { usage && exit 1 }
 
 eval set -- "$cmd_options"
 while (( $# > 0 )); do
     case $1 in
-        -b | --rebase)
-            rebase_immediately=y
-            ;;
         -h | --help)
             usage
             exit 0
             ;;
-        -f | --full)
-            SEGMENT_PREFIX=ref/head/
+        -v | --verbose)
+            verbose=yes
             ;;
-        -s | --short)
-            short_list=y
-            ;;
-        -d | --delete)
-            delete_segment=y
-            ;;
+
         -p | --diff)
-            patch_segment=y
+            shift
+            segment=$1
+            update_cmd diff
             ;;
         -i | --patch-id)
             only_table=y
             short_list=n
             show_patch_id=y
             ;;
+
+        -d | --delete)
+            update_cmd delete
+            shift
+            segment=$1
+            ;;
         -D | --prune )
-            delete_segment=y
+            update_cmd delete
             delete_branch=y
+
+            shift
+            segment=$1
+            ;;
+
+        -f | --full)
+            update_cmd list
+            # fixme: unused:
+            SEGMENT_PREFIX=ref/head/
+            ;;
+        -s | --short)
+            # this could also be info
+            # ensure_cmd 'list'
+            # either 'info'
+            short_list=y
+            ;;
+
+        -b | --rebase)
+            # ensure_cmd 'update'
+            rebase_immediately=y
             ;;
         -u | --update)
-            update=y
+            update_cmd 'update'
+            shift
+            segment=$1
+            check_existing_segment $segment
             ;;
         -r | --restart)
-            restart=y
-            # new_start=$OPTARG
+            update_cmd 'restart'
+            shift
+            segment=$1
+            check_existing_segment $segment
             ;;
+
         -c | --checkout)
+            # sure?
+            update_cmd 'define'
             checkout=y
             ;;
         --)
@@ -200,141 +278,158 @@ while (( $# > 0 )); do
 done
 GIT_DIR=$(git_dir)
 
-## `list' all segments, and the Bases.
-if [ $# = 0 ]; then
-    list_segments | column --table
-
-    # Dump the starts?
-    if false; then
-        echo
-        git for-each-ref 'refs/start/' --format "%(refname)" |\
-            sed -e 's|^refs/start/||'
+# $# max message
+check_maximum_arguments()
+{
+    if [[ $1 -gt $2 ]]; then
+        # fixme: dangling arguments -> error!
+        local count=$(( $1 - $2 ))
+        echo "$count dangling arguments ${3-$CMD}"
+        usage >&2
+        exit 1
     fi
-    exit 0;
-fi
+}
 
+# if no CMD
+# 0 arguments -> LIST
+# 1 argument -> info on that segment.
+# 2-4 arguments -> DEFINE
+# set -x
 
-# Otherwise a specific segment:
-readonly name=${1#refs/heads/}
-local baseref=$(segment_base_name $name)
-# echo "the segment name is $name"
-
-if [ $# = 1 ]; then
-    if [ $delete_segment = y ]; then
-
-        # fixme:
-        describe_segment $name|| true
-
-        # funny: bug!
-        drop_segment $name
-
-        if [ $delete_branch = y ];then
-            git-delete $name
-        fi
-
-        exit $?
-
-        # git update-ref -d  refs/base/test "refs/heads/master"
-        # removes master!
-    elif [ ${patch_segment-n} = y ]; then
-        diff_segment $name
+if [[ -z $CMD ]]; then
+    # determine:
+    ## `list' all segments, and the Bases.
+    if [[ $# = 0 ]]; then
+        update_cmd list
+    elif [[ $# = 1 ]]; then
+        update_cmd info
+            # git update-ref -d  refs/base/test "refs/heads/master"
+            # removes master!
+            ## `Describe' the (given) segment
+            # cat $basefile
+            # could be hash
+            # or ref - tag or head.
+    elif [[ $# -le 4 ]]; then
+        update_cmd define
     else
-    ## `Describe' the (given) segment
-    # cat $basefile
-    # could be hash
-    # or ref - tag or head.
-        describe_segment $name
-        exit 0
+        echo "dangling arguments"
+        usage >&2
+        exit 1
     fi
 else
-    # 4 options:
-
-    # 1/ defining (not updating) -- so it does not exist!
-
-    # 2/          possibly start=base
-
-    # 3/ update start
-    # 4/        base  or both!
-
-    # we have: new_start, new_base
-
-    if [ $# = 2 ];
-    then
-        # moving the `base' or `start'
-        if [ $restart = y ]; then
-            new_start=$2
-            start_hash=$(commit_id $new_start)
-            # git rev-parse
-            # git log $new_start --max-count=1 --format="%H" --
-        else
-            # fixme: use rev-parse
-            new_base=$(try_to_expand $2)
-            #possibly remotes/$2
-
-            if [ $update = n ]; then
-                # in this case ... we create ... we have to provide the
-                # start, so default is the trivial segment (base = start):
-                start_hash=$(git log $new_base --max-count=1 --format="%H")
-            fi
-        fi
-    else
-        new_base=$2
-        # only in this case, there is this variable:
-        start=$3
-        # fixme: check that it's an ancestor (of segment's head)
-        start_hash=$(git log $start --max-count=1 --format="%H" --)
-    fi
-
-    # by now we determined the necessary base / start.
-    # iow. $start_hash is always defined, unless: _update_ & not restart
-    # and $base unless update & restart.
-
-    # Ensure it exists:
-    if [ $update = y -o $restart = y ]; then
-        # check it exists
-        if ! is_segment $name; then
-            die "unknown segment $name"
-        fi
-    else
-        # no update -> start is defined:
-        if ! git-branch-exists $name; then
-            # check it:
-            if [[ $# = 4 ]]; then git rev-parse $4; fi
-            # Create it:
-            git branch $name $start_hash
-        fi
-        # doing in this order intentionally?
-        if is_segment $name; then
-            die "segment already exists: $name"
-        fi
-    fi
-
-    # echo "new: base: ${new_base-} start: ${new_start-}"
-
-    # `update/setup' the segment definition
-    # fixme: remove ""
-    if [[ -n "${new_base-}" ]]; then
-        new_base=$(expand_ref $new_base)
-        # cecho yellow "so the base is ${new_base-}"
-
-        cecho yellow "Changing the base of $name to $new_base"
-        git symbolic-ref $baseref $new_base
-    fi
-
-    # User specified -> official:
-    if [ -n "${start_hash-}" ]; then
-        cecho yellow "pushing the start to $start_hash"
-        git-set-start $name $start_hash
-    fi
-    if [[ $rebase_immediately = "y" ]]; then
-        git-rebase-segment $name
-    fi
-
-    if [ $# = 4 ]; then
-        git branch --force $name $4
-    fi
-
-    if [ $checkout = "y" ]; then
-        git checkout $name
-    fi
+    # this is not true!
+    # check_maximum_arguments $# 1
+    :
 fi
+
+case $CMD in
+    list)
+        check_maximum_arguments $# 0
+        list_segments | column --table
+
+        # Dump the starts?
+        if [[ $verbose = yes ]];
+        then
+            echo
+            git for-each-ref 'refs/start/' --format "%(refname)" |\
+                sed -e 's|^refs/start/||'
+        fi
+        exit 0
+        ;;
+    info)
+        segment=$1
+        check_existing_segment $segment
+        describe_segment $segment
+        exit 0
+        ;;
+    delete)
+        check_existing_segment $segment
+        describe_segment $segment|| true
+
+        # funny: bug!
+        # todo: see `git-delete' for the real check
+        drop_segment $segment
+
+        if [[ $delete_branch = y ]]; then
+            git-delete $segment
+        fi
+
+        # fixme indentation? ... it was due to  ";then" without space!
+        exit $?
+        ;;
+    define)
+        check_maximum_arguments $# 4 "define"
+        segment=$1
+        base=$2
+
+        base=$(expand_ref $base)
+        if [[ $# -gt 2 ]]; then
+            start=$3
+        else
+            start=$base
+        fi
+
+        # start_hash=$(git log $start --max-count=1 --format="%H" --)
+        # get the sha:
+        # git log $base --max-count=1 --format="%H"
+        start_hash=$(commit_id $start)
+
+        # no updaten -> start is defined:
+        if ! git-branch-exists $segment; then
+            # check now ... b/c ? fixme!
+            # it can be HEAD
+            if [[ $# = 4 ]]; then
+                git rev-parse $4;
+            fi
+            # fixme: maybe crate at $4 !!!
+            # Create it:
+            git branch $segment $start_hash
+        fi
+
+        if [[ $# = 4 ]]; then
+            git branch --force $segment $4
+        fi
+
+        git-set-start $segment $start_hash
+
+        # set base to:
+        local baseref=$(segment_base_name $segment)
+        git symbolic-ref $baseref $base
+
+        if [[ $checkout = y ]];
+        then
+            git switch $segment
+        fi
+        ;;
+    update)
+        set -x
+        new_base=$1
+        check_maximum_arguments $# 1
+
+        new_base=$(expand_ref $new_base)
+        local baseref=$(segment_base_name $segment)
+        git symbolic-ref $baseref $new_base
+
+        if [[ $rebase_immediately = "y" ]]; then
+            git-rebase-segment $segment
+        fi
+
+        ;;
+    restart)
+        local new_start=$1
+        check_maximum_arguments $# 1
+
+        start_hash=$(commit_id $new_start)
+        # take the start_hash
+        git-set-start $segment $start_hash
+        ;;
+    diff)
+        check_maximum_arguments $# 0
+        diff_segment $segment
+        ;;
+    *)
+        usage >&2
+        exit 1
+esac
+
+exit
