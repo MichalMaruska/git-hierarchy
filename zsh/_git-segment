@@ -23,20 +23,25 @@ _git-segment() {
 	{-r,--restart}'[change Start]:segment:_git-segment-name' \
 	\
 	{-D,--prune}'[Segment to drop]:segment:_git-segment-name' \
-	{-d,--delete}'[Segment to drop]:segment:_git-segment-name'
-
-     # No, I want to continue!
-     # && return 0
-
-     # if NO option is used (only -c) -> define
-     # if (( words[(b:CURRENT-1:I)--cd] ))
-     # now add arguments:
-     _arguments -s -C \
+	{-d,--delete}'[Segment to drop]:segment:_git-segment-name' \
 	': :->git_segment_name' \
 	': :->branch' \
 	': :->branch-or-tree-ish-or-file' \
 	': :->branch-or-tree-ish-or-file' \
+    && return 0
+     # No, I want to continue!
 
+     # if NO option is used (only -c) -> define
+     # if (( words[(b:CURRENT-1:I)--cd] ))
+     # now add arguments:
+     if false; then
+     _arguments -s -C \
+	': :->git_segment_name' \
+	': :->branch' \
+	': :->branch-or-tree-ish-or-file' \
+	': :->branch-or-tree-ish-or-file'
+
+     fi
      # now see if one of  ...... is present.
 
 
