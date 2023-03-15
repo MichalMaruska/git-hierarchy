@@ -387,7 +387,7 @@ case $CMD in
         fi
 
         if [[ $# = 4 ]]; then
-            git branch --force $segment $4
+            set_branch_to $segment $4
         fi
 
         git-set-start $segment $start_hash
