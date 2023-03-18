@@ -11,6 +11,7 @@ _git_sum_branches() {
 	'-h[help]'  \
 	'-d[dry]' \
 	'-v[verbose]' \
+	'-s[stepwise]' \
 	'-n[number them]' \
 	'1: :->sum'  && return 0
 
