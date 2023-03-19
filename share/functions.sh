@@ -349,7 +349,7 @@ dump_segment()
                 description="segment"
             fi
             cat <<EOF
-"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://$segment_name",tooltip="$description",
+"$dot_name" [label="$segment_name $length\n$age",color=$color,fontsize=14,URL="gitk://heads/$segment_name",tooltip="$description",
             fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
 # tooltip of the edge? headtooltip, edgetooltip, tailtooltip
