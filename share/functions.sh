@@ -437,7 +437,7 @@ dump_sum()
     if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
     then
         equal=n
-        test_commit_parents $sum $real_branches[@]
+        test_commit_parents heads/$sum $real_branches[@]
         if [[ "$equal" = n ]]
         then
             if [[ $test == n ]]; then
@@ -785,7 +785,7 @@ expand_ref()
                 #   warning: refname 'mmc-build' is ambiguous.
                 #   error: refname 'mmc-build' is ambiguous
                 if [[ ( -z "$result" ) || ( $? != 0 ) ]]; then
-                    ERROR "cannot resolve heads/$name: "
+                    ERROR "cannot resolve $name: "
                     git rev-parse --symbolic-full-name $name
                     exit 1
                 fi

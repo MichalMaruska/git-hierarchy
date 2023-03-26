@@ -45,7 +45,8 @@ OPTIND=1
 # rebasing this ref, upon its base.
 # The base is somehow defined ...
 ref=$1
-branch=${ref#refs/heads/}
+name=${ref#refs/}
+name=${name#heads/}
 
 cmd=
 # cmd=echo
@@ -55,11 +56,11 @@ verbosity=()
 test "$DEBUG" = y && verbosity+=("-v")
 test "$SILENT" = y && verbosity+=("-q")
 
-if is_sum $branch; then
+if is_sum $name; then
     # shouldn't it be  EVALed?
-    $cmd git-sum-branches $dry_flag $verbosity -r $branch
-elif is_segment $branch; then
-    $cmd git-rebase-segment $dry_flag $verbosity $branch
+    $cmd git-sum-branches $dry_flag $verbosity -r $name
+elif is_segment $name; then
+    $cmd git-rebase-segment $dry_flag $verbosity $name
 else
     if test "$DEBUG" = y; then echo "unknown -- leaving unchanged $ref";fi
 fi

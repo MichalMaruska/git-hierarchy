@@ -86,7 +86,11 @@ if [ $# != 1 ]; then
     exit 1
 fi
 
-sum_name=$1
+sum_name=${1}
+# make it a function
+# extract_ref_name
+sum_name=${sum_name#refs/}
+sum_name=${sum_name#heads/}
 
 # git-sum
 if ! is_sum $sum_name &>/dev/null ;
@@ -103,7 +107,7 @@ sum_resolve_summands $sum_name
 debug_trace "Summands: $real_branches"
 
 # y ... gives priority to heads, remotes, generic
-sum_branch=$(expand_ref $sum_name y)
+sum_ref=$(expand_ref $sum_name y)
 
 equal=n
 # This is the `situation':
@@ -111,12 +115,11 @@ equal=n
 debug_trace "sanity check"
 if git-branch-exists $sum_name;
 then
-    test_commit_parents --strict $sum_branch $real_branches[@]
+    test_commit_parents --strict $sum_ref $real_branches[@]
 else
     git branch $sum_name
 fi
 # todo?: if exists such branch/tag ->abort
-
 
 if test "$equal" = y;
 then
@@ -186,7 +189,7 @@ else
     else
         foreach next ($others)
         {
-            eval $cmd git merge -m "'Sum: $next into $sum_branch'" --rerere-autoupdate "'$next'";
+            eval $cmd git merge -m "'Sum: $next into $sum_name'" --rerere-autoupdate "'$next'";
         }
     fi
 fi

@@ -199,7 +199,7 @@ fi
 
 
 # Create the branch. todo: might hint at where!
-git rev-parse heads/$name -- || git branch $name $start_point
+git rev-parse heads/$name -- &>/dev/null || git branch $name $start_point
 
 # now creation:
 # find minimal number:
