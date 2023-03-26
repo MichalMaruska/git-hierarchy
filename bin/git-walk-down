@@ -148,8 +148,7 @@ else
     exit 1
 fi
 
-ref_name=${ref_name#refs/heads/}
-
+ref_name=$(ref_extract_name $ref_name)
 GRAPH=
 
 trap "clean" EXIT

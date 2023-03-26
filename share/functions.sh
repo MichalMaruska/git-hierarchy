@@ -144,6 +144,12 @@ ref_exists(){
     test -e "$(git rev-parse --git-path $1)"
 }
 
+ref_extract_name(){
+    local ref=$1
+    name=${ref#refs/}
+    echo ${name#heads/}
+}
+
 # expand by just 1 level:
 dump_ref(){
     # echo "dump_ref $1" >&2

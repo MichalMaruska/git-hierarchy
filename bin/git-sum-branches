@@ -86,13 +86,8 @@ if [ $# != 1 ]; then
     exit 1
 fi
 
-sum_name=${1}
-# make it a function
-# extract_ref_name
-sum_name=${sum_name#refs/}
-sum_name=${sum_name#heads/}
+sum_name=$(ref_extract_name $1)
 
-# git-sum
 if ! is_sum $sum_name &>/dev/null ;
 then
     echo "$sum_name is not a sum branch (in $GIT_DIR)" >&2

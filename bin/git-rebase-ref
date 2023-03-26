@@ -45,8 +45,7 @@ OPTIND=1
 # rebasing this ref, upon its base.
 # The base is somehow defined ...
 ref=$1
-name=${ref#refs/}
-name=${name#heads/}
+name=$(ref_extract_name $ref)
 
 cmd=
 # cmd=echo
