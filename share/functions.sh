@@ -69,6 +69,11 @@ function WARN()
 {
     cecho red "$@" >&2
 }
+function ERROR()
+{
+    cecho blue "$@" >&2
+}
+
 
 
 
@@ -776,8 +781,13 @@ expand_ref()
 
                 # why prioritize heads ?
                 result=$(git rev-parse --symbolic-full-name $name 2>/dev/null)
-                if [[ $? != 0 ]]; then
-                    die "cannot resolve heads/$name"
+                # this can succeed, but print:
+                #   warning: refname 'mmc-build' is ambiguous.
+                #   error: refname 'mmc-build' is ambiguous
+                if [[ ( -z "$result" ) || ( $? != 0 ) ]]; then
+                    ERROR "cannot resolve heads/$name: "
+                    git rev-parse --symbolic-full-name $name
+                    exit 1
                 fi
             fi
             # name=refs/heads/$name
