@@ -1,0 +1,7 @@
+#!/bin/zsh -feu
+
+
+name=$1
+git branch --force $name _tmp
+git switch $name
+git branch --delete _tmp
