@@ -4,10 +4,11 @@
 
 _git_sum_branches() {
     # fixme: necessara?
-    local curcontext="$curcontext" state line
+    local curcontext="$curcontext" \
+	  state line
     typeset -A opt_args
 
-    _arguments : \
+    _arguments -R : \
 	'-h[help]'  \
 	'-d[dry]' \
 	'-v[verbose]' \
