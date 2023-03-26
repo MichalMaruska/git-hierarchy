@@ -17,14 +17,14 @@ onto=""
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [-qv] [-o onto] [--] [branch]
+usage: ${0##*/} [-qv] [-o onto] [--] [segment]
 -o onto some commit, by default onto its BASE.
 -v verbose
 -q quiet
 -s stash-if-needed
 
 -n dry
-branch ... segment-name, by default the current branch.
+segment ... segment-name, by default the current branch.
 EOF
 }
 
@@ -62,15 +62,15 @@ OPTIND=1
 #fixme:
 if [ $# = 0 ]; then
     # default is the current branch
-    branch=$(current_branch_name)
+    segment=$(current_branch_name)
 elif [ $# = 1 ]; then
-    branch=${1}
+    segment=${1}
 fi
 
 cd $(git rev-parse --show-toplevel);
-branch=${branch#refs/heads/}
+segment=${segment#refs/heads/}
 
-if ! git-segment $branch >/dev/null ;
+if ! git-segment $segment >/dev/null ;
 then
     echo "this is not a segment" >&2
     exit 1
@@ -78,10 +78,10 @@ fi
 
 
 # not needed "ref/
-start="refs/start/$branch"
+start="refs/start/$segment"
 if [ -z $onto ]; then
    # the base
-   onto=$(segment_base_name $branch)
+   onto=$(segment_base_name $segment)
 fi
 
 if [[ $dry = y ]];
@@ -90,7 +90,7 @@ then
     then
         exit 0
     else
-        echo "should rebase segment $branch" >&2
+        echo "should rebase segment $segment" >&2
         exit 0
     fi
 fi
@@ -111,15 +111,15 @@ rebase_empty_segment()
 if test $(commit_id $start) = $(commit_id $onto);
 then
     test $SILENT = n && \
-        {echo -n "no need to rebase segment ";cecho cyan $branch} >&2
+        {echo -n "no need to rebase segment ";cecho cyan $segment} >&2
     exit 0
-elif test $(commit_id $start) = $(commit_id $branch);
+elif test $(commit_id $start) = $(commit_id heads/$segment);
 then
-    rebase_empty_segment $branch $onto
+    rebase_empty_segment $segment $onto
     exit 0
 fi
 
-{cecho yellow -n "rebasing segment ";cecho cyan $branch} >&2
+{cecho yellow -n "rebasing segment ";cecho cyan $segment} >&2
 
 # This might fail. in that case:
 # 1/ save the state, to reinvoke later:
@@ -130,16 +130,16 @@ export GIT_USE_COLOR=y
 # fixme: this establishes a binding, and one cannot --delete w/o merging into $onto.
 #
 if git checkout --no-track -B temp $onto &&
-   git cherry-pick $start..$branch
+   git cherry-pick $start..heads/$segment
 
 ## the alternative way:
-# git rebase --onto $onto $start $branch;
+# git rebase --onto $onto $start $segment;
 then
     exit_status=0
-    git-done-segment $branch "temp"
+    git-done-segment $segment "temp"
 else
     exit_status=1
-    mark_rebase_segment $branch
+    mark_rebase_segment $segment
 fi
 
 mmc_unstash_if_stashed
