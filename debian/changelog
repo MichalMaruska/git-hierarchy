@@ -1,3 +1,35 @@
+git-hierarchy (5.39) release; urgency=medium
+
+  * git-rebase-origin: stop tracing (with set -x)
+  * git-done-segment: careful with subshells, when defining variable
+  * dump: quote the name -- possibly with dots (tag name)
+  * xdot: useless addition to the edge
+  * xdot related comments
+  * git-segment: use colors in usage()
+  * git-segment: reimplement the option processing -> invoking actions
+  * _git-segment: long options & not only remote-branches as base?
+  * _git-segment: I must invoke _arguments once
+  * use set_branch_to
+  * zsh/_git-sum-branches adapt to -s option
+  * xdot: invoke gitk without ambiguity
+  * functions: ERROR & report the failure of resolving ambiguity
+  * use -R for _arguments '....-> state'
+  * git-rebase-segment: name it segment, and avoid ambiguity with tags
+  * sum/segment commands take the NAME, while the rest must handle generic ref
+  * ref_extract_name
+  * new: git-done-sum
+  * git-clone-segment: always use heads/ when using segment name for git commands
+  * add _git-segment-patches
+  * rework _git-segment: the various 'modes'
+  * git-segment-patches: correctly $0 in usage, and heads/$segment
+  * git-done-sum: commit first
+  * git-done-sum: avoid making a new branch
+  * new _git-done-sum
+  * git-graph: detect the git environmnent AFTER getopt processing
+  * git-tag-hierarchy: add usage
+
+ -- Michal Maruska <mmaruska@gmail.com>  Tue, 28 Mar 2023 17:45:17 +0200
+
 git-hierarchy (5.38) release; urgency=medium
 
   * _git-rebase-poset: zsh complete
