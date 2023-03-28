@@ -1,7 +1,15 @@
 #!/bin/zsh -feu
 
+source /usr/share/git-hierarchy/functions.sh
 
 name=$1
+
+if ! is_sum $name &>/dev/null ;
+then
+    echo "$name is not a sum branch (in $GIT_DIR)" >&2
+    summands_of $name >&2
+    exit 1
+fi
 
 if ! git diff --cached  --quiet
 then
