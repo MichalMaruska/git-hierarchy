@@ -9,11 +9,14 @@ GIT_DIR=$(git_dir)
 
 usage()
 {
+    local program="${PROGRAM##*/}"
     cat <<EOF
-usage: ${0##*/} [-p] [+-h] [-o outdir] [--] {segment}  args...
+usage: $program [-p] [-h] [-o outdir] [--] {segment}  args...
 
 -q  ... quiet
 -p  ... dump the patch-ids.
+-o  ... defaults to the segment-name
+
 args are passed to:  git-format-patch(1)
 EOF
 }
@@ -55,8 +58,7 @@ fi
 
 # dump segment:
 segment=$1; shift
-
-name=${segment#refs/heads/}
+name=$(ref_extract_name $segment)
 start=$(segment_start $name)
 
 if [ $dump_ids = "y" ]; then
@@ -73,5 +75,5 @@ else
         mkdir -p $output_dir
     fi
 
-    git format-patch $arguments --keep-subject --inline --output-directory $output_dir $start..$segment "$@"
+    git format-patch $arguments --keep-subject --inline --output-directory $output_dir $start..heads/$name "$@"
 fi
