@@ -6,7 +6,6 @@
 # note this generates the graph "globally", not by search.
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
 
 keep_graph_file="n"
 just_graph=n
@@ -99,6 +98,7 @@ done
 shift OPTIND-1
 OPTIND=1
 
+GIT_DIR=$(git_dir)
 readonly GRAPH=$(mktemp -t graph.XXX)
 extern_color=pink
 
