@@ -1,0 +1,21 @@
+#compdef git-done-sum
+#description complete resum after manually resolving conflicts
+
+_git_sum() {
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+# '-h[help]'
+
+    _arguments -R : \
+	'1: :->sum' \
+	&& return 0
+
+    case $state in
+	sum)
+	    _git-sum-name
+	    ;;
+    esac
+}
+
+_git_sum "$@"
