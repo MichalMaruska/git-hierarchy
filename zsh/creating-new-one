@@ -5,3 +5,16 @@
 
 * Install
 * compinit -D
+
+# some options exclude others.
+'(-r --restart)' .....
+
+# duplicate:
+{-s,--short}'[short]'
+
+#
+
+# see also ...
+../../mmc-shell/zsh/Completion/
+../../mmc-zsh/functions/Completion/_openvpn
+

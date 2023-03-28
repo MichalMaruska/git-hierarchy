@@ -1,0 +1,51 @@
+#compdef git-segment-patches
+#description generate patches from a segment
+
+# :completion::complete:git-segment:argument-1:git-branches
+
+_git-segment-patches() {
+    local curcontext="$curcontext"
+    # we call _arguments -R  which will set the following:
+    local context state state_descr line
+
+    # -s ?
+    # :  ?
+    # must -R to treat  the ->XX actions: exit status 300
+    _arguments -R -S -C : \
+	-h \
+	'-q[help]' \
+	'-o[output directory]:directory:_files -/' \
+	': :->segment' \
+	 && return 0
+
+    # git-format-patch ....
+    case $state in
+	segment ||  git_segment_name)
+	    _git-segment-name
+	    ;;
+	branch)
+	    # __git_remote_branch_names
+	    # todo: also:
+	    __git_branch_names
+	    ;;
+
+	branch-or-tree-ish-or-file)
+	    __git_commits_prefer_recent
+	    ;;
+	*)
+	    ;;
+    esac
+    return 0
+}
+
+# standard trick:
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-segment-patches")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git
+
