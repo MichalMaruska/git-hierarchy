@@ -1,8 +1,33 @@
 #!/bin/zsh -feu
 
 source /usr/share/git-hierarchy/functions.sh
-GIT_DIR=$(git_dir)
 
+usage()
+{
+    cat <<EOF
+
+usage: ${0##*/} [+-h] [--] tag [branch]
+
+Create an annotated tag which contains the hierararchy as tag-message
+EOF
+}
+
+
+while getopts :h OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        *)
+            usage >&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+GIT_DIR=$(git_dir)
 tag=$1
 shift
 
@@ -16,7 +41,10 @@ fi
 
 
 readonly content=$(mktemp -t graph.XXX)
+# --resolved
 git-graph -r $branch > $content
 
 git tag $tag HEAD --file $content
 
+# --keep
+rm -vf $content
