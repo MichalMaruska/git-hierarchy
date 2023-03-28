@@ -4,49 +4,92 @@
 
 
 _git-segment() {
-    local curcontext="$curcontext" state line
+    local curcontext="$curcontext"
+    # we call _arguments -R  which will set the following:
+    local context state state_descr line
     typeset -A opt_args
 
     # some options exclude others.
     # -u -> the arguments must be
     # exclude '(-r --restart)'
 
-     _arguments -s -C \
+    # but here I can exlude more:
+    local -a command_options
+
+    command_options=(
+	{-s,--short}'[short]'
+    )
+
+    local -a update_cmd_spec
+    update_cmd_spec=({-u,--update}'[update]:segment:_git-segment-name')
+    local -a restart_cmd
+    restart_cmd=({-r,--restart}'[change Start]:segment:_git-segment-name')
+
+    # how to query if one of those is present?
+    local -a specific_options
+    # math context?
+    # fixme: not the previous one, ANY
+    if (( words[(I)-(p|-diff)] ))
+    then
+	specific_options=()
+    elif (( words[(I)-(d|-delete)] ))
+    then
+	 specific_options=()
+	 # what?
+	 # i ... Like 'r', but gives the index of the match instead; this may not be
+	 # I .. gives the index of the last match, or all possible
+	 # On failure substitutes 0
+
+	 # b:-1:
+	 # b:CURRENT-1:
+    elif (( words[(I)-(u|-update)] ))
+    then
+	# mmc!
+	specific_options=( $update_cmd_spec )
+	# does this append?
+	specific_options+=(
+	    {-b,--rebase}'[git-rebase immediately]'
+	    ': :->branch'
+	)
+    elif (( words[(I)-(r|-restart)] ))
+    then
+	specific_options=( $restart_cmd )
+	specific_options+=(
+	    # {-b,--rebase}'[git-rebase immediately]'
+	    # is this valid?
+	    ': :->branch-or-tree-ish-or-file'
+	)
+    else
+	command_options=(
+	    {-p,--diff}'[diff]:segment:_git-segment-name'
+	    $restart_cmd
+	    #
+	    $update_cmd
+
+	    {-D,--prune}'[Segment to drop]:segment:_git-segment-name'
+	    {-d,--delete}'[Segment to drop]:segment:_git-segment-name'
+
+	    {-s,--short}'[short]'
+	)
+	specific_options=(
+	    ': :->git_segment_name'
+	    ': :->branch'
+	    ': :->branch-or-tree-ish-or-file'
+	    ': :->branch-or-tree-ish-or-file'
+	)
+    fi
+
+    # -s ?
+    # :  ?
+    # must -R to treat  the ->XX actions: exit status 300
+    _arguments -R -S -C : \
 	{-h,--help}'[help]'  \
-	{-s,--short}'[short]'  \
-	\
-	'(-r --restart)'{-p,--diff}'[diff]:segment:_git-segment-name' \
-	\
-	{-u,--update}'[update]:segment:_git-segment-name' \
-	{-b,--rebase}'[git-rebase immediately]' \
-	\
-	{-r,--restart}'[change Start]:segment:_git-segment-name' \
-	\
-	{-D,--prune}'[Segment to drop]:segment:_git-segment-name' \
-	{-d,--delete}'[Segment to drop]:segment:_git-segment-name' \
-	': :->git_segment_name' \
-	': :->branch' \
-	': :->branch-or-tree-ish-or-file' \
-	': :->branch-or-tree-ish-or-file' \
-    && return 0
-     # No, I want to continue!
+	$command_options \
+	$specific_options \
+	 && return 0
 
-     # if NO option is used (only -c) -> define
-     # if (( words[(b:CURRENT-1:I)--cd] ))
-     # now add arguments:
-     if false; then
-     _arguments -s -C \
-	': :->git_segment_name' \
-	': :->branch' \
-	': :->branch-or-tree-ish-or-file' \
-	': :->branch-or-tree-ish-or-file'
-
-     fi
-     # now see if one of  ...... is present.
-
-
-     # if one -> info
-     # if more -> we are DEFINING.
+    # if one -> info
+    # if more -> we are DEFINING.
 
     # base ... from git branches remotes included (segments & sums prefered?).
     # start
@@ -60,12 +103,14 @@ _git-segment() {
 	    # todo: also:
 	    __git_branch_names
 	    ;;
+
 	branch-or-tree-ish-or-file)
 	    __git_commits_prefer_recent
 	    ;;
 	*)
 	    ;;
     esac
+    return 0
 }
 
 # standard trick:
