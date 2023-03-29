@@ -68,7 +68,7 @@ describe_segment()
     local baseref=$(segment_base_name $name)
     local startref=refs/start/$name
     #$baseref
-
+    colors
     # fixme: how to avoid dereferencing?
     # git show-ref $startref
 
@@ -77,9 +77,10 @@ describe_segment()
         # set -x
         if [[ $only_table != y ]]
         then
-            local base=$(dump_ref_without_ref $baseref |\
-                             sed -e 's|^refs/heads/||')
-            echo -n "base is "; cecho green "$base"
+            local base=$(dump_ref_without_ref $baseref)
+            local base_name=$(ref_extract_name $base)
+
+            print "base is $fg_bold[green]$base_name$reset_color ($base)"
 
             output_dirty $name ""
             echo -n "start is "; git show-ref --hash $startref
@@ -360,9 +361,10 @@ case $CMD in
     define)
         check_maximum_arguments $# 4 "define"
         segment=$1
-        base=$2
+        # base is either generic branch (not tag) or segment/sum
+        base=$(ref_extract_name $2)
+        base=$(expand_ref heads/$base)
 
-        base=$(expand_ref $base)
         if [[ $# -gt 2 ]]; then
             start=$3
         else
