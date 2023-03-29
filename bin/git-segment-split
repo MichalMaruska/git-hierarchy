@@ -53,7 +53,7 @@ readonly commit=$2
 # git rev-parse $commit
 {
     git merge-base --is-ancestor start/$segment $commit &&
-        git merge-base --is-ancestor $commit $segment
+        git merge-base --is-ancestor $commit heads/$segment
 } || exit 1
 
 readonly name=$3
