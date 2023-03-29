@@ -326,7 +326,8 @@ fi
 case $CMD in
     list)
         check_maximum_arguments $# 0
-        list_segments | column --table
+        list_segments | column -t
+        # ubuntu 20.04 does not support --table
 
         # Dump the starts?
         if [[ $verbose = yes ]];
