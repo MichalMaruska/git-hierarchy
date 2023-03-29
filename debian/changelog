@@ -1,3 +1,9 @@
+git-hierarchy (5.41) release; urgency=medium
+
+  * avoid using 'column --table' to support ubuntu 20.04
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 29 Mar 2023 13:11:22 +0200
+
 git-hierarchy (5.40) release; urgency=medium
 
   * git-segment: use ref_extract_name() and colors. Base is a branch
