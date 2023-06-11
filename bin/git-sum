@@ -73,9 +73,8 @@ add_to_sum()
     local addend=$2
     local index=$3
 
-    # if verbose
-    set -x
-    cecho yellow "adding to sum $sum: $addend, as $index"
+    [[ $verbose = y ]] &&
+        INFO "adding to sum $sum: $addend, as $index"
     local ref=refs/sums/$sum/$index
 
     set_symbolic_reference $ref  "ref: $addend"
@@ -132,8 +131,9 @@ correct="n"
 delete=n
 number_them=n
 start_point="HEAD"
+verbose=no
 
-while getopts :cdhnrs: OPT; do
+while getopts :cdhnrs:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -153,6 +153,9 @@ while getopts :cdhnrs: OPT; do
             ;;
         d)
             delete="y"
+            ;;
+        v)
+            verbose=y
             ;;
         *)
             echo "unexpected option $OPT">&2
