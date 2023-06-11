@@ -1,10 +1,5 @@
 #! /usr/bin/zsh -feu
 
-# Manage the Sum information:
-# list ..
-# add
-# remove
-#
 
 usage()
 {
@@ -13,24 +8,24 @@ usage()
 Usage:
 ${0##*/} [+-h]
 
+Manage the Sum information:
+
 ${0##*/}
   list all sums
 
-${0##*/} {name}
+${0##*/} [-c] {name}
   show the definition -- list of summands
-
-${0##*/} [-c] branch
-  show the sum definition,
--c prune non-existings summands
+  -c ... prune non-existings summands
   # does this make it contiguous?
 
-${0##*/} [-r] branch new-merge-branch -drop-merge-branch ...
-  modify the definition.
+${0##*/} [-s start] [-r] branch new-merge-branch -drop-merge-branch ...
+  modify the definition -- stepwise?
   -r reset: empty the definition first.
   -s start_point
 
   -name ... remove this ref as summand
   name | +name add.
+
 
 ${0##*/} [-d] branch
   drop the definition.
@@ -44,17 +39,19 @@ source /usr/share/git-hierarchy/functions.sh
 # return (print) a new number for the (next) summand.
 find_new_index(){
     local name=$1
-    typeset -i i=1
+    typeset -li min_non_existing=1
     git for-each-ref "refs/sums/$name/" --format "%(refname)" |\
     while read ref; do
-        if [ ${ref##*/} -ge $i ]; then
-            ((i=${ref##*/}+1))
+        if [ ${ref##*/} -ge $min_non_existing ]; then
+            ((min_non_existing=${ref##*/}+1))
         fi
     done
-    echo $i
+    echo $min_non_existing
 }
 
 # no renumbering (of summands)
+# @sum must be name
+# @summand must be full refs/heads/xxx ?
 remove_from_sum() {
     local sum=$1
     local summand=$2
@@ -69,12 +66,14 @@ remove_from_sum() {
         done)
 }
 
+# addend (summand) should be full ref.
 add_to_sum()
 {
     local sum=$1
     local addend=$2
     local index=$3
 
+    # if verbose
     set -x
     cecho yellow "adding to sum $sum: $addend, as $index"
     local ref=refs/sums/$sum/$index
@@ -82,11 +81,10 @@ add_to_sum()
     set_symbolic_reference $ref  "ref: $addend"
 }
 
-
-
 # print valid/existing components of the sum
 show_prune_definition()
 {
+    local name=$1
     local silent
     if [ $# = 2 ];then
         silent="y"
@@ -171,7 +169,10 @@ if [ $# -lt 1 ]; then
     exit -1
 fi
 
-name=${1#refs/heads/}
+
+name=$1
+name=${name#refs/}
+name=${name#heads/}
 shift
 
 if [[ $delete = y ]];
@@ -182,7 +183,6 @@ then
 elif [[ $reset = "y" ]];
 then
     delete_sum_definition $name
-    # exit 0
 
 elif [ $# = 0 ]; then
     if [ $correct = y ]; then
@@ -197,9 +197,13 @@ elif [ $# = 0 ]; then
 fi
 
 
-
+new_defition=no
 # Create the branch. todo: might hint at where!
-git rev-parse heads/$name -- &>/dev/null || git branch $name $start_point
+git rev-parse heads/$name -- &>/dev/null ||
+    {
+        new_defition=yes
+        git branch $name $start_point
+    }
 
 # now creation:
 # find minimal number:
@@ -236,7 +240,14 @@ do
             fi
             ;;
     esac
-
     # refresh:
-    git-sum-branches $name
+    # or if it didn't exist previously!
+    if [[ $reset != "y" && $new_defition = no ]]; then
+        git-sum-branches $name
+    fi
 done
+
+# can we do it only now?
+if [[ $reset = "y" || $new_defition = yes ]]; then
+    git-sum-branches $name
+fi
