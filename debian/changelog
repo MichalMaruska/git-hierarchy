@@ -1,3 +1,11 @@
+git-hierarchy (5.42) release; urgency=medium
+
+  [ Michal Maruska ]
+  * git-sum: clean up & do not merge multiple-times
+  * git-sum: reduce verbosity
+
+ --  <mmaruska@gmail.com>  Tue, 04 Jul 2023 15:48:36 +0200
+
 git-hierarchy (5.41) release; urgency=medium
 
   * avoid using 'column --table' to support ubuntu 20.04
