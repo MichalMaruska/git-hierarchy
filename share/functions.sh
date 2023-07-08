@@ -173,7 +173,7 @@ dump_ref(){
     # git ref-parse $1
 
     # fixme: only symbolic: git symbolic-ref $1
-    git rev-parse $1
+    git rev-parse $1 | tr -d '\n'
 }
 
 # I bet on always knowing what to expect. for start & base.
