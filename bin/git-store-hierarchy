@@ -41,38 +41,45 @@ OPTIND=1
 # create the content:
 # ==================
 tmpfile=$(mktemp hierarchy-dump.XXX)
-
+# trap
 echo "$tmpfile" >&2
-
 git-graph -r $@ > $tmpfile
 
-if [[ $do_commit = yes ]]
-then
-    readonly blob_hash=$(git hash-object --stdin -w < $tmpfile)
+commit_single_file_on_branch()
+{
+    set -xe
+    local -r tmpfile=$1
+    local -r BRANCH=$2
+    local -r commit_message=$3
+    local -r blob_hash=$(git hash-object --stdin -w < $tmpfile)
+
     # todo: check it didn't fail.
-
-
     # check:
-    git cat-file -p $blob_hash
+    # git cat-file -p $blob_hash
     # must be "blob"
     git cat-file -t $blob_hash
 
-
     # tree with 1 file:
-    readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
+    typeset -lr tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
     # |git update-index  --index-info
 
     # the parent:
-    parents=()
+    typeset -la parents=()
 
     if git-branch-exists $BRANCH;
     then
         parents+=(-p $BRANCH)
     fi
-    commit=$(git commit-tree -m "new hierarchy" $parents $tree_hash)
-
+    commit=$(git commit-tree -m "$commit_message" $parents $tree_hash)
 
     git branch --force $BRANCH $commit
+
+}
+
+
+if [[ $do_commit = yes ]]
+then
+    commit_single_file_on_branch $tmpfile $BRANCH "new hierarchy: $@"
 else
     cat $tmpfile
 fi
