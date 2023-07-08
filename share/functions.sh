@@ -121,22 +121,26 @@ sum_resolve_summands()
     #### Calculate the summands: for the check and for re-merging.
     # local
     local sum_name=$1
-    typeset -a summand_branches
+    local result_array=$2
+
+    typeset -a _summand_branches
     # this is `definition'
-    summand_branches=(
+    _summand_branches=(
         $(git for-each-ref "refs/sums/$sum_name/" --format "%(refname)") )
     #(${(f)_tmp})
-    #test $debug = y &&     echo $summand_branches
+    #test $debug = y &&     echo $_summand_branches
 
     # Those references are symbolic "ref: ref/head/NAME", but we want to
     # use the NAMES in the commit message & interaction with the user.
     # So, `resolve' them:
-    real_branches=()
+    typeset -l -a _real_branches=()
 
     local br
-    foreach br ($summand_branches) {
-        real_branches+=$(dump_ref_without_ref $br)
+    foreach br ($_summand_branches) {
+        _real_branches+=$(dump_ref_without_ref $br)
     }
+
+    set -A $result_array $_real_branches
 }
 
 
@@ -436,8 +440,7 @@ dump_sum()
 
     # dump the summands:
     typeset -a real_branches
-    sum_resolve_summands $sum
-
+    sum_resolve_summands $sum real_branches
 
     local up_to_date=y
     if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
@@ -920,7 +923,7 @@ test_sum_is_intact()
 
     # summand_branches
     typeset -a real_branches
-    sum_resolve_summands $sum_name
+    sum_resolve_summands $sum_name real_branches
     # if git-branch-exists $sum_name;
 
     equal=n

@@ -98,7 +98,7 @@ fi
 ### same as `test_sum_is_intact', but we need real_branches ourselves:
 typeset -a real_branches
 
-sum_resolve_summands $sum_name
+sum_resolve_summands $sum_name real_branches
 debug_trace "Summands: $real_branches"
 
 # y ... gives priority to heads, remotes, generic
