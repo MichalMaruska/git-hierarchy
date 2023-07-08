@@ -968,24 +968,17 @@ walk_down_from()
     local name
     while [[ ${#queue} -ge 1 ]];
     do
-        queue=(${queue:|processed}) # A:|B is A-B. fixme: processed ?
+        # fixme: processed comes as implicit parameter?
+        queue=(${queue:|processed}) # A:|B is A-B.
 
         if [[ $#queue = 0 ]]; then
             break;
         fi
 
         this=${queue[1]}
-        # remove "first" if it's repeated:
-        # we don't need += here, since all previously processed cannot be in `queue' anymore,
-        # if the graph is DAG (acyclic!):
         processed+=($this)
 
-
-        # take the first, and append the base(s)
-        # also remove "first" if it's repeated.
-
-        # STEP
-        STEP "processing $this, (queue is $queue ${#queue}" || : ok
+        STEP "processing $this, (queue is $queue ${#queue}"
 
         # append the base(s), or summands:
         name=${this#refs/heads/}
@@ -994,6 +987,7 @@ walk_down_from()
             # fixme: this should _test_
             dump_sum $test_option ${sum_format} $name
 
+            # depth-first search: we prepend:
             queue+=($(summands_of $name))
         elif is_segment $name; then
             dump_segment $segment_format $name
