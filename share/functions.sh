@@ -111,6 +111,7 @@ summands_of()
           do
               # echo $summand >&2
               dump_ref_without_ref $summand
+              echo
           done)
 }
 
@@ -204,7 +205,8 @@ dump_symbolic_ref(){
 dump_ref_without_ref()
 {
     if true; then
-        git rev-parse --symbolic-full-name $1
+        # fixme: no newline!
+        git rev-parse --symbolic-full-name $1 | tr -d '\n'
     else
         a=$(dump_symbolic_ref $1)
         echo ${a#ref: }
