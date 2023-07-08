@@ -439,7 +439,7 @@ dump_sum()
         # dot does not need anything?
         resolved)
             #
-            echo "sum\t$sum\t$(dump_ref refs/heads/$sum)\t";
+            echo -n "sum\t$sum\t$(dump_ref refs/heads/$sum)";
             ;;
         *)
     esac
@@ -497,6 +497,7 @@ dump_sum()
                 echo "\t${summand#refs/heads/}"
                 ;;
             raw| resolved)
+                # the first one is not necessary:
                 echo -n "\t" $summand
                 ;;
             *)
