@@ -437,6 +437,10 @@ dump_sum()
             return
             ;;
         # dot does not need anything?
+        resolved)
+            #
+            echo "sum\t$sum\t$(dump_ref refs/heads/$sum)\t";
+            ;;
         *)
     esac
 
@@ -492,7 +496,7 @@ dump_sum()
                 # "\t${${$(dump_ref_without_ref $summand)#refs/heads/}//-/_}"
                 echo "\t${summand#refs/heads/}"
                 ;;
-            raw)
+            raw| resolved)
                 echo -n "\t" $summand
                 ;;
             *)
@@ -515,7 +519,7 @@ dump_sum()
               fontname="Palatino-Italic",fontcolor=black,style=filled];
 EOF
             ;;
-        symbolic | tsort |raw)
+        symbolic | tsort |raw | resolved)
             echo
             ;;
         *)
