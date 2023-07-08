@@ -13,16 +13,21 @@ usage()
 usage: ${0##*/} [+-h] [--] ARGS...
 
 ********
-Invoke "git-graph -s" and store the output ...
+Invoke "git-graph -s $@" and store the output ...
 in a new commit on $BRANCH
 EOF
 }
 
-while getopts :h OPT; do
+do_commit=no
+
+while getopts :hc OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
+            ;;
+        c)
+            do_commit=yes
             ;;
         *)
             echo "unexpected option $OPT">&2
@@ -35,28 +40,41 @@ OPTIND=1
 
 # create the content:
 # ==================
-# git-graph -s > $tmpfile
-readonly blob_hash=$(git-graph -s | git hash-object --stdin -w)
-# check it didn't fail.
+tmpfile=$(mktemp hierarchy-dump.XXX)
 
-# check:
-git cat-file -p $blob_hash
-# must be "blob"
-git cat-file -t $blob_hash
+echo "$tmpfile" >&2
 
+git-graph -r $@ > $tmpfile
 
-# tree with 1 file:
-readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
-# |git update-index  --index-info
-
-# the parent:
-parents=()
-
-if git-branch-exists $BRANCH;
+if [[ $do_commit = yes ]]
 then
-    parents+=(-p $BRANCH)
+    readonly blob_hash=$(git hash-object --stdin -w < $tmpfile)
+    # todo: check it didn't fail.
+
+
+    # check:
+    git cat-file -p $blob_hash
+    # must be "blob"
+    git cat-file -t $blob_hash
+
+
+    # tree with 1 file:
+    readonly tree_hash=$(echo "$MODE blob $blob_hash\t$FILENAME"| git mktree)
+    # |git update-index  --index-info
+
+    # the parent:
+    parents=()
+
+    if git-branch-exists $BRANCH;
+    then
+        parents+=(-p $BRANCH)
+    fi
+    commit=$(git commit-tree -m "new hierarchy" $parents $tree_hash)
+
+
+    git branch --force $BRANCH $commit
+else
+    cat $tmpfile
 fi
-commit=$(git commit-tree -m "new hierarchy" $parents $tree_hash)
 
-
-git branch --force $BRANCH $commit
+rm -f $tmpfile
