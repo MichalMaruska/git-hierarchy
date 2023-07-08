@@ -20,14 +20,14 @@ EOF
 
 do_commit=no
 
-while getopts :hc OPT; do
+while getopts :ch OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
             ;;
         c)
-            do_commit=yes
+            do_commit="yes"
             ;;
         *)
             echo "unexpected option $OPT">&2
