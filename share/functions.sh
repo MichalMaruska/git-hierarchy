@@ -978,7 +978,7 @@ walk_down_from()
         this=${queue[1]}
         processed+=($this)
 
-        STEP "processing $this, (queue is $queue ${#queue}"
+        STEP "processing $this, (queue is $queue ${#queue})"
 
         # append the base(s), or summands:
         name=${this#refs/heads/}
