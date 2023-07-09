@@ -12,10 +12,13 @@ hierarchy_branch="_hierarchy"
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-hn]  [-r remote] [--] ARGS...
+usage: ${0##*/} [+-hn] [-t TAG] | [-b]
 
--n   ... dump (only) the last hierarchy
--r remote  ... instead of local branch $hierarchy_branch, use the the remote one.
+-n   ... dump only
+-c  ... check only
+
+-t TAG
+-b from $BRANCH
 
 -l list all remote "$hierarchy_branch" branches
 
@@ -29,66 +32,35 @@ EOF
 
 # todo: share with ./git-store-hierarchy
 FILENAME=hierarchy
+tmpfile=$(mktemp -p ${TMPDIR-/tmp} hierarchy-dump.XXX)
+trap 'rm -vf $tmpfile' EXIT
 REMOTE="heads"
 
-# uses $REMOTE
-reconstruct_segment()
-{
-    readonly segment=$1
-    readonly base=$2
-    if [[ $base =~ "heads/.*" ]]; then
-        start=${base#heads/}
-        start=remotes/$REMOTE/${base#heads/}
-    else
-        # tag or remote/XXX/aaa
-        start=$base
-    fi
+check_only=no
+cat_only=no
 
-
-    if is_segment $segment; then
-        warn "we already have segment $segment"
-        # todo: check it's the same base!
-    else
-        if git rev-parse $base;
-        then
-            # the start is the remote base!
-            # b/c if I made a new sum, ....!
-            git-segment $segment $base $start remotes/$REMOTE/$segment
-        else
-            warn "don't have the base of segment $segment: $base"
-            exit 1
-        fi
-    fi
-}
-
-reconstruct_sum()
-{
-    readonly sum=$1
-    shift
-    readonly summands=($@)
-    # check all the summands exist
-
-    if is_sum $sum; then
-        warn "we already have SUM $sum"
-    else
-        (
-            set -x
-            # fixme: a bit dangerous! what if I already have it?
-            git-sum -r -s remotes/$REMOTE/$sum $sum $summands
-        )
-    fi
-}
-
-cat_only=n
-while getopts :hlnr: OPT; do
+while getopts :chlnt: OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
             ;;
-        r)
-            REMOTE=$OPTARG
-            # optiplex
+        b)
+            from_branch=yes
+            cat_git_file_from_commit $hierarchy_branch $FILENAME > $tmpfile
+            ;;
+        c)
+            check_only=yes
+            ;;
+        t)
+            # extract from a tag:
+            TAG=$OPTARG
+            git tag --verify $TAG &>/dev/null
+
+            (set -x
+             git tag --list --format="%(contents)" $TAG | sed -n -e '/BEGIN PGP/q;p' > $tmpfile
+             # git tag --list --format="%(subject)" $TAG > $FILENAME
+            )
             ;;
         l)
             echo "let's find possible branches:"
@@ -98,11 +70,10 @@ while getopts :hlnr: OPT; do
                     echo "$remote/$hierarchy_branch !"
                 fi
             }
-            # git rev-parse   'remotes/origin/_hierarchy'
             exit 0
             ;;
         n|+n)
-            cat_only=y
+            cat_only=yes
             ;;
         *)
             echo "unexpected option $OPT">&2
@@ -114,37 +85,183 @@ shift OPTIND-1
 OPTIND=1
 
 
-if [[ $cat_only = y ]]; then
+
+# First get it into a file
+# from tag, from branch ...
+#
+if [[ $cat_only = yes ]];
+then
     # from mmc-shell
-    cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME
-    exit
+    cat $tmpfile
+    rm -f $tmpfile
+    exit 0
 fi
 
+error()
+{
+    cecho red "$@" >&2
+}
+
+correct()
+{
+    cecho green "$@" >&2
+}
+
+# Given the line "segment NAME SHA BASE START"
+reconstruct_segment()
+{
+    local -r segment=$1
+    local -r base=$2
+    local -r start=$3
+    local -r head=$4
+    LOG_STEP "segment $segment"
+
+    if [[ $check_only = "yes"  ]]
+    then
+        if ! is_segment $segment
+        then
+            error "segment $segment does not exist at all"
+            return 1
+        fi
+        # BASE
+        if [[ $(segment_base $segment) != $base ]]
+        then
+            error "divergence: base of $segment:\n\tis: $(segment_base $segment)\n\tshould be: $base"
+            return 1
+        fi
+
+        # START
+        if [[ $(segment_start $segment) != $start ]]
+        then
+            error "divergence: START of $segment is:\n\t$(segment_start $segment)\n\tshould be $start"
+            return 1
+        fi
+
+        # HEAD
+        if [[ $(commit_id $segment) != $sha ]]
+        then
+            error "divergence: the HEAD of $segment is:\tis: $(commit_id $segment)\n\tshould be $sha"
+            return 1
+        fi
+
+        correct "segment $segment is identical"
+        return 0
+    elif is_segment $segment
+    then
+        error "we already have segment $segment"
+        # todo: check it's the same base!
+        return 1
+    fi
+
+    # check that base exists
+    if ! git rev-parse $base >/dev/null
+    then
+        warn "don't have the base of segment $segment: $base"
+        exit 1
+    fi
+
+    if ! git log -1 $start >/dev/null
+    then
+        error "cannot use the provided START: $start"
+        # the start is the remote base!
+        # b/c if I made a new sum, ....!
+    fi
+
+    cmd=echo
+    # $cmd
+    (set -x
+     git-segment $segment $base $start $head
+     )
+}
+
+reconstruct_sum()
+{
+    local -r sum=$1
+    local -r sha=$2
+    # shift
+    local -a _summands=( ${(P)3} )
+    LOG_STEP "sum $sum"
+    # echo  @ $sha, from ${_summands[@]}"
+
+    if [[ $check_only = "yes"  ]]
+    then
+        if ! is_sum $sum
+        then
+            error "sum $sum does not exist at all"
+            return 1
+        fi
+
+        # HEAD
+        if [[ $(commit_id $sum) != $sha ]]
+        then
+            error "divergence: the HEAD of $sum:\n\tis: $(commit_id $sum)\n\tshould be: $sha"
+            return 1
+        fi
+        # summands
+        #
+        local -a current_summands=( $(summands_of $sum) )
+        # compare 2 arrays:
+        # delete  from one array:   :|
+        _minus=${current_summands:|_summands}
+        _plus=${_summands:|current_summands}
+
+        if ! [[ $#_minus = 0 && $#_plus = 0 ]]
+        then
+            error "difference in summand list of $sum:\nnow:\t$current_summands[@]\n\t$_summands[*]"
+            return 1
+        fi
+
+        correct "sum $sum is identical"
+        return 0
+    elif is_sum $sum
+    then
+        warn "we already have SUM $sum"
+        exit 1
+    fi
+
+    # check all the summands exist
+    # todo:
+    (
+        set -x
+        # fixme: a bit dangerous! what if I already have it?
+        cmd=echo
+        $cmd git-sum -r -s remotes/$REMOTE/$sum $sum $summands
+    )
+}
+
+
 # Maybe this should invoke a tool which `only' creates?
-cat_git_file_from_commit $REMOTE/$hierarchy_branch $FILENAME | \
+tac $tmpfile| \
     while read line; do
-        echo ">$line<"
-        if [[ $line -regex-match '^segment ([[:graph:]]+)[[:space:]]+([[:graph:]]+)$' ]]
+        # echo ">$line<"
+        # Given the line          "segment     NAME                      SHA     BASE  START"
+        if [[ $line -regex-match '^segment ([[:graph:]]+)[[:space:]]+([[:graph:]]+)[[:space:]]+([[:graph:]]+)[[:space:]]+([[:graph:]]+)$' ]]
         then
             # variables:
             segment=$match[1]
-            base=$match[2]
-            reconstruct_segment $segment $base
+            sha=$match[2]
+            base=$match[3]
+            start=$match[4]
+            reconstruct_segment $segment $base $start $sha || : ignore
 
-        elif [[ $line -regex-match '^sum[[:space:]]+([[:graph:]]+)$' ]]
+            # Given the line        "sum               NAME                      SHA    summands"
+        elif [[ $line -regex-match '^sum[[:space:]]+([[:graph:]]+)[[:space:]]+([[:graph:]]+)(.*)$' ]]
         then
-             sum=$match[1]
-             # read the summands:
-             summands=()
+            sum=$match[1]
+            sha=$match[2]
+            # read the summands:
+            rest=$match[3]
+            typeset -a summands=()
+            # echo "processing the rest: $rest"
+            # greedy:
+            while [[ "$rest" -regex-match '^[[:space:]]+([[:graph:]]+)(.*)$' ]]
+            do
+                # echo "adding $match[1]"
+                summands+=($match[1])
+                rest=($match[2])
+            done
 
-             while read line; do
-                 if [[ $line = '' ]]; then
-                     # empty line = end.
-                     break;
-                 fi
-                 summands+=($line)
-             done
-
-             reconstruct_sum $sum $summands
+            # print "summands: $summands[@]"
+            reconstruct_sum $sum $sha "summands" || : ignore
         fi
     done
