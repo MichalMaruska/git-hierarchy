@@ -382,7 +382,7 @@ case $CMD in
             # check now ... b/c ? fixme!
             # it can be HEAD
             if [[ $# = 4 ]]; then
-                git rev-parse $4;
+                git rev-parse $4 >/dev/null
             fi
             # fixme: maybe crate at $4 !!!
             # Create it:

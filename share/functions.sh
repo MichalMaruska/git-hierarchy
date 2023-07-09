@@ -830,11 +830,11 @@ set_branch_to()
     local branch=$1
     local commit_id=$2
 
-    if [ $branch = $(current_branch_name) ]
+    if [ $branch = $(current_branch_name_maybe) ]
     then
         git reset --hard $commit_id
     else
-        git branch -f $branch $commit_id
+        git branch --force $branch $commit_id
     fi
 }
 
