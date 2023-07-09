@@ -215,31 +215,33 @@ git rev-parse heads/$name -- &>/dev/null ||
 index=$(find_new_index $name)
 readonly summands=($(summands_of $name))
 
-for br in "$@"
+# new_summand
+for branch in "$@"
 do
-    case "$br" in
+    # do I need to expand it?
+    case "$branch" in
         -*)
-            br=${br#-}
+            branch=${branch#-}
             # I need to `expand' to `Full' ref!
-            br=$(git-expand-ref $br)
+            branch=$(git-expand-ref $branch)
 
             # remove:
             # find its index!
-            cecho red $br
-            remove_from_sum $name $br
+            cecho red $branch
+            remove_from_sum $name $branch
             ;;
         +* | *)
-            br=${br#+}
-            cecho green "addend $br"
-            br=$(git-expand-ref $br)
+            branch=${branch#+}
+            cecho green "addend $branch"
+            branch=$(git-expand-ref $branch)
 
-            if [[ ${summands[(i)$br]} -le ${#summands} ]]; then
+            if [[ ${summands[(i)$branch]} -le ${#summands} ]]; then
                 WARN "already summand, skipping"
                 # short-cut:
                 continue
             else
                 # add:
-                add_to_sum $name $br $index
+                add_to_sum $name $branch $index
                 ((index=index+1))
             fi
             ;;
