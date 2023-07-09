@@ -141,19 +141,15 @@ fi
 mmc_stash_if_non_clean "git-sum-branches saving"
 
 
-test $debug = y && echo "checkout & merge" >&2
+[[ $debug = y ]] && echo "checkout & merge" >&2
 ####################################### Merge
 # no way. `git-checkout' prefers branches (over tags)
 # http://programmers.stackexchange.com/questions/230438/in-git-is-it-a-bad-idea-to-create-a-tag-with-the-same-name-as-a-deleted-branch
 first=$real_branches[1]
 first_branch=$(expand_ref $first)
 
-get_temp_branch()
-{
-    echo "_tmp"
-}
 
-readonly work_branch=$(get_temp_branch)
+readonly work_branch="_tmp"
 if [ $reset = "y" ]; then
     # Is this really necessary? only if
     #if [ $sum_branch = $(git branch) ]; then
