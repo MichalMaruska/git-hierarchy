@@ -33,7 +33,7 @@ EOF
 
 # todo: share with ./git-store-hierarchy
 FILENAME=hierarchy
-tmpfile=$(mktemp -p ${TMPDIR-/tmp} hierarchy-dump.XXX)
+tmpfile=$(mktemp -t hierarchy-dump.XXX)
 trap 'rm -vf $tmpfile' EXIT
 REMOTE="heads"
 

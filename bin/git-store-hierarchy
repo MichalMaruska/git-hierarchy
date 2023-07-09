@@ -49,7 +49,7 @@ OPTIND=1
 
 # create the content:
 # ==================
-tmpfile=$(mktemp -P ${TMPDIR-/tmp} hierarchy-dump.XXX)
+tmpfile=$(mktemp -t hierarchy-dump.XXX)
 # trap
 echo "$tmpfile" >&2
 git-graph -r $@ > $tmpfile
