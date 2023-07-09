@@ -109,7 +109,6 @@ summands_of()
     git for-each-ref "refs/sums/$sum/" --format "%(refname)"|\
         ( while read summand;
           do
-              # echo $summand >&2
               dump_ref_without_ref $summand
               echo
           done)
@@ -766,13 +765,15 @@ try_to_expand()
     echo $expanded
 }
 
+# return the full reference name
+# possibly with a fixed preference:
 expand_ref()
 {
-    readonly name=$1
+    local -r name=$1
     local result
     local my_priority=n
     if [ $# -gt 1 ]; then
-       my_priority=$2
+        my_priority=$2
     fi
     case $name in
         refs/*)
@@ -806,11 +807,8 @@ expand_ref()
                     exit 1
                 fi
             fi
-            # name=refs/heads/$name
-            # prepend refs/
     esac
 
-    # mmc: this should abort!
     echo $result
 }
 
