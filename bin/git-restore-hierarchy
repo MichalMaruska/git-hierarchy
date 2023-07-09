@@ -22,6 +22,7 @@ usage: ${0##*/} [+-hn] [-t TAG] | [-b]
 
 -l list all remote "$hierarchy_branch" branches
 
+-v verbose
 ******************
 Create segments/sums following hierarchy on $hierarchy_branch
 
@@ -36,10 +37,11 @@ tmpfile=$(mktemp -p ${TMPDIR-/tmp} hierarchy-dump.XXX)
 trap 'rm -vf $tmpfile' EXIT
 REMOTE="heads"
 
+verbose=no
 check_only=no
 cat_only=no
 
-while getopts :chlnt: OPT; do
+while getopts :chlnt:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -51,16 +53,6 @@ while getopts :chlnt: OPT; do
             ;;
         c)
             check_only=yes
-            ;;
-        t)
-            # extract from a tag:
-            TAG=$OPTARG
-            git tag --verify $TAG &>/dev/null
-
-            (set -x
-             git tag --list --format="%(contents)" $TAG | sed -n -e '/BEGIN PGP/q;p' > $tmpfile
-             # git tag --list --format="%(subject)" $TAG > $FILENAME
-            )
             ;;
         l)
             echo "let's find possible branches:"
@@ -74,6 +66,19 @@ while getopts :chlnt: OPT; do
             ;;
         n|+n)
             cat_only=yes
+            ;;
+        t)
+            # extract from a tag:
+            TAG=$OPTARG
+            git tag --verify $TAG &>/dev/null
+
+            (set -x
+             git tag --list --format="%(contents)" $TAG | sed -n -e '/BEGIN PGP/q;p' > $tmpfile
+             # git tag --list --format="%(subject)" $TAG > $FILENAME
+            )
+            ;;
+        v)
+            verbose=yes
             ;;
         *)
             echo "unexpected option $OPT">&2
@@ -107,6 +112,44 @@ correct()
     cecho green "$@" >&2
 }
 
+
+check_segment()
+{
+    local -r segment=$1
+    local -r base=$2
+    local -r start=$3
+    local -r head=$4
+
+    if ! is_segment $segment
+    then
+        error "segment $segment does not exist at all"
+        return 1
+    fi
+    # BASE
+    if [[ $(segment_base $segment) != $base ]]
+    then
+        error "divergence: base of $segment:\n\tis: $(segment_base $segment)\n\tshould be: $base"
+        return 1
+    fi
+
+    # START
+    if [[ $(segment_start $segment) != $start ]]
+    then
+        error "divergence: START of $segment is:\n\t$(segment_start $segment)\n\tshould be $start"
+        return 1
+    fi
+
+    # HEAD
+    if [[ $(commit_id $segment) != $sha ]]
+    then
+        error "divergence: the HEAD of $segment is:\tis: $(commit_id $segment)\n\tshould be $sha"
+        return 1
+    fi
+
+    correct "segment $segment is identical"
+    return 0
+}
+
 # Given the line "segment NAME SHA BASE START"
 reconstruct_segment()
 {
@@ -118,43 +161,18 @@ reconstruct_segment()
 
     if [[ $check_only = "yes"  ]]
     then
-        if ! is_segment $segment
-        then
-            error "segment $segment does not exist at all"
-            return 1
-        fi
-        # BASE
-        if [[ $(segment_base $segment) != $base ]]
-        then
-            error "divergence: base of $segment:\n\tis: $(segment_base $segment)\n\tshould be: $base"
-            return 1
-        fi
-
-        # START
-        if [[ $(segment_start $segment) != $start ]]
-        then
-            error "divergence: START of $segment is:\n\t$(segment_start $segment)\n\tshould be $start"
-            return 1
-        fi
-
-        # HEAD
-        if [[ $(commit_id $segment) != $sha ]]
-        then
-            error "divergence: the HEAD of $segment is:\tis: $(commit_id $segment)\n\tshould be $sha"
-            return 1
-        fi
-
-        correct "segment $segment is identical"
-        return 0
+        check_segment $@
+        return $?
     elif is_segment $segment
     then
         error "we already have segment $segment"
-        # todo: check it's the same base!
-        return 1
+        check_segment $@
+        return $?
     fi
 
-    # check that base exists
-    if ! git rev-parse $base >/dev/null
+    [[ $verbose = yes ]] && LOG_STEP "check that base exists"
+
+    if ! git rev-parse $base -- >/dev/null
     then
         warn "don't have the base of segment $segment: $base"
         exit 1
@@ -169,9 +187,49 @@ reconstruct_segment()
 
     cmd=echo
     # $cmd
-    (set -x
-     git-segment $segment $base $start $head
+    (
+        if [[ $verbose = yes ]]; then
+            set -x
+        fi
+        git-segment $segment $base $start $head
      )
+}
+
+check_sum()
+{
+    local -r sum=$1
+    local -r sha=$2
+    # shift
+    local -a _summands=( ${(P)3} )
+
+
+    if ! is_sum $sum
+    then
+        error "sum $sum does not exist at all"
+        return 1
+    fi
+
+    if [[ $(commit_id $sum) != $sha ]]
+    then
+        error "divergence: the HEAD of $sum:\n\tis: $(commit_id $sum)\n\tshould be: $sha"
+        return 1
+    fi
+
+    # summands
+    local -a current_summands=( $(summands_of $sum) )
+    # compare 2 arrays:
+    # delete  from one array:   :|
+    _minus=${current_summands:|_summands}
+    _plus=${_summands:|current_summands}
+
+    if ! [[ $#_minus = 0 && $#_plus = 0 ]]
+    then
+        error "difference in summand list of $sum:\nnow:\t$current_summands[@]\n\t$_summands[*]"
+        return 1
+    fi
+
+    correct "sum $sum is identical"
+    return 0
 }
 
 reconstruct_sum()
@@ -185,38 +243,13 @@ reconstruct_sum()
 
     if [[ $check_only = "yes"  ]]
     then
-        if ! is_sum $sum
-        then
-            error "sum $sum does not exist at all"
-            return 1
-        fi
-
-        # HEAD
-        if [[ $(commit_id $sum) != $sha ]]
-        then
-            error "divergence: the HEAD of $sum:\n\tis: $(commit_id $sum)\n\tshould be: $sha"
-            return 1
-        fi
-        # summands
-        #
-        local -a current_summands=( $(summands_of $sum) )
-        # compare 2 arrays:
-        # delete  from one array:   :|
-        _minus=${current_summands:|_summands}
-        _plus=${_summands:|current_summands}
-
-        if ! [[ $#_minus = 0 && $#_plus = 0 ]]
-        then
-            error "difference in summand list of $sum:\nnow:\t$current_summands[@]\n\t$_summands[*]"
-            return 1
-        fi
-
-        correct "sum $sum is identical"
-        return 0
+        check_sum $@
+        return $?
     elif is_sum $sum
     then
         warn "we already have SUM $sum"
-        exit 1
+        check_sum $@
+        return $?
     fi
 
     # check all the summands exist
@@ -242,7 +275,7 @@ tac $tmpfile| \
             sha=$match[2]
             base=$match[3]
             start=$match[4]
-            reconstruct_segment $segment $base $start $sha || : ignore
+            reconstruct_segment $segment $base $start $sha || [[ $check_only = yes ]]
 
             # Given the line        "sum               NAME                      SHA    summands"
         elif [[ $line -regex-match '^sum[[:space:]]+([[:graph:]]+)[[:space:]]+([[:graph:]]+)(.*)$' ]]
@@ -262,6 +295,6 @@ tac $tmpfile| \
             done
 
             # print "summands: $summands[@]"
-            reconstruct_sum $sum $sha "summands" || : ignore
+            reconstruct_sum $sum $sha "summands" || [[ $check_only = yes ]]
         fi
     done
