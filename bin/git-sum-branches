@@ -1,34 +1,36 @@
 #! /usr/bin/zsh -feu
 
+source /usr/share/git-hierarchy/functions.sh
+source /usr/share/mmc-shell/mmc-functions.sh
+check_getopt
+
 usage()
 {
     cat <<EOF
 Remake a git sum/merge. (akin 'rebase' for segments)
 
-usage: ${0##*/} [-d] [+-r] [-h] [-s] [--] {sum}
--d  dry
+This turns the formal definition into commits.
 
--r  reset before starting merge. Default
-+r  don't reset.
+usage: ${0##*/} [-d] [+-r] [-h] [-s] [--]  {sum-name}
+-d  --dry
 
--v  verbose
--q  quiet (not-implemented)
+-r  --reset  before starting merge (to the first summand). Default
+fixme: --noreset
 
--s  stepwise: don't try to merge in 1 git-merge.
+-v  --verbose
+-q  --quiet (not-implemented)
+
+-s  --stepwise:  don't try to merge in 1 git-merge.
 .... can contain upstream Git(1) options.
 
--h  help
+-h  --help
 EOF
 }
 
-source /usr/share/git-hierarchy/functions.sh
-source /usr/share/mmc-shell/mmc-functions.sh
-check_getopt
 
 GIT_DIR=$(git_dir)
-# fixme:
+# fixme: why?
 cd $(git rev-parse --show-toplevel)
-
 
 # by default make a `clean' merge. This means
 reset=y
@@ -38,7 +40,7 @@ cmd=""
 debug=n
 quiet=no
 
-stepwise=0
+stepwise=no
 
 cmd_options=$(getopt --name $0 --shell bash \
         --longoptions dry,help,quit,reset,stepwise,verbose \
@@ -63,9 +65,10 @@ while (( $# > 0 )); do
             reset=y
             ;;
         -s | --stepwise )
-            stepwise=1
+            stepwise=yes
             ;;
         -v | --verbose | --debug)
+            # quiet=no
             debug=y
             ;;
         --)
@@ -88,10 +91,15 @@ fi
 
 sum_name=$(ref_extract_name $1)
 
-if ! is_sum $sum_name &>/dev/null ;
+## Sanity check:
+if git-branch-exists $sum_name && is_sum $sum_name &>/dev/null
 then
-    echo "$sum_name is not a sum branch (in $GIT_DIR)" >&2
-    summands_of $sum_name >&2
+    :
+else
+    {
+        echo "$sum_name is not a sum branch (in $GIT_DIR)"
+        summands_of $sum_name
+    } >&2
     exit 1
 fi
 
@@ -101,26 +109,20 @@ typeset -a real_branches
 sum_resolve_summands $sum_name real_branches
 debug_trace "Summands: $real_branches"
 
-# y ... gives priority to heads, remotes, generic
+debug_trace "uptodate check"
+# y ... gives `priority' to heads, remotes, generic
 sum_ref=$(expand_ref $sum_name y)
 
 equal=n
-# This is the `situation':
-# sanity check:
-debug_trace "sanity check"
-if git-branch-exists $sum_name;
-then
-    test_commit_parents --strict $sum_ref $real_branches[@]
-else
-    git branch $sum_name
-fi
-# todo?: if exists such branch/tag ->abort
+# but we already checked this in `is_sum'?
+test_commit_parents --strict $sum_ref $real_branches[@]
 
+# todo?: if exists such branch/tag ->abort
 if test "$equal" = y;
 then
     if [[ $quiet != yes ]]; then
         {
-            echo -n "no need to merge again -- the sum ";
+            echo -n "no need to merge again -- the sum "
             # todo: debug ?
             cecho magenta -n $sum_name
             echo " is up-to-date (as defined)."
@@ -164,27 +166,29 @@ else
     # but here it is needed:
     eval $cmd git merge $first_branch
 fi
-# git checkout -b $sum_name $first
 
-if test ${#real_branches} = 1;
+
+if [[ ${#real_branches} = 1 ]]
 then
     # if empty, we are done!
-    test $debug = y && echo "the sum is trivial - 1 summand, no merging"
+    [[ $debug = y ]] && echo "the sum is trivial - 1 summand, no merging" >&2
 else
     others=($real_branches[2,-1])
-# octopus is default (for >2 children) & refuses any conflict.
+    # octopus is default (for >2 children) & refuses any conflict.
 
-    {cecho green -n "re-merging sum ";cecho cyan $sum_name} >&2
-    set -x
-    if [ $stepwise = 0 ]; then
+    print "$fg[green]re-merging sum $fg[cyan]$sum_name" >&2
+    if [[ $stepwise = no ]]; then
         eval $cmd git merge -m '"Sum: $sum_name = $first + $others"' \
              --rerere-autoupdate \
              --strategy octopus \
-             --strategy recursive --strategy-option patience --strategy-option ignore-space-change $others
+             --strategy recursive \
+             --strategy-option patience \
+             --strategy-option ignore-space-change $others
     else
         foreach next ($others)
         {
-            eval $cmd git merge -m "'Sum: $next into $sum_name'" --rerere-autoupdate "'$next'";
+            eval $cmd git merge -m "'Sum: $next into $sum_name'" \
+                 --rerere-autoupdate "'$next'"
         }
     fi
 fi
