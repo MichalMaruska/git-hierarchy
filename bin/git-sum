@@ -129,11 +129,12 @@ fi
 reset="n"
 prune="n"
 delete=n
+merge_incrementally=no
 number_them=n
 start_point="HEAD"
 verbose=no
 
-while getopts :cdhnrs:v OPT; do
+while getopts :cdhinrs:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -144,6 +145,9 @@ while getopts :cdhnrs:v OPT; do
             ;;
         n)
             number_them=y
+            ;;
+        i)
+            merge_incrementally=yes
             ;;
         s)
             start_point=$OPTARG
@@ -248,12 +252,12 @@ do
     esac
     # refresh:
     # or if it didn't exist previously!
-    if [[ $reset != "y" && $new_defition = no ]]; then
+    if [[ $merge_incrementally = yes ]] then
         git-sum-branches $name
     fi
 done
 
 # can we do it only now?
-if [[ $reset = "y" || $new_defition = yes ]]; then
+if [[ $merge_incrementally = no ]] then
     git-sum-branches $name
 fi
