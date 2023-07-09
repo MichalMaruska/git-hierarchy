@@ -16,7 +16,7 @@ usage: ${0##*/} [+-hn] [-t TAG] | [-b]
 
 -n   ... dump only
 -c  ... check only
-
+-f ... force -- discard old version
 -t TAG
 -b from $BRANCH
 
@@ -40,8 +40,10 @@ REMOTE="heads"
 verbose=no
 check_only=no
 cat_only=no
+# overwrite:
+force=no
 
-while getopts :chlnt:v OPT; do
+while getopts :cfhlnt:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -53,6 +55,10 @@ while getopts :chlnt:v OPT; do
             ;;
         c)
             check_only=yes
+            ;;
+        f)
+            # maybe only forward?
+            force=yes
             ;;
         l)
             echo "let's find possible branches:"
@@ -159,6 +165,7 @@ reconstruct_segment()
     local -r head=$4
     LOG_STEP "segment $segment"
 
+    local exists=no
     if [[ $check_only = "yes"  ]]
     then
         check_segment $@
@@ -167,9 +174,21 @@ reconstruct_segment()
     then
         error "we already have segment $segment"
         check_segment $@
-        return $?
+
+        if [[ $? = 0 ]]
+        then
+            return 0
+        else
+            git log -1 --oneline $segment
+            git-segment $segment
+            if [[ $force = no ]]; then
+                return 1
+            fi
+            exists=yes
+        fi
     fi
 
+    # so either force, or does not exist.
     [[ $verbose = yes ]] && LOG_STEP "check that base exists"
 
     if ! git rev-parse $base -- >/dev/null
@@ -185,13 +204,20 @@ reconstruct_segment()
         # b/c if I made a new sum, ....!
     fi
 
-    cmd=echo
-    # $cmd
     (
         if [[ $verbose = yes ]]; then
             set -x
         fi
-        git-segment $segment $base $start $head
+        # this can still fail, if already exists!
+        # and  a sum is on top of it.
+        if [[ $exists = yes ]]
+        then
+            git branch --force $segment $head
+            git-segment -r $segment $start
+            git-segment -u $segment $base
+        else
+            git-segment $segment $base $start $head
+        fi
      )
 }
 
@@ -249,7 +275,17 @@ reconstruct_sum()
     then
         warn "we already have SUM $sum"
         check_sum $@
-        return $?
+
+        if [[ $? = 0 ]]
+        then
+            return 0
+        else
+            git-sum $sum
+            if [[ $force = no ]]; then
+                return 1
+            fi
+            exists=yes
+        fi
     fi
 
     # check all the summands exist
@@ -258,7 +294,9 @@ reconstruct_sum()
         set -x
         # fixme: a bit dangerous! what if I already have it?
         cmd=echo
-        $cmd git-sum -r -s remotes/$REMOTE/$sum $sum $summands
+        git-sum -r -s $sha $sum $summands
+        # maybe necessary:
+        git branch --force $sum $sha
     )
 }
 
