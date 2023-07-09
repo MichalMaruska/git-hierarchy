@@ -1,3 +1,33 @@
+git-hierarchy (5.43) release; urgency=medium
+
+  [ Michal Maruska ]
+  * sum_resolve_summands: backfill a provided array
+  * dump_ref_without_ref -- drop newline
+  * fix resolved format for sum
+  * dump_ref: drop final newline
+  * clean up comments
+  * fix comment
+  * git-store-hierarchy: -c to commit, othwerwise only stdout
+  * fix resolved format for sum
+  * git-store-hierarchy -c option
+  * git-store-hierarchy: use function, improve the commit message
+  * shorten the name
+  * set_branch_to (functions): quietly, git-segment quietly
+  * git-store-hierarchy: -t to tag
+  * git-restore-hierarchy: from -t or -b, check-only (-c), dump (-n)
+  * spaces
+  * git-restore-hierarchy -v verbose & non-check will run the check too
+  * fix mktemp
+  * functions.sh: clean up
+  * git-sum-branches: clean up (still "noreset" dubious)
+  * git-restore-hierarchy: force option (-f) to update existing segments/sums
+  * git-sum: rename to $prune
+  * git-sum: rename to $branch
+  * git-sum: -i incrementally do merges? -- useful?
+  * git-sum-branches: clean up
+
+ --  <mmaruska@gmail.com>  Mon, 10 Jul 2023 01:29:45 +0200
+
 git-hierarchy (5.42) release; urgency=medium
 
   [ Michal Maruska ]
