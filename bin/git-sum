@@ -127,7 +127,7 @@ fi
 
 
 reset="n"
-correct="n"
+prune="n"
 delete=n
 number_them=n
 start_point="HEAD"
@@ -149,7 +149,7 @@ while getopts :cdhnrs:v OPT; do
             start_point=$OPTARG
             ;;
         c)
-            correct="y"
+            prune="y"
             ;;
         d)
             delete="y"
@@ -188,7 +188,8 @@ then
     delete_sum_definition $name
 
 elif [ $# = 0 ]; then
-    if [ $correct = y ]; then
+
+    if [ $prune = y ]; then
         TEMP=$(mktemp -t)
         show_prune_definition $name "silent" > $TEMP
         # todo!
