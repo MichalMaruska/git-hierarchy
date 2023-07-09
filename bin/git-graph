@@ -134,7 +134,6 @@ else
     }
 fi
 
-
 # now the action -- the format of the file is not changed anymore
 case $dump_action in
     x)
