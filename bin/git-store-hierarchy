@@ -10,17 +10,23 @@ readonly MODE=100644
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [--] ARGS...
+usage: ${0##*/} [+-h] [-c] [--] REF ...
 
 ********
-Invoke "git-graph -s $@" and store the output ...
+Invoke "git-graph -r $@" and store the output ...
 in a new commit on $BRANCH
+
+with REF given, walk down that. Otherwise the whole graph
+
+-c in fact store it as a new commit on $BRANCH
+-t or in a tag?
 EOF
 }
 
 do_commit=no
+do_tag=no
 
-while getopts :ch OPT; do
+while getopts :cht: OPT; do
     case $OPT in
         h|+h)
             usage
@@ -28,6 +34,9 @@ while getopts :ch OPT; do
             ;;
         c)
             do_commit="yes"
+            ;;
+        t)
+            do_tag=$OPTARG
             ;;
         *)
             echo "unexpected option $OPT">&2
@@ -40,7 +49,7 @@ OPTIND=1
 
 # create the content:
 # ==================
-tmpfile=$(mktemp hierarchy-dump.XXX)
+tmpfile=$(mktemp -P ${TMPDIR-/tmp} hierarchy-dump.XXX)
 # trap
 echo "$tmpfile" >&2
 git-graph -r $@ > $tmpfile
@@ -80,6 +89,10 @@ commit_single_file_on_branch()
 if [[ $do_commit = yes ]]
 then
     commit_single_file_on_branch $tmpfile $BRANCH "new hierarchy: $@"
+elif [[ $do_tag != no ]]
+then
+    # ensure $# = 1
+    git tag $do_tag $1 --annotate --sign --file $tmpfile
 else
     cat $tmpfile
 fi
