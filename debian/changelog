@@ -1,3 +1,16 @@
+git-hierarchy (5.45) release; urgency=medium
+
+  [ Michal Maruska ]
+  * git-restore-hierarchy: use full reference (from names)
+  * git-restore-hierarchy: careful to reset checked-out branch
+  * git-restore-hierarchy: now the order (in the serializion) is reversed
+  * zsh: drop unused code
+  * git-graph: check the -i option
+  * git-store-hierarchy: when -t mode, the commit to tag must be given
+  * _git-rebase-origin: more options
+
+ --  <mmaruska@gmail.com>  Thu, 13 Jul 2023 00:11:54 +0200
+
 git-hierarchy (5.44) release; urgency=medium
 
   [ Michal Maruska ]
