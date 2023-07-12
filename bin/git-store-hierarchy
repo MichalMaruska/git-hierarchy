@@ -10,23 +10,24 @@ readonly MODE=100644
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [-c] [--] REF ...
+usage: ${0##*/} [+-h] [-c] [-t tag] [--] REF ...
 
 ********
 Invoke "git-graph -r $@" and store the output ...
-in a new commit on $BRANCH
 
 with REF given, walk down that. Otherwise the whole graph
 
 -c in fact store it as a new commit on $BRANCH
--t or in a tag?
+-t or in a tag
+
+otherwise just output.
 EOF
 }
 
 do_commit=no
 do_tag=no
 
-while getopts :cht: OPT; do
+while getopts :cht:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -37,6 +38,9 @@ while getopts :cht: OPT; do
             ;;
         t)
             do_tag=$OPTARG
+            ;;
+        v)
+            verbose=yes
             ;;
         *)
             echo "unexpected option $OPT">&2
