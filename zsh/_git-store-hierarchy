@@ -13,7 +13,6 @@ _git-store-hierarchy()
 	       '-t[store to tag (message)]:tag:_git-tag' \
 	       '-c[commit onto branch]' \
 	       '*: :->hierarchy_name' && return 0
-	&& return 0
 
     case $state in
 	hierarchy_name)
@@ -21,6 +20,7 @@ _git-store-hierarchy()
 	    _alternative \
 		'segment:segment:_git-segment-name' \
 		'sum:sum:_git-sum-name'
+	    ;;
     esac
 }
 
@@ -30,7 +30,9 @@ then
     words[1]=(git "-store-hierarchy")
     (( CURRENT++ ))
 else
+    # in ZLE 2 is closed!
     echo "already divided: $words[1] vs $words[2]">&2
 fi
-service=git;
+
+service=git
 _git
