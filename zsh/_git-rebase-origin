@@ -9,12 +9,13 @@ _git-rebase-origin()
 _arguments : \
     '-h[help]'  \
     '-f[fetch]'  \
+    '-v[verbose]'  \
+    '-i[ignore mismatch]: :->git_poset_name'  \
     '1: :->origin_name' \
     '*: :->git_poset_name' && return 0
 
 case $state in
     origin_name)
-	# or _sum
 	__git_any_repositories
 	;;
     git_poset_name)
