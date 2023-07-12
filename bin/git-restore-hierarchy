@@ -212,7 +212,7 @@ reconstruct_segment()
         # and  a sum is on top of it.
         if [[ $exists = yes ]]
         then
-            git branch --force $segment $head
+            set_branch_to  $segment $head
             git-segment -r $segment $start
             git-segment -u $segment $base
         else
@@ -296,7 +296,7 @@ reconstruct_sum()
         cmd=echo
         git-sum -r -s $sha $sum $summands
         # maybe necessary:
-        git branch --force $sum $sha
+        set_branch_to $sum $sha
     )
 }
 
