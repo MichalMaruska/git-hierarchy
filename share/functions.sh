@@ -965,6 +965,7 @@ walk_down_from()
 
     local this
     local name
+    local cycle=1
     while [[ ${#queue} -ge 1 ]];
     do
         # fixme: processed comes as implicit parameter?
@@ -980,22 +981,40 @@ walk_down_from()
         STEP "processing $this, (queue is $queue ${#queue})"
 
         # append the base(s), or summands:
-        name=${this#refs/heads/}
+        if [[ $this =~ "^finish-(.*)" ]]
+        then
+            name=${this#finish-}
 
-        if is_sum $name; then
-            # fixme: this should _test_
-            dump_sum $test_option ${sum_format} $name
-
-            # depth-first search: we prepend:
-            queue+=($(summands_of $name))
-        elif is_segment $name; then
-            dump_segment $segment_format $name
-            queue+=($(segment_base $name))
+            if is_sum $name; then
+                dump_sum $test_option ${sum_format} $name
+            elif is_segment $name; then
+                dump_segment $segment_format $name
+            else
+                die "what? $name"
+            fi
         else
-            CRITICAL "stopping @ $name"
-        fi
+            name=${this#refs/heads/}
 
-        debug_trace "iterate ${#queue}: $queue"
+            # I need depth-first search:
+            # pre-order:
+            # can I put into queue a markere to have post-order?
+            if is_sum $name; then
+                # fixme: this should _test_
+
+                # depth-first search: we prepend:
+                # += append!
+                # prepend:
+                queue[1]=("finish-$name" $queue[1])
+                queue[1]=($(summands_of $name) $queue[1])
+            elif is_segment $name; then
+                queue[1]=("finish-$name" $queue[1])
+                queue[1]=($(segment_base $name) $queue[1])
+            else
+                CRITICAL "stopping @ $name"
+            fi
+        fi
+        debug_trace "iterate $cycle: $queue"
+        ((cycle+=1))
     done
 }
 
