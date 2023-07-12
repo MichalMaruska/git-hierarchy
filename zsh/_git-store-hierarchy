@@ -1,0 +1,36 @@
+#compdef git-store-hierarchy
+#description reset git-rebase state & reset the start to base (of a Segment)
+
+# I need this as I invoke other _functions:
+_git-store-hierarchy()
+{
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	       '-h[help]'  \
+	       '-v[verbose]' \
+	       '-t[store to tag (message)]:tag:_git-tag' \
+	       '-c[commit onto branch]' \
+	       '*: :->hierarchy_name' && return 0
+	&& return 0
+
+    case $state in
+	hierarchy_name)
+	    # or _sum
+	    _alternative \
+		'segment:segment:_git-segment-name' \
+		'sum:sum:_git-sum-name'
+    esac
+}
+
+
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-store-hierarchy")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git

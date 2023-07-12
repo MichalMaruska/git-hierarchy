@@ -1,0 +1,57 @@
+#compdef git-restore-hierarchy
+#description reset git-rebase state & reset the start to base (of a Segment)
+
+# I need this as I invoke other _functions:
+_git-restore-hierarchy()
+{
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	       '-h[help]'  \
+	       '-v[verbose]' \
+	       '-t[from tag message]:tag:_git-tag' \
+	       '-n[dump only]' \
+	       '-c[check only]' \
+	       '-f[force]' \
+	       '-b[branch]' \
+	&& return 0
+
+
+    case $state in
+	branch-or-tree-ish-or-file)
+	    # how to use a local function from _git?
+	    # ~/git/zsh/Completion/Unix/Command/_git
+	    _alternative 'branches::__git_revisions'
+	    ;;
+	git_commit)
+	    # __git_commits
+	    #&& ret=0
+	    local -a argument_array_names
+	    zparseopts -D -E O:=argument_array_names
+	    local commit_opts__argument_name=$argument_array_names[2]
+	    _alternative \
+		'commit-objects:: __git_commit_objects_prefer_recent -O expl:$commit_opts__argument_name'
+	    ;;
+	git_segment_name)
+	    # or _sum
+	    _alternative \
+		'segment:segment:_git-segment-name'
+	    #		     'sum:sum:_git-sum-name'
+	    # _arguments "1:Segments:($available)"
+	    ;;
+	*)
+	    _files
+    esac
+}
+
+
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-restore-hierarchy")
+    (( CURRENT++ ))
+else
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+service=git;
+_git
