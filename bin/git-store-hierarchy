@@ -18,7 +18,7 @@ Invoke "git-graph -r $@" and store the output ...
 with REF given, walk down that. Otherwise the whole graph
 
 -c in fact store it as a new commit on $BRANCH
--t or in a tag
+-t or in a tag ... on the commit of first REF
 
 otherwise just output.
 EOF
@@ -56,6 +56,22 @@ OPTIND=1
 tmpfile=$(mktemp -t hierarchy-dump.XXX)
 # trap
 echo "$tmpfile" >&2
+
+# we use the REF when setting a tag!
+if [[ $do_tag != no ]]
+then
+    if [[ $# = 1 ]]; then
+        commit_to_tag=$1
+    else
+        # commit_to_tag=$(current_branch_name)
+        {
+            echo "when tagging, only 1 argument is needed"
+            usage
+        } >&2
+        exit 1
+    fi
+fi
+# is this in topological order?
 git-graph -r $@ > $tmpfile
 
 commit_single_file_on_branch()
@@ -96,7 +112,7 @@ then
 elif [[ $do_tag != no ]]
 then
     # ensure $# = 1
-    git tag $do_tag $1 --annotate --sign --file $tmpfile
+    git tag $do_tag $commit_to_tag --annotate --sign --file $tmpfile
 else
     cat $tmpfile
 fi
