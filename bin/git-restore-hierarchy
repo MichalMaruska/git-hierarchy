@@ -146,7 +146,7 @@ check_segment()
     fi
 
     # HEAD
-    if [[ $(commit_id $segment) != $sha ]]
+    if [[ $(commit_id refs/heads/$segment) != $sha ]]
     then
         error "divergence: the HEAD of $segment is:\tis: $(commit_id $segment)\n\tshould be $sha"
         return 1
@@ -179,7 +179,7 @@ reconstruct_segment()
         then
             return 0
         else
-            git log -1 --oneline $segment
+            git log -1 --oneline refs/heads/$segment
             git-segment $segment
             if [[ $force = no ]]; then
                 return 1
