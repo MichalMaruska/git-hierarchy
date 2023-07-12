@@ -16,33 +16,6 @@ _git-restore-hierarchy()
 	       '-f[force]' \
 	       '-b[branch]' \
 	&& return 0
-
-
-    case $state in
-	branch-or-tree-ish-or-file)
-	    # how to use a local function from _git?
-	    # ~/git/zsh/Completion/Unix/Command/_git
-	    _alternative 'branches::__git_revisions'
-	    ;;
-	git_commit)
-	    # __git_commits
-	    #&& ret=0
-	    local -a argument_array_names
-	    zparseopts -D -E O:=argument_array_names
-	    local commit_opts__argument_name=$argument_array_names[2]
-	    _alternative \
-		'commit-objects:: __git_commit_objects_prefer_recent -O expl:$commit_opts__argument_name'
-	    ;;
-	git_segment_name)
-	    # or _sum
-	    _alternative \
-		'segment:segment:_git-segment-name'
-	    #		     'sum:sum:_git-sum-name'
-	    # _arguments "1:Segments:($available)"
-	    ;;
-	*)
-	    _files
-    esac
 }
 
 
