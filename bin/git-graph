@@ -60,7 +60,17 @@ while getopts :dgi:klrstx OPT; do
             just_graph=y
             ;;
         i)
-            known_divergent+=($OPTARG)
+            # fixme: check that it exists (is a sum/segment):
+            ref=$OPTARG
+            if is_segment $ref || is_sum $ref; then
+                known_divergent+=($ref)
+            else
+                {
+                    echo "${0##*/}: invalid argument (for -i option): '$ref'"
+                    usage
+                } >&2
+                exit 1
+            fi
             ;;
         k|+k)
             keep_graph_file=y
