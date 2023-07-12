@@ -384,7 +384,7 @@ EOF
             ;;
         tsort)
             # mmc: so full refs here!
-            echo -n "refs/heads/$segment_name\t"; segment_base $segment_name
+            echo -n "refs/heads/$segment_name\t"; segment_base $segment_name; echo
             ;;
         symbolic)
             local base=$(segment_base $segment_name)
