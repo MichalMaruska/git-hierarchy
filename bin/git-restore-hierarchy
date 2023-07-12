@@ -302,7 +302,7 @@ reconstruct_sum()
 
 
 # Maybe this should invoke a tool which `only' creates?
-tac $tmpfile| \
+cat $tmpfile| \
     while read line; do
         # echo ">$line<"
         # Given the line          "segment     NAME                      SHA     BASE  START"
