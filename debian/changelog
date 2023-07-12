@@ -1,3 +1,17 @@
+git-hierarchy (5.44) release; urgency=medium
+
+  [ Michal Maruska ]
+  * git-restore-hierarchy: sq rename $branch
+  * zsh: _git-restore-hierarchy & _git-store-hierarchy
+  * zsh: _git-graph
+  * zsh: _git-rebase-poset -- clean-up
+  * zsh: fix _git-store-hierarchy
+  * still fix for the dump_ref_without_ref change
+  * git-store-hierarchy: fix usage() and add -v option
+  * walk_down_from: correct dfs to output in topological order
+
+ --  <mmaruska@gmail.com>  Wed, 12 Jul 2023 15:50:23 +0200
+
 git-hierarchy (5.43) release; urgency=medium
 
   [ Michal Maruska ]
