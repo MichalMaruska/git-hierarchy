@@ -14,11 +14,6 @@ _git-rebase-poset() {
 
     local curcontext="$curcontext" state line
 
-    # how to treat the long options?
-    # and the numbered arguments?
-
-    # if --help -> nothing
-    # otherwise
     _arguments -s -C \
 	       {--help,-h}'[print help]' \
 	       {--dry,-n} \
@@ -30,8 +25,6 @@ _git-rebase-poset() {
 	       \
 	       {--clone,-c}'[duplicate with prefixed names]:prefix:' \
 	       '*: :->hierarchy_name' && return 0
-
-# fixme: this should be OR ^^^
 
     if [[ -n $state ]]
     then
