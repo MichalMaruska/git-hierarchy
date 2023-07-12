@@ -1,6 +1,43 @@
 #compdef git-graph
 #description dump the graph
 
-# or
-_git-segment-name
-_git-sum-name
+# I need this as I invoke other _functions:
+_git-graph()
+{
+    local curcontext="$curcontext" state line
+    typeset -A opt_args
+
+    _arguments : \
+	       '-h[help]'  \
+	       '-d[debug]' \
+	       '-x[using xdot]' \
+	       '-s[symbolic (definitions)]' \
+	       '-r[resolved/symbolic (definitions + positions)]' \
+	       '-t[just dump in topologic order]' \
+	       '-l[git log]' \
+	       '-k[keep the raw graph file]' \
+	       '*: :->hierarchy_name' && return 0
+
+    case $state in
+	hierarchy_name)
+	    # can I have a shared function for this?
+	    _alternative \
+		'segment:segment:_git-segment-name' \
+		'sum:sum:_git-sum-name'
+	    ;;
+    esac
+}
+
+
+# what?
+if [[ ! $words[1] = 'git' ]]
+then
+    words[1]=(git "-graph")
+    (( CURRENT++ ))
+else
+    # in ZLE 2 is closed!
+    echo "already divided: $words[1] vs $words[2]">&2
+fi
+
+service=git
+_git
