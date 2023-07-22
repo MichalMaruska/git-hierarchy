@@ -59,7 +59,7 @@ diff_segment()
 {
     local name=$1
     local startref=refs/start/$name
-    git diff $startref..$name
+    git diff $startref..refs/heads/$name
 }
 
 describe_segment()
