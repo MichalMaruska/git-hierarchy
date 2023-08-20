@@ -22,6 +22,7 @@ ${0##*/} [-s start] [-r] branch new-merge-branch -drop-merge-branch ...
   modify the definition -- stepwise?
   -r reset: empty the definition first.
   -s start_point
+  -n do NOT merge (yet)
 
   -name ... remove this ref as summand
   name | +name add.
@@ -130,7 +131,7 @@ reset="n"
 prune="n"
 delete=n
 merge_incrementally=no
-number_them=n
+merge_at_end=yes
 start_point="HEAD"
 verbose=no
 
@@ -143,11 +144,12 @@ while getopts :cdhinrs:v OPT; do
         r)
             reset="y"
             ;;
-        n)
-            number_them=y
-            ;;
         i)
             merge_incrementally=yes
+            merge_at_end=no
+            ;;
+        n)
+            merge_at_end=no
             ;;
         s)
             start_point=$OPTARG
@@ -258,6 +260,6 @@ do
 done
 
 # can we do it only now?
-if [[ $merge_incrementally = no ]] then
+if [[ $merge_at_end = yes ]] then
     git-sum-branches $name
 fi
