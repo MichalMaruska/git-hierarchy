@@ -1158,3 +1158,89 @@ dump_associative_array()
         echo "$key $val"
     done
 }
+
+
+
+# Closure above:
+typeset -a fetched
+fetched=()
+# keys:  $remote:$remote_branch
+
+# uses $dry_only, $fetch, $GIT_P4 $fetched
+function fetch_upstream_of()
+{
+    local base=$1  # Full reference! refs/xxx/name
+    local git_fetch=$fetch # could be $2 ?
+    local remote
+    local REMOTE_BRANCH
+    local this_branch
+
+    # Calculate remote
+    if expr match $base 'refs/remotes/p4/' >/dev/null ;
+    then
+        remote=${base#refs/remotes/p4/}
+        REMOTE_BRANCH=${remote}
+        if [ $dry_only = no ]; then
+            # readonly
+            set -x
+            local -r old=$(git rev-parse ${base#refs/})
+            $GIT_P4 sync --branch $REMOTE_BRANCH --git-dir $(git rev-parse --git-common-dir)
+            git log --oneline $old..${base#refs/}
+        fi
+        git_fetch=no
+    elif expr match $base 'refs/remotes/' >/dev/null ;
+    then
+        remote=${base#refs/remotes/}
+        remote_branch=${remote#*/}
+        remote=${remote%/*}
+        echo "the base is remote: $remote/$remote_branch"
+
+    else
+        if ! expr match $base 'refs/heads/' >/dev/null
+        then #fixme:
+            # so it's a simple name? e.g.  debian-unstable
+            this_branch=$base
+            base=refs/heads/$base
+        fi
+
+        # upstream
+        remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
+        if [[ -z $remote_branch ]]; then git_fetch=no; fi
+
+        echo "upstream: $remote_branch"
+        remote=${remote_branch%/*}
+        remote_branch=${remote_branch#*/}
+    fi
+
+    # and fetch it
+    if [ $git_fetch = yes ]; then
+        key="$remote:$remote_branch"
+
+        if [[ $fetched[(i)${(q)key}] -le ${#fetched} ]]
+        then
+            INFO "already fetched from $remote $remote_branch"
+        else
+            fetched+=($key)
+            INFO "Fetching upstream to $base: $remote"
+            if [ $dry_only = no ]; then
+                # could this use `git-ff' ?
+                local old_head=$(git rev-parse $remote/$remote_branch)
+                git fetch $remote $remote_branch
+                git log --oneline $old_head..FETCH_HEAD
+
+                # funny: just like a filename: $(basename $base)
+                git branch --force ${base#refs/heads/} $remote/$remote_branch
+            else
+                echo "would fetch from $remote $remote_branch"
+            fi
+        fi
+    fi # manual! todo: understand what error scenarios are possible!
+
+    # sometimes I point the segment base directly at remote, correct?
+    if [ $dry_only = no ]; then
+        if [ -n "${this_branch-}" ]; then
+            warn "setting branch $this_branch to follow upstream"
+            set_branch_to $this_branch $remote/$remote_branch
+        fi
+    fi
+}
