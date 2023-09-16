@@ -1168,7 +1168,7 @@ typeset -a fetched
 fetched=()
 # keys:  $remote:$remote_branch
 
-# uses $dry_only, $fetch, $GIT_P4 $fetched
+# uses $dry_only, $fetch, $GIT_P4 $fetched, $debug
 function fetch_upstream_of()
 {
     local base=$1  # Full reference! refs/xxx/name
@@ -1209,7 +1209,7 @@ function fetch_upstream_of()
         remote_branch=$(git for-each-ref --format='%(upstream:short)' $base)
         if [[ -z $remote_branch ]]; then git_fetch=no; fi
 
-        echo "upstream: $remote_branch"
+        DEBUG "upstream: $remote_branch"
         remote=${remote_branch%/*}
         remote_branch=${remote_branch#*/}
     fi
@@ -1220,7 +1220,7 @@ function fetch_upstream_of()
 
         if [[ $fetched[(i)${(q)key}] -le ${#fetched} ]]
         then
-            INFO "already fetched from $remote $remote_branch" >&2
+            DEBUG "already fetched from $remote $remote_branch"
         else
             fetched+=($key)
             INFO "Fetching upstream to $base: $remote" >&2
