@@ -451,7 +451,7 @@ dump_sum()
     if [[ ${known_divergent[(i)${(q)sum}]} -gt ${#known_divergent} ]]
     then
         equal=n
-        test_commit_parents heads/$sum $real_branches[@]
+        test_commit_parents heads/$sum $real_branches[@] >&2
         if [[ "$equal" = n ]]
         then
             if [[ $test == n ]]; then
