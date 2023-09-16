@@ -50,7 +50,7 @@ CRITICAL()
 
 function INFO()
 {
-    cecho blue "$@" >&2
+    cecho blue "$@"
 }
 
 # function INFO()
@@ -547,6 +547,8 @@ test_commit_parents()
 # output
 # `returns' the $equal variable is set.
 # $reason
+
+# beware: this outputs to stdout
 {
     local strict=n
     if [[ $1 = "--strict" ]]; then
@@ -610,7 +612,7 @@ test_commit_parents()
     # if the sum refers to one of the summand commit?
     # (r)
     if [[ ${summands_commit_ids[(r)$sum_commit_id]} = $sum_commit_id ]];then
-        CRITICAL "This merge is itself a summand."
+        INFO "This merge is itself a summand."
     else
         # here the O(N^2) tests:
         # verify
@@ -619,7 +621,7 @@ test_commit_parents()
             if ! [[ ${summands_commit_ids[(r)$id]} = $id ]] ; then
                 reason="parents not in summand"
 
-                CRITICAL "$sum_branch: This parent is not in summands: $id"
+                INFO "$sum_branch: This parent is not in summands: $id"
                 missing_parents+=($id)
                 # append & then check it!
                 # equal=n
@@ -702,10 +704,10 @@ test_commit_parents()
         {
             cecho red "$sum_branch: $#unsolved missing summands: "
             dump_array "\t" $unsolved[@]
-        } >&2
+        }
         equal=n
     elif [[ $#copy_missing_parents -gt 0 ]]; then
-        cecho red "($sum_branch) parents missing (did the sum-branch move?)" >&2
+        INFO "($sum_branch) parents missing (did the sum-branch move?)"
         equal=n
     fi
 }
@@ -1218,10 +1220,10 @@ function fetch_upstream_of()
 
         if [[ $fetched[(i)${(q)key}] -le ${#fetched} ]]
         then
-            INFO "already fetched from $remote $remote_branch"
+            INFO "already fetched from $remote $remote_branch" >&2
         else
             fetched+=($key)
-            INFO "Fetching upstream to $base: $remote"
+            INFO "Fetching upstream to $base: $remote" >&2
             if [ $dry_only = no ]; then
                 # could this use `git-ff' ?
                 local old_head=$(git rev-parse $remote/$remote_branch)
