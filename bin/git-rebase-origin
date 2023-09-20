@@ -60,7 +60,10 @@ if [ $# -lt 1 ]; then
     # by default the current-branch-poset
     # by default look at the base ... what it follows:
     top=$(current_branch_name)
-    cecho blue -n "taking the current "; cecho green -n "$top "; cecho blue "as top"
+
+    # fixme:
+    echo "$fg[blue]taking the current $fg[green]$top$fg[blue] as top$reset_color"
+    # cecho blue -n ; cecho green -n "$top "; cecho blue "as top"
 elif [ $# = 1 ]; then
     top=$1
 else
