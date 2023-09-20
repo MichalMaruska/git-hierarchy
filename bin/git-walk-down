@@ -2,13 +2,12 @@
 extern_color=pink
 
 # Tools can operate in 2 modes: `set' mode, in which ALL segments & sums are collected,
-# and t-sorted by _local_ property of incidence.
+# and topo-sorted by _local_ property of incidence.
 #
 # or the `graph' mode, in which some root(s) is given, and we walk down and get a restricted
 # set of segments/sums.
 #
-# DISPlay etc should be separate. These 2 methods should feed a commot format of data.
-
+# Display etc should be separate. These 2 methods should feed a common format of data.
 
 # apparently I use 2 formats:  `dot' and `tsort'
 
