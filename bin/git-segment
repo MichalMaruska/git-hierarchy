@@ -405,7 +405,7 @@ case $CMD in
         fi
         ;;
     update)
-        set -x
+        # set -x
         new_base=$1
         check_maximum_arguments $# 1
 
