@@ -1012,7 +1012,7 @@ walk_down_from()
                 queue[1]=("finish-$name" $queue[1])
                 queue[1]=($(segment_base $name) $queue[1])
             else
-                CRITICAL "stopping @ $name"
+                CRITICAL "stopping @ $name -- not segment, nor sum"
             fi
         fi
         debug_trace "iterate $cycle: $queue"
