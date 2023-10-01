@@ -27,6 +27,7 @@ ${0##*/} [-s start] [-r] branch new-merge-branch -drop-merge-branch ...
   -name ... remove this ref as summand
   name | +name add.
 
+  -m  number the summands
 
 ${0##*/} [-d] branch
   drop the definition.
@@ -132,10 +133,12 @@ prune="n"
 delete=n
 merge_incrementally=no
 merge_at_end=yes
+number_them=n
+
 start_point="HEAD"
 verbose=no
 
-while getopts :cdhinrs:v OPT; do
+while getopts :cdhimnrs:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -144,6 +147,9 @@ while getopts :cdhinrs:v OPT; do
         r)
             reset="y"
             ;;
+        m)
+             number_them=y
+             ;;
         i)
             merge_incrementally=yes
             merge_at_end=no
