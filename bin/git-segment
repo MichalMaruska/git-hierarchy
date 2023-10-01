@@ -364,7 +364,13 @@ case $CMD in
         segment=$1
         # base is either generic branch (not tag) or segment/sum
         base=$(ref_extract_name $2)
-        base=$(expand_ref heads/$base)
+
+        # fixme: it can be a tag!
+        if [[ $base =~ tags/ ]]; then
+            base=$(expand_ref $base)
+        else
+            base=$(expand_ref heads/$base)
+        fi
 
         if [[ $# -gt 2 ]]; then
             start=$3
