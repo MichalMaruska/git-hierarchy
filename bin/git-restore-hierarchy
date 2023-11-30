@@ -43,15 +43,16 @@ cat_only=no
 # overwrite:
 force=no
 
-while getopts :cfhlnt:v OPT; do
+while getopts :bcfhlnt:v OPT; do
     case $OPT in
         h|+h)
             usage
             exit 0
             ;;
         b)
-            from_branch=yes
+            # from_branch=yes
             cat_git_file_from_commit $hierarchy_branch $FILENAME > $tmpfile
+	    # git br -f   _hierarchy  remotes/desktop/_hierarchy
             ;;
         c)
             check_only=yes
