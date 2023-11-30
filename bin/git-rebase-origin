@@ -15,11 +15,11 @@ usage: ${0##*/} [+-hfv] [--] [top-ref]
 -f  do NOT git fetch origin
 -v  verbose
 -d  dry
+
 [top-ref]  what to rebase, by default the current branch.
 
 *******
-Discover which remote branches to fetch, then rebase ....
-update the Bases by \`fetch' and rebase.
+Discover which remote branches are bases to selected rooted git-hierarchy, update/fetch, then rebase.
 EOF
 
 }
@@ -55,9 +55,10 @@ while getopts :hi:fvd OPT; do
 done
 shift $(( OPTIND - 1 ))
 OPTIND=1
+
 # set -x
-if [ $# -lt 1 ]; then
-    # by default the current-branch-poset
+if [ $# -lt 1 ]
+then
     # by default look at the base ... what it follows:
     top=$(current_branch_name)
 
@@ -70,13 +71,16 @@ else
     die "wrong number of parameters"
 fi
 
-# todo: git-walk-down and solve the baseS. move them,
+
+# todo: git-walk-down and solve the baseS. Move them,
 typeset -a bases
-#todo: have to
+
+# todo: have to
+# fixme: no user visible changes, please!
 git checkout HEAD
 
-# note: grep & drop = sed -n
 
+# note: grep & drop = sed -n
 if [[ ${#known_divergent} -gt 0 ]]
 then
     ignore_options=("-i")
