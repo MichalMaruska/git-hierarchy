@@ -5,15 +5,15 @@
 
 _git-segment() {
     local curcontext="$curcontext"
-    # we call _arguments -R  which will set the following:
+    # we call "_arguments -R"  which will set the following:
+    # .... Return status 300 instead of zero when a $state is to be
     local context state state_descr line
     typeset -A opt_args
 
     # some options exclude others.
-    # -u -> the arguments must be
-    # exclude '(-r --restart)'
+    # -u excludes  '(-r --restart)'
 
-    # but here I can exlude more:
+    # but here I can exclude more:
     local -a command_options
 
     command_options=(
@@ -60,17 +60,6 @@ _git-segment() {
 	    ': :->branch-or-tree-ish-or-file'
 	)
     else
-	command_options=(
-	    {-p,--diff}'[diff]:segment:_git-segment-name'
-	    $restart_cmd
-	    #
-	    $update_cmd
-
-	    {-D,--prune}'[Segment to drop]:segment:_git-segment-name'
-	    {-d,--delete}'[Segment to drop]:segment:_git-segment-name'
-
-	    {-s,--short}'[short]'
-	)
 	specific_options=(
 	    ': :->git_segment_name'
 	    ': :->branch'
@@ -79,14 +68,28 @@ _git-segment() {
 	)
     fi
 
+    command_options+=(
+	{-p,--diff}'[diff]:segment:_git-segment-name'
+	$restart_cmd
+	#
+	$update_cmd_spec
+
+	{-D,--prune}'[Segment to drop]:segment:_git-segment-name'
+	{-d,--delete}'[Segment to drop]:segment:_git-segment-name'
+
+	{-s,--short}'[short]'
+    )
+
+    # -S ... Do not complete options after a '--' appearing on the line,
+    # -C ... Modify the curcontext parameter for an action of the form
+    # -R  ... to treat  the ->XX actions: exit status 300
     # -s ?
     # :  ?
-    # must -R to treat  the ->XX actions: exit status 300
     _arguments -R -S -C : \
 	{-h,--help}'[help]'  \
 	$command_options \
 	$specific_options \
-	 && return 0
+	&& return 0
 
     # if one -> info
     # if more -> we are DEFINING.
@@ -123,4 +126,3 @@ else
 fi
 service=git;
 _git
-
