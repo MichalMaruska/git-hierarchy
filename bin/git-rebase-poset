@@ -126,11 +126,17 @@ if [ $# -gt 0 ]; then
     fi
 
     if [[ $debug = y ]]; then debug_option="--debug"; else debug_option=();  fi
-    WHAT_TO_REBASE=($(git-walk-down $ignore_options $debug_option --graph $1))
+    # when this fails, the error message is obscure:
+    WHAT_TO_REBASE=($(git-walk-down $ignore_options $debug_option --graph $1)) ||
+        die "sorry, git-walk-down failed"
     # if [[ $? != 0 ]]; then die "";fi
 else
     # who checks the sums?
     WHAT_TO_REBASE=($(dump_whole_graph_tsort name))
+fi
+
+if [[ "$debug" = y ]]; then
+    echo "will rebase $WHAT_TO_REBASE" >&2
 fi
 
 # Log in .git/
