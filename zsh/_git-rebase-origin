@@ -6,43 +6,28 @@
 
 _git-rebase-origin()
 {
-_arguments : \
-    '-h[help]'  \
-    '-f[fetch]'  \
-    '-v[verbose]'  \
-    '-i[ignore mismatch]: :->git_poset_name'  \
-    '1: :->origin_name' \
-    '*: :->git_poset_name' && return 0
+    _arguments : \
+	       '-h[help]'  \
+	       '-f[fetch]'  \
+	       '-v[verbose]'  \
+	       '-i[ignore mismatch]: :->git_poset_name'  \
+	       '*: :->git_poset_name' && return 0
 
-case $state in
-    origin_name)
-	__git_any_repositories
-	;;
-    git_poset_name)
-	_alternative \
-	    'segment:segment:_git-segment-name' \
-	    'sum:sum:_git-sum-name'
-	;;
-    *)
-	_files
-esac
+    case $state in
+	origin_name)
+	    __git_any_repositories
+	    ;;
+	git_poset_name)
+	    _alternative \
+		'segment:segment:_git-segment-name' \
+		'sum:sum:_git-sum-name'
+	    ;;
+	*)
+	    _files
+    esac
 }
 
-# autoload +X _git
-
-# echo $words[1] >&2
-
-#if [[ ! $words[1] = "git" ]]
-#then
-# echo "invoking git">&2
 words[1]=(git -rebase-origin)
 (( CURRENT++ ))
 service=git;
 _git
-#else
-#    _git-rebase-origin
-# }; compdef _pqi pqi
-# autoload _git
-
-
-#fi
