@@ -7,107 +7,8 @@ source /usr/share/mmc-shell/mmc-functions.sh
 colors
 source /usr/share/git-hierarchy/functions.sh
 
+# move to functions:
 hierarchy_branch="_hierarchy"
-
-usage()
-{
-    cat <<EOF
-usage: ${0##*/} [+-hn] [-t TAG] | [-b]
-
--n   ... dump only
--c  ... check only
--f ... force -- discard old version
--t TAG
--b from $hierarchy_branch
-
--l list all remote "$hierarchy_branch" branches
-
--v verbose
-******************
-Create segments/sums following hierarchy on $hierarchy_branch
-
-EOF
-}
-
-
-
-# todo: share with ./git-store-hierarchy
-FILENAME=hierarchy
-tmpfile=$(mktemp -t hierarchy-dump.XXX)
-trap 'rm -vf $tmpfile' EXIT
-REMOTE="heads"
-
-verbose=no
-check_only=no
-cat_only=no
-# overwrite:
-force=no
-
-while getopts :bcfhlnt:v OPT; do
-    case $OPT in
-        h|+h)
-            usage
-            exit 0
-            ;;
-        b)
-            # from_branch=yes
-            cat_git_file_from_commit $hierarchy_branch $FILENAME > $tmpfile
-	    # git br -f   _hierarchy  remotes/desktop/_hierarchy
-            ;;
-        c)
-            check_only=yes
-            ;;
-        f)
-            # maybe only forward?
-            force=yes
-            ;;
-        l)
-            echo "let's find possible branches:"
-            foreach remote ( $(git remote ) ) {
-                if git rev-parse remotes/$remote/$hierarchy_branch >/dev/null;
-                then
-                    echo "$remote/$hierarchy_branch !"
-                fi
-            }
-            exit 0
-            ;;
-        n|+n)
-            cat_only=yes
-            ;;
-        t)
-            # extract from a tag:
-            TAG=$OPTARG
-            git tag --verify $TAG &>/dev/null
-
-            (set -x
-             git tag --list --format="%(contents)" $TAG | sed -n -e '/BEGIN PGP/q;p' > $tmpfile
-             # git tag --list --format="%(subject)" $TAG > $FILENAME
-            )
-            ;;
-        v)
-            verbose=yes
-            ;;
-        *)
-            echo "unexpected option $OPT">&2
-            usage>&2
-            exit 2
-    esac
-done
-shift OPTIND-1
-OPTIND=1
-
-
-
-# First get it into a file
-# from tag, from branch ...
-#
-if [[ $cat_only = yes ]];
-then
-    # from mmc-shell
-    cat $tmpfile
-    rm -f $tmpfile
-    exit 0
-fi
 
 error()
 {
@@ -301,6 +202,113 @@ reconstruct_sum()
     )
 }
 
+
+usage()
+{
+    cat <<EOF
+usage: ${0##*/} [+-hn] [-t TAG] | [-b]
+
+-n   ... dump only
+-c  ... check only
+-f ... force -- discard old version
+-t TAG
+-b from $hierarchy_branch
+
+-l list all remote "$hierarchy_branch" branches
+
+
+-v verbose
+******************
+Create segments/sums following hierarchy on $hierarchy_branch
+
+EOF
+}
+
+
+
+# todo: share with ./git-store-hierarchy
+FILENAME=hierarchy
+tmpfile=$(mktemp -t hierarchy-dump.XXX)
+trap 'rm -vf $tmpfile' EXIT
+REMOTE="heads"
+
+verbose=no
+check_only=no
+cat_only=no
+# overwrite:
+force=no
+
+while getopts :bcfhlnt:v OPT; do
+    case $OPT in
+        h|+h)
+            usage
+            exit 0
+            ;;
+        b)
+            # from_branch=yes
+            cat_git_file_from_commit $hierarchy_branch $FILENAME > $tmpfile
+	    # git br -f   _hierarchy  remotes/desktop/_hierarchy
+            ;;
+        c)
+            check_only=yes
+            ;;
+        f)
+            # maybe only forward?
+            force=yes
+            ;;
+        l)
+            echo "let's find possible branches:"
+            foreach remote ( $(git remote ) ) {
+                if git rev-parse remotes/$remote/$hierarchy_branch >/dev/null;
+                then
+                    echo "$remote/$hierarchy_branch !"
+                fi
+            }
+            exit 0
+            ;;
+        n|+n)
+            cat_only=yes
+            ;;
+        t)
+            # extract from a tag:
+            TAG=$OPTARG
+            git tag --verify $TAG &>/dev/null
+
+            (set -x
+             git tag --list --format="%(contents)" $TAG | sed -n -e '/BEGIN PGP/q;p' > $tmpfile
+             # git tag --list --format="%(subject)" $TAG > $FILENAME
+            )
+            ;;
+        v)
+            verbose=yes
+            ;;
+        *)
+            echo "unexpected option $OPT">&2
+            usage>&2
+            exit 2
+    esac
+done
+shift OPTIND-1
+OPTIND=1
+
+
+
+# First get it into a file
+# from tag, from branch ...
+#
+if [[ $cat_only = yes ]];
+then
+    # from mmc-shell
+    cat $tmpfile
+    rm -f $tmpfile
+    exit 0
+fi
+
+if [[ $# -gt 0 ]]
+# limit to the given names!
+then
+
+fi
 
 # Maybe this should invoke a tool which `only' creates?
 cat $tmpfile| \
