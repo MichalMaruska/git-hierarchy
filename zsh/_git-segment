@@ -17,7 +17,7 @@ _git-segment() {
     local -a command_options
 
     command_options=(
-	{-s,--short}'[short]'
+        {-s,--short}'[short]'
     )
 
     local -a update_cmd_spec
@@ -31,53 +31,53 @@ _git-segment() {
     # fixme: not the previous one, ANY
     if (( words[(I)-(p|-diff)] ))
     then
-	specific_options=()
+        specific_options=()
     elif (( words[(I)-(d|-delete)] ))
     then
-	 specific_options=()
-	 # what?
-	 # i ... Like 'r', but gives the index of the match instead; this may not be
-	 # I .. gives the index of the last match, or all possible
-	 # On failure substitutes 0
+         specific_options=()
+         # what?
+         # i ... Like 'r', but gives the index of the match instead; this may not be
+         # I .. gives the index of the last match, or all possible
+         # On failure substitutes 0
 
-	 # b:-1:
-	 # b:CURRENT-1:
+         # b:-1:
+         # b:CURRENT-1:
     elif (( words[(I)-(u|-update)] ))
     then
-	# mmc!
-	specific_options=( $update_cmd_spec )
-	# does this append?
-	specific_options+=(
-	    {-b,--rebase}'[git-rebase immediately]'
-	    ': :->branch'
-	)
+        # mmc!
+        specific_options=( $update_cmd_spec )
+        # does this append?
+        specific_options+=(
+            {-b,--rebase}'[git-rebase immediately]'
+            ': :->branch'
+        )
     elif (( words[(I)-(r|-restart)] ))
     then
-	specific_options=( $restart_cmd )
-	specific_options+=(
-	    # {-b,--rebase}'[git-rebase immediately]'
-	    # is this valid?
-	    ': :->branch-or-tree-ish-or-file'
-	)
+        specific_options=( $restart_cmd )
+        specific_options+=(
+            # {-b,--rebase}'[git-rebase immediately]'
+            # is this valid?
+            ': :->branch-or-tree-ish-or-file'
+        )
     else
-	specific_options=(
-	    ': :->git_segment_name'
-	    ': :->branch'
-	    ': :->branch-or-tree-ish-or-file'
-	    ': :->branch-or-tree-ish-or-file'
-	)
+        specific_options=(
+            ': :->git_segment_name'
+            ': :->branch'
+            ': :->branch-or-tree-ish-or-file'
+            ': :->branch-or-tree-ish-or-file'
+        )
     fi
 
     command_options+=(
-	{-p,--diff}'[diff]:segment:_git-segment-name'
-	$restart_cmd
-	#
-	$update_cmd_spec
+        {-p,--diff}'[diff]:segment:_git-segment-name'
+        $restart_cmd
+        #
+        $update_cmd_spec
 
-	{-D,--prune}'[Segment to drop]:segment:_git-segment-name'
-	{-d,--delete}'[Segment to drop]:segment:_git-segment-name'
+        {-D,--prune}'[Segment to drop]:segment:_git-segment-name'
+        {-d,--delete}'[Segment to drop]:segment:_git-segment-name'
 
-	{-s,--short}'[short]'
+        {-s,--short}'[short]'
     )
 
     # -S ... Do not complete options after a '--' appearing on the line,
@@ -86,10 +86,10 @@ _git-segment() {
     # -s ?
     # :  ?
     _arguments -R -S -C : \
-	{-h,--help}'[help]'  \
-	$command_options \
-	$specific_options \
-	&& return 0
+        {-h,--help}'[help]'  \
+        $command_options \
+        $specific_options \
+        && return 0
 
     # if one -> info
     # if more -> we are DEFINING.
@@ -98,20 +98,20 @@ _git-segment() {
     # start
     # head
     case $state in
-	git_segment_name)
-	    _git-segment-name
-	    ;;
-	branch)
-	    # __git_remote_branch_names
-	    # todo: also:
-	    __git_branch_names
-	    ;;
+        git_segment_name)
+            _git-segment-name
+            ;;
+        branch)
+            # __git_remote_branch_names
+            # todo: also:
+            __git_branch_names
+            ;;
 
-	branch-or-tree-ish-or-file)
-	    __git_commits_prefer_recent
-	    ;;
-	*)
-	    ;;
+        branch-or-tree-ish-or-file)
+            __git_commits_prefer_recent
+            ;;
+        *)
+            ;;
     esac
     return 0
 }
