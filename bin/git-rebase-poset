@@ -247,7 +247,6 @@ git-clone-sum()
         #if found ...
         new_summands+=$rewritten_bases[$ref]
     }
-    set -x
     git-sum $name $new_summands
     #rewritten_bases[$ref]=$new_name
 }
@@ -281,6 +280,8 @@ foreach ref ($WHAT_TO_REBASE)
 
         if is_segment $branch; then
             new_name=$prefix$branch
+
+            DEBUG "clone & segment $branch -> $new_name"
 
             # the new base:
             base=$rewritten_bases[$(segment_base $branch)]
