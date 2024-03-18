@@ -126,17 +126,18 @@ fi
 
 # For now I can do without the hooks. At least in the succesful case.
 export GIT_USE_COLOR=y
-
+readonly TEMP="temp-segment"
 # fixme: this establishes a binding, and one cannot --delete w/o merging into $onto.
 #
-if git checkout --no-track -B temp $onto &&
+if git checkout --no-track -B $TEMP $onto &&
    git cherry-pick $start..heads/$segment
 
 ## the alternative way:
 # git rebase --onto $onto $start $segment;
 then
     exit_status=0
-    git-done-segment $segment "temp"
+    # fixme:
+    git-done-segment $segment $TEMP
 else
     exit_status=1
     mark_rebase_segment $segment
