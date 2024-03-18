@@ -311,6 +311,12 @@ if [[ -z $CMD ]]; then
             # could be hash
             # or ref - tag or head.
     elif [[ $# -le 4 ]]; then
+        if segment_base $1 &> /dev/null; then
+            echo "already exists" >&2
+            usage >&2
+            exit 1
+        fi
+        # what if it already exists!
         update_cmd define
     else
         echo "dangling arguments"
