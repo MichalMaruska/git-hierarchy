@@ -612,7 +612,7 @@ test_commit_parents()
     # if the sum refers to one of the summand commit?
     # (r)
     if [[ ${summands_commit_ids[(r)$sum_commit_id]} = $sum_commit_id ]];then
-        INFO "This merge is itself a summand."
+        INFO "This merge is itself a summand: $sum_commit_id"
     else
         # here the O(N^2) tests:
         # verify
