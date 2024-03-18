@@ -17,7 +17,7 @@ EOF
     }
 
 
-readonly TEMP="temp-segment"
+TEMP="temp-segment"
 abort_rebase=n
 while getopts :ha OPT; do
     case $OPT in
@@ -37,16 +37,23 @@ done
 shift OPTIND-1
 OPTIND=1
 
-if [ $# -gt 1 ]; then
-    echo "unexpected arguments $2..." >&2
-    usage >&2
-    exit 1
+if [ $# -gt 0 ]; then
+    readonly branch=$1
+    shift
+else
+    readonly branch=$(marked_segment)
+fi
+# todo: double-check it's a segment!
+
+if [ $# -gt 0 ]; then
+    TEMP=$1
+    shift
 fi
 
 if [ $# -gt 0 ]; then
-    readonly branch=$1
-else
-    readonly branch=$(marked_segment)
+    echo "unexpected arguments $@..." >&2
+    usage >&2
+    exit 1
 fi
 
 if [ -z $branch ];
