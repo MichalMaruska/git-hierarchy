@@ -22,21 +22,23 @@ usage: ${0##*/} [OPTIONS].... [top sum or segment]...
  -d, --debug    be verbose
  -n, --dry      dry run
 
- -i, --ignore   ignore misalignment
+ -i, --ignore {REF}    ignore misalignment
 
- -s, --skip     [old-name] stop at
- -t, --replace  [new-name] use a different base INSTEAD
-# todo: should be  --skip old-name:new-name ?
-# or  --skip
+ -s, --skip {old-name}    ....  stop at
+ -t, --replace {new-name} ....  use a different base INSTEAD
 
-Replace old-name as summands/segment-bases with new-name.
+  # todo: should be  --skip old-name:new-name ?
+  Replace old-name as summands/segment-bases with new-name.
 
- -c, --clone     [prefix] Create a clone hierarchy, rebasing at the same time.
+ -c, --clone [prefix]     .... Create a clone hierarchy, rebasing at the same time.
 EOF
     unsetopt POSIX_ARGZERO
 }
 
+# experiment:
+# prefix="xyz-"
 clone_hierarchy=no
+
 debug=n
 dry_only=n
 dry_option=()
@@ -78,6 +80,7 @@ while (( $# > 0 )); do
             shift
             skip_over=$(expand_ref $1)
             ;;
+        # so only 1 pair !
         -t | --replace )
             shift
             replacement=$(expand_ref $1)
@@ -151,7 +154,6 @@ test "$debug" = y && GIT_DEBUG_OPTIONS+=(-d)
 test "$debug" = n && GIT_DEBUG_OPTIONS+=(-q)
 #test "$SILENT" = y &&
 
-
 log()
 {
     if [[ $debug = y ]]; then
@@ -165,7 +167,6 @@ report()
 }
 
 
-
 is_summand()
 {
     local sum=$1
@@ -177,7 +178,6 @@ is_summand()
     [[ ${summands[(i)$ref]} -le ${#summands} ]]
 }
 
-#
 # @skip is a reference we want to Eliminate from the hierarchy:
 # We want @replacement to play its role: either base for for some segments, or
 # a summand (only removal!)
