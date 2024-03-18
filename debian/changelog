@@ -1,3 +1,25 @@
+git-hierarchy (5.47) release; urgency=medium
+
+  * git-segment: suppress set -x
+  * git-segment: definition can base off a tag
+  * functions(walk_down_from): explain why stopping
+  * cleanup comments in _git-segment-split
+  * _git-segment: reformat comments
+  * _git-segment: tabs
+  * _git-rebase-origin: drop remote as first argument + reformat
+  * git-rebase-origin: reformat comments
+  * git-rebase-poset: improve failure diagnostics when git-walk-down fails
+  * git-rebase-poset: reduce logging
+  * git-restore-hierarchy: add -b option ??
+  * git-store-hierarchy: move function to the top
+  * git-done-segment: name the temporary branch as temp-segment
+  * git-segment: error on non-specified command with arguments
+  * git-rebase-poset: use {} and [] correctly in usage
+  * git-store-hierarchy: -k to keep the temp file
+  * drop git-update-hierarchy: use git-restore-hierarchy-from-branch directly
+
+ -- Michal Maruska <mmaruska@gmail.com>  Mon, 18 Mar 2024 10:41:54 +0100
+
 git-hierarchy (5.46) release; urgency=medium
 
   * drop git-diff-segment, improve "git-segment --diff"
