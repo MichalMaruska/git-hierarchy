@@ -10,7 +10,7 @@ readonly MODE=100644
 usage()
 {
     cat <<EOF
-usage: ${0##*/} [+-h] [-c] [-t tag] [--] REF ...
+usage: ${0##*/} [+-h] [-k] [-c] [-t tag] [--] REF ...
 
 ********
 Invoke "git-graph -r $@" and store the output ...
@@ -18,6 +18,7 @@ Invoke "git-graph -r $@" and store the output ...
 with REF given, walk down that. Otherwise the whole graph
 
 -c in fact store it as a new commit on $BRANCH
+-k keep the temporary file with dumped info
 -t or in a tag ... on the commit of first REF
 
 otherwise just output.
@@ -26,8 +27,9 @@ EOF
 
 do_commit=no
 do_tag=no
+keep=no
 
-while getopts :cht:v OPT; do
+while getopts :chkt:v OPT; do
     case $OPT in
         h|+h)
             usage
@@ -35,6 +37,9 @@ while getopts :cht:v OPT; do
             ;;
         c)
             do_commit="yes"
+            ;;
+        k)
+            keep=yes
             ;;
         t)
             do_tag=$OPTARG
@@ -117,4 +122,4 @@ else
     cat $tmpfile
 fi
 
-rm -f $tmpfile
+[[ $keep = yes ]] || rm -f $tmpfile
