@@ -1132,7 +1132,7 @@ unmark_rebase_segment()
             echo "### so rebase was completed, moving *start* to the *base*"  >&2
             rm -v $GIT_DIR/$git_segment_mark
         else
-            echo "### mismatch!"  >&2
+            echo "### mismatch! $1 vs $(cat $GIT_DIR/$git_segment_mark)"  >&2
         fi
     fi
 }
