@@ -2,11 +2,29 @@
 
 source /usr/share/git-hierarchy/functions.sh
 
+usage()
+{
+    cat <<EOF
+usage: $0 {sum-name}
+
+ To be used after failed automatic merge, even as the final manual "git commit".
+
+EOF
+}
+
+# could be $2
+TEMP=_tmp
+
+if [[ $# -ne 1 ]]; then
+    usage >&2
+    exit 1
+fi
+
 name=$1
 
 if ! is_sum $name &>/dev/null ;
 then
-    echo "$name is not a sum branch (in $GIT_DIR)" >&2
+    echo "$name is not a sum branch" >&2
     summands_of $name >&2
     exit 1
 fi
@@ -15,6 +33,8 @@ if ! git diff --cached  --quiet
 then
     git commit --no-edit
 fi
-git branch --force $name _tmp
+
+
+git branch --force $name $TEMP
 git switch $name
-git branch --delete _tmp
+git branch --delete $TEMP
