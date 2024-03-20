@@ -1,3 +1,10 @@
+git-hierarchy (5.49) release; urgency=medium
+
+  * git-done-sum: usage
+  * git-sum-branches: prepare commit message in a temp file
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 20 Mar 2024 17:50:24 +0100
+
 git-hierarchy (5.48) release; urgency=medium
 
   * git-done-segment: support specific temp branches
