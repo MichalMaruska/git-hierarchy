@@ -172,14 +172,29 @@ else
     others=($real_branches[2,-1])
     # octopus is default (for >2 children) & refuses any conflict.
 
+    SUBJECT="Sum: $sum_name"
+    message_file=$(mktemp $TMPDIR/commit-message-XXX)
+    {
+        echo $SUBJECT
+        echo "\n\n"
+        echo $first
+        foreach b ( $others) {
+            echo "+ $b"
+        }
+    } >> $message_file
     print "$fg[green]re-merging sum $fg[cyan]$sum_name" >&2
     if [[ $stepwise = no ]]; then
-        eval $cmd git merge -m '"Sum: $sum_name = $first + $others"' \
+        # '"Sum: $sum_name\n\n = $first + $others"'
+        # m '"$SUBJECT"' -m '"$MSG"' \
+        # why eval? to have $cmd expanded/removed
+        eval $cmd git merge -F $message_file \
              --rerere-autoupdate \
              --strategy octopus \
              --strategy recursive \
              --strategy-option patience \
              --strategy-option ignore-space-change $others
+        # fixme: even on failure!
+        rm -fv $message_file
     else
         foreach next ($others)
         {
