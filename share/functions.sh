@@ -206,7 +206,10 @@ dump_ref_without_ref()
     setopt pipefail
     if true; then
         # fixme: no newline!
-        git rev-parse --symbolic-full-name $1 -- | tr -d '\n'
+        # bug: refs/base/nonexistent says
+        # > Use '--' to separate paths from revisions
+        # but that then "resolves" -- to --, so the output is ...
+        git rev-parse --symbolic-full-name $1 | tr -d '\n'
     else
         a=$(dump_symbolic_ref $1)
         echo ${a#ref: }
