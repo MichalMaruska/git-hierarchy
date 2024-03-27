@@ -1,3 +1,12 @@
+git-hierarchy (5.50) release; urgency=medium
+
+  * functions: fix dump_ref_without_ref to fail & not ambiguous
+  * git-segment: diagnose if segment exists
+  * git-clone-segment: in 1 step
+  * revert dump_ref_without_ref() change
+
+ -- Michal Maruska <mmaruska@gmail.com>  Wed, 27 Mar 2024 23:44:32 +0100
+
 git-hierarchy (5.49) release; urgency=medium
 
   * git-done-sum: usage
