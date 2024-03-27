@@ -22,7 +22,6 @@ EOF
     unsetopt POSIX_ARGZERO
 }
 
-
 while getopts :h OPT; do
     case $OPT in
         h|+h)
@@ -50,13 +49,11 @@ original=$1
 new=$2
 new_base=$3
 
-set -x
 
 # Just clone it, and rebase it:
 # alternatively create it, and then "git branch -f new orig"
 # but this way it might error if already existing, which is good.
-git branch $new heads/$original
-git-segment $new $new_base $(segment_start $original)
+git-segment $new $new_base $(segment_start $original) $original
 
 # rebase it at a different point:
 git-rebase-segment $new
