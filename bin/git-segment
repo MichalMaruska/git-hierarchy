@@ -312,7 +312,7 @@ if [[ -z $CMD ]]; then
             # or ref - tag or head.
     elif [[ $# -le 4 ]]; then
         if segment_base $1 &> /dev/null; then
-            echo "already exists" >&2
+            echo "segment $1 already exists" >&2
             usage >&2
             exit 1
         fi
