@@ -91,8 +91,8 @@ func sumSummand(name string, n int) plumbing.ReferenceName {
 }
 
 
-func refsWithPrefix(repository *git.Repository, prefix string) []plumbing.Reference {
-	collector := []plumbing.Reference{}
+func refsWithPrefix(repository *git.Repository, prefix string) []*plumbing.Reference {
+	collector := []*plumbing.Reference{}
 
 	refIter, _ := repository.References()
 	// fmt.Fprintln(os.Stderr, "looking for this prefix:", prefix)
@@ -101,7 +101,7 @@ func refsWithPrefix(repository *git.Repository, prefix string) []plumbing.Refere
 
 		if strings.HasPrefix(ref.Name().String(), prefix) {
 			// fmt.Fprintln(os.Stderr,"found")
-			collector = append (collector, *ref) //  yield
+			collector = append(collector, ref) //  yield
 			// found = branch
 			// return ErrStop
 		}
@@ -113,15 +113,15 @@ func refsWithPrefix(repository *git.Repository, prefix string) []plumbing.Refere
 	return collector
 }
 
-func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []plumbing.Reference{
+func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []*plumbing.Reference{
 	collector := refsWithPrefix(repository, prefix)
 
-	var refs []plumbing.Reference
+	var refs []*plumbing.Reference
 	// todo: a function for this:
 	s := "ref: " + ref.Name().String()
 
 	for _, ref := range collector {
-		content := dump_symbolic_ref(&ref)
+		content := dump_symbolic_ref(ref)
 		// reduced, _ := strings.CutPrefix(content, "ref: ")
 		if s == content {
 			refs = append(refs, ref)
@@ -131,22 +131,22 @@ func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefi
 	return refs
 }
 
-func base_for(repository *git.Repository, ref *plumbing.Reference)  []plumbing.Reference {
+func base_for(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference {
 	// iterate over given prefix
 	return symbolic_refs_to(repository, ref, "refs/base/")
 }
 
-func summand_of(repository *git.Repository, ref *plumbing.Reference)  []plumbing.Reference{
+func summand_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference{
 	return symbolic_refs_to(repository, ref, "refs/sums/")
 }
 
 
 // return collection
-func sumSummands(repository *git.Repository, sName string) []plumbing.Reference {
+func sumSummands(repository *git.Repository, sName string) []*plumbing.Reference {
 	return refsWithPrefix(repository,  sumSummandPrefix + sName + "/")
 }
 
-func isSum(name string, repository *git.Repository) (bool, []plumbing.Reference) {
+func isSum(name string, repository *git.Repository) (bool, []*plumbing.Reference) {
 	// expand all subtree
 	summands := sumSummands(repository, name)
 	return len(summands) > 0, summands
@@ -274,7 +274,7 @@ func Rename(repository *git.Repository, from string, to string) {
 	above := base_for(repository, full)
 	sums_with := summand_of(repository, full)
 
-	var ref plumbing.Reference
+	var ref *plumbing.Reference
 
 	for _, ref = range above {
 		set_symbolic_reference(repository, ref.Name(), toFull)
@@ -300,7 +300,7 @@ func Rename(repository *git.Repository, from string, to string) {
 			// CheckIfError(err)  ParseUint
 			end, _ := strings.CutPrefix(s.Name().String(), prefix)
 			n, _ := strconv.Atoi(end)
-			rename_symbolic_reference(repository, &s, sumSummand(newName, n))
+			rename_symbolic_reference(repository, s, sumSummand(newName, n))
 		}
 	}
 
