@@ -319,3 +319,76 @@ func Rename(repository *git.Repository, from string, to string) {
 }
 
 var TheRepo *git.Repository
+
+type gitHierarchy interface{
+	// segment | sum
+	Children() []*plumbing.Reference // gitHierarchy
+	Name() string
+}
+
+type  segment struct {
+	ref *plumbing.Reference
+	base *plumbing.Reference
+	start *plumbing.Hash
+}
+
+func (s segment) Name() string {
+	return branchName(s.ref)
+}
+
+func (s segment) Children() []*plumbing.Reference {
+	repository := TheRepo
+
+	base, err := repository.Reference(plumbing.ReferenceName(segmentBase(s.Name())), false)
+	CheckIfError(err)
+	start, err1 := repository.Reference(plumbing.ReferenceName(segmentStart(s.Name())), false)
+	CheckIfError(err1)
+
+	return []*plumbing.Reference{base, start}
+}
+
+
+type  sum struct {
+	ref *plumbing.Reference
+	summands  []*plumbing.Reference
+}
+
+// todo: identical. Generics?
+func (s sum) Name() string {
+	return branchName(s.ref)
+}
+
+func (s sum) Children() []*plumbing.Reference {
+	return sumSummands(TheRepo, s.Name())
+}
+
+type base struct {
+	ref plumbing.Reference
+}
+
+// ErrStop
+// discover_subgraph
+// hopefully acyclic
+// type HandlerFunc func(ResponseWriter, *Request)
+func walk_graph(top *gitHierarchy) { // func neighbors() []gitHierarchy
+	// <node>
+	var q List = List.New().PushFront(top)
+	// []*gitHierarchy{top}
+
+	// list:
+	var visited []*gitHierarchy // references
+	for this = q.Front(); this != nil; {
+		// this = first(q)
+
+		if member(this, visited) {
+			continue
+		} else {
+			neigh := neighbors(top)
+
+
+			q = append(q, neigh)
+			visited = append(visited, this)
+		}
+	}
+}
+
