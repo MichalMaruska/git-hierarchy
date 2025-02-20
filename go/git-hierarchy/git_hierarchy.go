@@ -317,3 +317,5 @@ func Rename(repository *git.Repository, from string, to string) {
 	}
 
 }
+
+var TheRepo *git.Repository
