@@ -14,6 +14,7 @@ import (
 	_ "github.com/go-git/go-git/v5/plumbing/storer"
 
 	"container/list"
+	mapset "github.com/deckarep/golang-set/v2"
 )
 
 
@@ -372,22 +373,20 @@ type base struct {
 // type HandlerFunc func(ResponseWriter, *Request)
 func walk_graph(top *gitHierarchy) { // func neighbors() []gitHierarchy
 	// <node>
-	var q List = List.New().PushFront(top)
-	// []*gitHierarchy{top}
+	var q *list.List = list.New()
+	q.PushFront(top)
 
-	// list:
-	var visited []*gitHierarchy // references
-	for this = q.Front(); this != nil; {
+	var visited = mapset.NewSet[*gitHierarchy]()
+	for this := q.Front().Value.(*gitHierarchy); this != nil; {
 		// this = first(q)
-
-		if member(this, visited) {
+		if visited.Contains(this) {
 			continue
 		} else {
-			neigh := neighbors(top)
-
-
-			q = append(q, neigh)
-			visited = append(visited, this)
+			children :=  (*this).Children()
+			for ch := range children {
+				q.PushBack(ch)
+			}
+			visited.Add(this)
 		}
 	}
 }
