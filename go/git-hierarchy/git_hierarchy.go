@@ -332,7 +332,7 @@ type gitHierarchy interface{
 type  segment struct {
 	ref *plumbing.Reference
 	base *plumbing.Reference
-	start *plumbing.Hash
+	start *plumbing.Reference // Hash
 }
 
 func (s segment) Name() string {
@@ -384,29 +384,66 @@ func (s base) Name() string {
 }
 
 
+
+// method of ... but we cannot implement it here
+func convert(ref *plumbing.Reference) gitHierarchy {
+	repository := TheRepo
+
+	name, _ := strings.CutPrefix(ref.Name().String(), head_prefix)
+
+	if is, summands := isSum(name, repository); is {
+		return sum{ref, summands}
+
+	} else if is, base := isSegment(name, repository); is {
+		startHash, err1 := repository.Reference(plumbing.ReferenceName(segmentStart(name)), true)
+		CheckIfError(err1)
+
+		return segment{ref, base, startHash}
+	}
+
+	// fmt.Println("it's a plain ref", ref)
+	return base{ref}
 }
 
 // ErrStop
 // discover_subgraph
 // hopefully acyclic
 // type HandlerFunc func(ResponseWriter, *Request)
-func walk_graph(top *gitHierarchy) { // func neighbors() []gitHierarchy
+func Walk_graph(top *plumbing.Reference) { // func neighbors() []gitHierarchy
 	// <node>
 	var q *list.List = list.New()
+	// fmt.Println("starting at", top.Name())
 	q.PushFront(top)
+	var visited = mapset.NewSet[string]()
 
-	var visited = mapset.NewSet[*gitHierarchy]()
-	for this := q.Front().Value.(*gitHierarchy); this != nil; {
-		// this = first(q)
-		if visited.Contains(this) {
+
+	for this := q.Front(); this != nil; this = q.Front() {
+		// bug:
+		ref := q.Remove(this).(*plumbing.Reference)
+
+		// fmt.Println("is", ref.Name().String(), "element?")
+		if visited.Contains(ref.Name().String()) {
+			// a cycle? or just a sibling?
+			// fmt.Println("skipping", ref.Name())
 			continue
 		} else {
-			children :=  (*this).Children()
-			for ch := range children {
+			fmt.Println("looking at", ref.Name())
+			// todo: convert Ref -> gitHierarchy
+			gh := convert(ref)
+			// this = first(q)
+
+			children :=  gh.Children()
+
+			// q.PushBackList(children)
+			// reverse
+			for _, ch := range children {
 				q.PushBack(ch)
 			}
-			visited.Add(this)
+
+			// fmt.Println("Adding", ref.Name().String())
+			visited.Add(ref.Name().String())
 		}
 	}
+	return
 }
 
