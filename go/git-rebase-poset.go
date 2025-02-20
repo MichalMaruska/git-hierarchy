@@ -38,8 +38,14 @@ func main(){
 
         // plan: collect the graph, linearized,
         // current_branch()
-        current := repository.Reference(plumbing.ReferenceName("HEAD"), false)
+        repository, err := git.PlainOpen(".")
+        git_hierarchy.TheRepo = repository
 
+        current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
+        fmt.Println("Current head is", current.Name())
+        git_hierarchy.CheckIfError(err, "finding repository")
+
+        git_hierarchy.Walk_graph(current)
         fmt.Println(current)
         // walk_down_from()
         // mark
