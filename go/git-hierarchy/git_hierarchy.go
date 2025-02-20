@@ -15,6 +15,8 @@ import (
 
 	"container/list"
 	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/samber/lo"
+	lom "github.com/samber/lo/mutable"
 )
 
 
@@ -340,12 +342,10 @@ func (s segment) Name() string {
 func (s segment) Children() []*plumbing.Reference {
 	repository := TheRepo
 
-	base, err := repository.Reference(plumbing.ReferenceName(segmentBase(s.Name())), false)
+	base, err := repository.Reference(plumbing.ReferenceName(segmentBase(s.Name())), true)
 	CheckIfError(err)
-	start, err1 := repository.Reference(plumbing.ReferenceName(segmentStart(s.Name())), false)
-	CheckIfError(err1)
 
-	return []*plumbing.Reference{base, start}
+	return []*plumbing.Reference{base}
 }
 
 
@@ -360,11 +360,30 @@ func (s sum) Name() string {
 }
 
 func (s sum) Children() []*plumbing.Reference {
-	return sumSummands(TheRepo, s.Name())
+	repository := TheRepo
+	sr := s.summands
+	lom.Reverse(sr)
+	return lo.Map(sr,
+		func(x *plumbing.Reference, index int) *plumbing.Reference {
+			ref, err := repository.Reference(x.Name(), true)
+			CheckIfError(err)
+			return ref
+		})
 }
 
 type base struct {
-	ref plumbing.Reference
+	ref *plumbing.Reference
+}
+
+func (s base) Children() []*plumbing.Reference {
+	return []*plumbing.Reference{}
+}
+
+func (s base) Name() string {
+	return branchName(s.ref)
+}
+
+
 }
 
 // ErrStop
