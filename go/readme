@@ -1,0 +1,29 @@
+
+GOPRIVATE=github.com/michalmaruska
+
+* start:
+indeed
+ go mod
+shows the commands!
+
+
+go mod init {name}
+
+go mod init git-hierarchy
+
+
+* install dependencies?
+go get nullprogram.com/x/optparse
+
+*** all deps?
+go mod tidy
+
+
+
+
+* Emacs:
+https://stackoverflow.com/questions/51642390/installing-and-using-godef
+
+
+* import
+https://www.geeksforgeeks.org/import-in-golang/
