@@ -447,3 +447,26 @@ func Walk_graph(top *plumbing.Reference) { // func neighbors() []gitHierarchy
 	return
 }
 
+// call cb formats[]
+/*
+func walk_down_from(top plumbing.Reference, cb func(ref) string ) {
+	// we append to the queue -- so breadth-first.
+	// queue, so depth-first?
+	walk_acyclic(top,
+		func (){
+			/*
+			if is_sum $name {
+			dump_sum $test_option ${sum_format} $name
+			} else if is_segment $name {
+			dump_segment $segment_format $name
+			} else {
+
+			}
+		}
+		)
+}
+*/
+
+
+func rebasePoset() {
+}
