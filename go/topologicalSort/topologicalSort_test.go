@@ -9,7 +9,7 @@ import (
 	"github.com/michalmaruska/topologicalSort"
 )
 
-func FuzzSort(t *testing.F) {
+func TestSort(t *testing.T) {
 	// Example graph (adjacency list representation)
 	// Number of nodes
 	// if testing.Short() {
@@ -42,8 +42,6 @@ func FuzzSort(t *testing.F) {
 			fmt.Println("Topological Sort Order:", result)
 		}
 	}
-	t.Fuzz()
-	// Output: Topological Sort Order: [4 5 2 0 3 1
 }
 
 // func TestMain(m *testing.M){}
