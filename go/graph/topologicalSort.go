@@ -1,4 +1,4 @@
-package topologicalSort
+package graph
 
 import (
 	"fmt"
@@ -10,6 +10,7 @@ type Graph struct {
 	vertices int
 	adjList  map[int][]int
 }
+
 // NewGraph creates a new graph with n vertices
 func NewGraph(n int) *Graph {
 	return &Graph{

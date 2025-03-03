@@ -1,4 +1,4 @@
-package topologicalSort
+package graph
 // If the test file is in the same package, it may refer to unexported identifiers within the package.
 // If the file is in a separate "_test" package, the package being tested must be imported explicitly
 

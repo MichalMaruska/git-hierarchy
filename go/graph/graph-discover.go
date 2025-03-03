@@ -1,23 +1,22 @@
-package main
+package graph
 // graphDiscover
 
 import (
 	"fmt"
-	"strconv"
 	// mapset "github.com/deckarep/golang-set/v2"
 )
 
 
 // any
-type nodeExpander interface {
+type NodeExpander interface {
 	// Read(b []byte) (n int, err os.Error)
 	// these are all implicitly methods!
 	NodeIdentity() string
-	NodePrepare() nodeExpander
-	NodeChildren() []nodeExpander
+	NodePrepare() NodeExpander
+	NodeChildren() []NodeExpander
 }
 
-
+/*
 //  move away, from dfs.go
 type Graph struct {
 	adjList map[int][]int
@@ -33,14 +32,15 @@ func (g *Graph) AddEdge(v, w int) {
 	g.adjList[v] = append(g.adjList[v], w)
 	g.adjList[w] = append(g.adjList[w], v) // For an undirected graph
 }
+*/
 
 
-func discoverGraph(topNodes *[]nodeExpander) (*[]nodeExpander, *Graph) {
+func discoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 	// *list.List
 	// a slice:
-	var vertices []nodeExpander = *topNodes
+	var vertices []NodeExpander = *topNodes
 
-	// make([]*nodeExpander, 0, 10)
+	// make([]*NodeExpander, 0, 10)
 	// list.New()
 	// vertices = append(vertices, top) // .PushFront
 	tail := len(*topNodes)
@@ -54,7 +54,7 @@ func discoverGraph(topNodes *[]nodeExpander) (*[]nodeExpander, *Graph) {
 		known[node.NodeIdentity()] = i // current
 	}
 
-	graph := NewGraph()
+	graph := NewGraph(1)
 
 	for current := 0; current != tail; current= current+1 {
 		this := vertices[current]
@@ -90,42 +90,4 @@ func discoverGraph(topNodes *[]nodeExpander) (*[]nodeExpander, *Graph) {
 		// known visited.Add(ref.Name().String())
 	}
 	return &vertices, graph
-}
-
-
-type testGraph struct {
-	n int
-}
-
-
-func (s testGraph) NodeIdentity() string {
-	fmt.Println("NodeIdentity", s.n)
-	return strconv.Itoa(s.n)
-}
-
-func (s testGraph) NodePrepare() nodeExpander { //  testGraph
-	return s
-}
-
-func (s testGraph) NodeChildren()  []nodeExpander {
-	// all divisors
-	// testGraph
-	var divisors []nodeExpander // *testGraph
-	for i := 2;i < s.n; i++ {
-		if (s.n % i == 0) {
-			divisors = append(divisors,nodeExpander(&testGraph{i}))
-		}
-	}
-	return divisors
-}
-
-
-func main() {
-	// var g testGraph = [0..10]
-	g := testGraph{10}
-	fmt.Println("starting with node", g.NodeIdentity())
-	res, graph := discoverGraph( &[]nodeExpander{g})
-	// toposort
-	fmt.Println(res)
-	fmt.Println(graph)
 }
