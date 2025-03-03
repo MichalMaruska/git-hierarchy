@@ -15,41 +15,42 @@ import (
 	_ "github.com/go-git/go-git/v5/plumbing/storer"
 )
 
-func usage(){
-        getopt.PrintUsage(os.Stderr)
+func usage() {
+	getopt.PrintUsage(os.Stderr)
 }
 
-func main(){
-        helpFlag := getopt.BoolLong("help", 'h', "display help")
-        // no errors, just fail:
-        getopt.SetUsage(func () {
-                getopt.PrintUsage(os.Stderr)
-                fmt.Println("\nparameter:  from  to")})
+func main() {
+	helpFlag := getopt.BoolLong("help", 'h', "display help")
+	// no errors, just fail:
+	getopt.SetUsage(func() {
+		getopt.PrintUsage(os.Stderr)
+		fmt.Println("\nparameter:  from  to")
+	})
 
-        getopt.Parse() // os.Args
+	getopt.Parse() // os.Args
 
-        if *helpFlag {
-                // I want it to stdout!
-                fmt.Println(plumbing.RefRevParseRules)
-                getopt.Usage()
-                os.Exit(0)
-        }
-        // -------------------------------------------------
-        args := getopt.Args()
-        if (len(args) < 2) {
-                //
-                fmt.Fprintln(os.Stderr,
-                        "* Error: Insufficient number of arguments")
-                // how to direct?
-                getopt.Usage()
-                // usage()
-                os.Exit(1)
-        }
+	if *helpFlag {
+		// I want it to stdout!
+		fmt.Println(plumbing.RefRevParseRules)
+		getopt.Usage()
+		os.Exit(0)
+	}
+	// -------------------------------------------------
+	args := getopt.Args()
+	if len(args) < 2 {
+		//
+		fmt.Fprintln(os.Stderr,
+			"* Error: Insufficient number of arguments")
+		// how to direct?
+		getopt.Usage()
+		// usage()
+		os.Exit(1)
+	}
 
-        repository, err := git.PlainOpen(".")
-        git_hierarchy.CheckIfError(err, "finding repository")
+	repository, err := git.PlainOpen(".")
+	git_hierarchy.CheckIfError(err, "finding repository")
 
-        git_hierarchy.Rename(repository, args[0], args[1])
+	git_hierarchy.Rename(repository, args[0], args[1])
 
-        os.Exit(0)
+	os.Exit(0)
 }

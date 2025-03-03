@@ -15,45 +15,43 @@ import (
 	_ "github.com/go-git/go-git/v5/plumbing/storer"
 )
 
-func usage(){
-        getopt.PrintUsage(os.Stderr)
+func usage() {
+	getopt.PrintUsage(os.Stderr)
 }
 
+func main() {
+	helpFlag := getopt.BoolLong("help", 'h', "display help")
+	// no errors, just fail:
+	getopt.SetUsage(func() {
+		getopt.PrintUsage(os.Stderr)
+		fmt.Println("\nparameter:  from  to")
+	})
+	getopt.Parse() // os.Args
 
+	if *helpFlag {
+		// I want it to stdout!
+		fmt.Println(plumbing.RefRevParseRules)
+		getopt.Usage()
+		os.Exit(0)
+	}
 
-func main(){
-        helpFlag := getopt.BoolLong("help", 'h', "display help")
-        // no errors, just fail:
-        getopt.SetUsage(func () {
-                getopt.PrintUsage(os.Stderr)
-                fmt.Println("\nparameter:  from  to")})
-        getopt.Parse() // os.Args
+	// plan: collect the graph, linearized,
+	// current_branch()
+	repository, err := git.PlainOpen(".")
+	git_hierarchy.TheRepo = repository
 
-        if *helpFlag {
-                // I want it to stdout!
-                fmt.Println(plumbing.RefRevParseRules)
-                getopt.Usage()
-                os.Exit(0)
-        }
+	current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
+	fmt.Println("Current head is", current.Name())
+	git_hierarchy.CheckIfError(err, "finding repository")
 
+	git_hierarchy.Walk_graph(current)
+	fmt.Println(current)
+	// walk_down_from()
+	// mark
+	// unmark
 
-        // plan: collect the graph, linearized,
-        // current_branch()
-        repository, err := git.PlainOpen(".")
-        git_hierarchy.TheRepo = repository
+	// state
+	// gitRebasePoset()
 
-        current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
-        fmt.Println("Current head is", current.Name())
-        git_hierarchy.CheckIfError(err, "finding repository")
-
-        git_hierarchy.Walk_graph(current)
-        fmt.Println(current)
-        // walk_down_from()
-        // mark
-        // unmark
-
-        // state
-        // gitRebasePoset()
-
-        os.Exit(0)
+	os.Exit(0)
 }
