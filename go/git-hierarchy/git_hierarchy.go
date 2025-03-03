@@ -13,10 +13,10 @@ import (
 	_ "github.com/go-git/go-git/v5/config"
 	_ "github.com/go-git/go-git/v5/plumbing/storer"
 
-	"container/list"
-	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/samber/lo"
 	lom "github.com/samber/lo/mutable"
+	// "github.com/kendru/darwin/go/depgraph"
+	//	"github.com/michalmaruska/git-hierarchy/graph"
 )
 
 
@@ -409,64 +409,43 @@ func convert(ref *plumbing.Reference) gitHierarchy {
 // discover_subgraph
 // hopefully acyclic
 // type HandlerFunc func(ResponseWriter, *Request)
-func Walk_graph(top *plumbing.Reference) { // func neighbors() []gitHierarchy
-	// <node>
-	var q *list.List = list.New()
-	// fmt.Println("starting at", top.Name())
-	q.PushFront(top)
-	var visited = mapset.NewSet[string]()
+// I need:
 
-
-	for this := q.Front(); this != nil; this = q.Front() {
-		// bug:
-		ref := q.Remove(this).(*plumbing.Reference)
-
-		// fmt.Println("is", ref.Name().String(), "element?")
-		if visited.Contains(ref.Name().String()) {
-			// a cycle? or just a sibling?
-			// fmt.Println("skipping", ref.Name())
-			continue
-		} else {
-			fmt.Println("looking at", ref.Name())
-			// todo: convert Ref -> gitHierarchy
-			gh := convert(ref)
-			// this = first(q)
-
-			children :=  gh.Children()
-
-			// q.PushBackList(children)
-			// reverse
-			for _, ch := range children {
-				q.PushBack(ch)
-			}
-
-			// fmt.Println("Adding", ref.Name().String())
-			visited.Add(ref.Name().String())
-		}
-	}
-	return
+// - not string ... what is required NewSet .. `Comparable'
+// so duplicate Refs are not equal?
+// repository.Reference should cache.
+// I need
+func identity(gh gitHierarchy) string {
+	return gh.Name()
 }
 
-// call cb formats[]
-/*
-func walk_down_from(top plumbing.Reference, cb func(ref) string ) {
-	// we append to the queue -- so breadth-first.
-	// queue, so depth-first?
-	walk_acyclic(top,
-		func (){
-			/*
-			if is_sum $name {
-			dump_sum $test_option ${sum_format} $name
-			} else if is_segment $name {
-			dump_segment $segment_format $name
-			} else {
 
-			}
-		}
-		)
+// so refname <--> gitHierarchy?
+// man ^^^ on that?
+
+// I want to accept
+
+//  (node)
+//  identity
+//  neighbors
+
+// so I have read-graph
+// then ... toposort.
+// which work by ...?
+//l
+
+// - no convert.
+// - callback to handle edges()
+
+// I need an interface, and wire
+// identity -> Name
+
+
+// any
+type nodeExpander interface {
+	NodeIdentity(any) string
+	NodeChildren(any) nodeExpander
 }
-*/
-
 
 func rebasePoset() {
 }
