@@ -41,4 +41,4 @@ require (
 )
 
 // replace github.com/michalmaruska/topologicalSort => ./topologicalSort/
-// replace github.com/michalmaruska/git-hierarchy => ./git-hierarchy
+replace github.com/michalmaruska/git-hierarchy => ./
