@@ -8,33 +8,12 @@ import (
 )
 
 
-// any
 type NodeExpander interface {
-	// Read(b []byte) (n int, err os.Error)
 	// these are all implicitly methods!
 	NodeIdentity() string
 	NodePrepare() NodeExpander
 	NodeChildren() []NodeExpander
 }
-
-/*
-//  move away, from dfs.go
-type Graph struct {
-	adjList map[int][]int
-}
-
-// NewGraph initializes a new graph
-func NewGraph() *Graph {
-	return &Graph{adjList: make(map[int][]int)}
-}
-
-// AddEdge adds an edge to the graph
-func (g *Graph) AddEdge(v, w int) {
-	g.adjList[v] = append(g.adjList[v], w)
-	g.adjList[w] = append(g.adjList[w], v) // For an undirected graph
-}
-*/
-
 
 func DiscoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 	// *list.List
