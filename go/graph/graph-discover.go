@@ -2,8 +2,9 @@ package graph
 // graphDiscover
 
 import (
-	"fmt"
+	// "fmt"
 	// mapset "github.com/deckarep/golang-set/v2"
+	// "container/list"
 )
 
 
@@ -35,7 +36,7 @@ func (g *Graph) AddEdge(v, w int) {
 */
 
 
-func discoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
+func DiscoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 	// *list.List
 	// a slice:
 	var vertices []NodeExpander = *topNodes
@@ -60,10 +61,11 @@ func discoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 		this := vertices[current]
 
 		// Body. Only once per node. So terminates.
-		fmt.Println("looking at", this.NodeIdentity())
+		// fmt.Println("looking at", this.NodeIdentity())
 
 		// todo: convert Ref -> gitHierarchy
 		node := this.NodePrepare()
+		vertices[current] = node
 
 		children :=  node.NodeChildren()
 		// I need edges: ref -> children
@@ -76,11 +78,13 @@ func discoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 			// elem, ok = m[key]
 			if childNode, ok := known[child.NodeIdentity()]; ok  {
 				// a cycle? or just a sibling?
-				// fmt.Println("skipping", ref.Name())
+				// fmt.Println("skipping", child.NodeIdentity(), "but adding edge")
 				graph.AddEdge(current, childNode)
 				continue
 			} else {
 				vertices = append(vertices, child) // PushBack()
+				known[child.NodeIdentity()] = tail
+				// fmt.Println("scheduling", child.NodeIdentity(), "and adding edge")
 				childNode = tail
 				graph.AddEdge(current, childNode)
 				tail += 1
@@ -89,5 +93,6 @@ func discoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 		// fmt.Println("Adding", ref.Name().String())
 		// known visited.Add(ref.Name().String())
 	}
+	graph.vertices = tail
 	return &vertices, graph
 }

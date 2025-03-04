@@ -36,7 +36,7 @@ func TestDiscover(t *testing.T) {
 	// var g testGraph = [0..10]
 	g := testGraph{10}
 	fmt.Println("starting with node", g.NodeIdentity())
-	res, graph := discoverGraph( &[]NodeExpander{g})
+	res, graph := DiscoverGraph( &[]NodeExpander{g})
 	// toposort
 	fmt.Println(res)
 	fmt.Println(graph)
