@@ -329,37 +329,36 @@ type gitHierarchy interface{
 	Name() string
 }
 
-type  segment struct {
+type  Segment struct {
 	ref *plumbing.Reference
 	base *plumbing.Reference
 	start *plumbing.Reference // Hash
 }
 
-func (s segment) Name() string {
+func (s Segment) Name() string {
 	return branchName(s.ref)
 }
 
-func (s segment) Children() []*plumbing.Reference {
+// only references
+func (s Segment) Children() []*plumbing.Reference {
 	repository := TheRepo
-
 	base, err := repository.Reference(plumbing.ReferenceName(segmentBase(s.Name())), true)
 	CheckIfError(err)
-
 	return []*plumbing.Reference{base}
 }
 
 
-type  sum struct {
+type  Sum struct {
 	ref *plumbing.Reference
 	summands  []*plumbing.Reference
 }
 
 // todo: identical. Generics?
-func (s sum) Name() string {
+func (s Sum) Name() string {
 	return branchName(s.ref)
 }
 
-func (s sum) Children() []*plumbing.Reference {
+func (s Sum) Children() []*plumbing.Reference {
 	repository := TheRepo
 	sr := s.summands
 	lom.Reverse(sr)
@@ -371,15 +370,15 @@ func (s sum) Children() []*plumbing.Reference {
 		})
 }
 
-type base struct {
+type Base struct {
 	ref *plumbing.Reference
 }
 
-func (s base) Children() []*plumbing.Reference {
+func (s Base) Children() []*plumbing.Reference {
 	return []*plumbing.Reference{}
 }
 
-func (s base) Name() string {
+func (s Base) Name() string {
 	return branchName(s.ref)
 }
 
@@ -392,17 +391,17 @@ func convert(ref *plumbing.Reference) gitHierarchy {
 	name, _ := strings.CutPrefix(ref.Name().String(), head_prefix)
 
 	if is, summands := isSum(name, repository); is {
-		return sum{ref, summands}
+		return Sum{ref, summands}
 
 	} else if is, base := isSegment(name, repository); is {
 		startHash, err1 := repository.Reference(plumbing.ReferenceName(segmentStart(name)), true)
 		CheckIfError(err1)
 
-		return segment{ref, base, startHash}
+		return Segment{ref, base, startHash}
 	}
 
 	// fmt.Println("it's a plain ref", ref)
-	return base{ref}
+	return Base{ref}
 }
 
 // ErrStop
