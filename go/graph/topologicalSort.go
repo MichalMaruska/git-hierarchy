@@ -11,6 +11,18 @@ type Graph struct {
 	adjList  map[int][]int
 }
 
+func DumpGraph(g *Graph) {
+	fmt.Println("Graph of", g.vertices, "vertices:")
+	for i, edges := range g.adjList {
+		fmt.Print(i, ":")
+		for _, edge := range edges {
+			fmt.Print(edge, ",")
+		}
+		fmt.Println()
+	}
+}
+
+
 // NewGraph creates a new graph with n vertices
 func NewGraph(n int) *Graph {
 	return &Graph{
