@@ -16,7 +16,7 @@ import (
 	"github.com/samber/lo"
 	lom "github.com/samber/lo/mutable"
 	// "github.com/kendru/darwin/go/depgraph"
-	//	"github.com/michalmaruska/git-hierarchy/graph"
+	"github.com/michalmaruska/git-hierarchy/graph"
 )
 
 
@@ -441,9 +441,60 @@ func identity(gh gitHierarchy) string {
 
 
 // any
-type nodeExpander interface {
-	NodeIdentity(any) string
-	NodeChildren(any) nodeExpander
+
+// implement the interface:
+
+type adapter struct{
+	gh gitHierarchy
+}
+
+func GetHierarchy(a graph.NodeExpander) gitHierarchy {
+	return a.(adapter).gh
+}
+// invalid receiver type gitHierarchy (pointer or interface type)
+// NodeIdentity
+func (a adapter) NodeIdentity() string {
+	// fmt.Println("NodeIdentity", s.n)
+	return GetHierarchy(a).Name()
+}
+
+
+func (a adapter) NodePrepare() graph.NodeExpander { //  testGraph
+
+	return adapter{convert(a.gh.(Base).ref )}
+}
+
+
+func (a adapter) NodeChildren()  []graph.NodeExpander {
+	refs := a.gh.Children()
+	// []*plumbing.Reference
+	// convert to ...
+	// map(refs, )
+	var result = make([]graph.NodeExpander, len(refs) )
+
+	for i, x := range refs {
+		result[i] = adapter{Base{x}}
+			// graph.NodeExpander
+	}
+
+	return result
+	/*
+	var divisors []graph.NodeExpander
+	return divisors
+	*/
+}
+
+
+// dump the linear graph from a given top.
+func WalkHierarchy(top *plumbing.Reference) (*[]graph.NodeExpander, *graph.Graph) {
+	// Create a gitHierarchy object/ array
+	// invoke
+	g := adapter{Base{top}}
+
+	fmt.Println("starting with node", g.NodeIdentity())
+
+	vertices, incidenceGraph := graph.DiscoverGraph( &[]graph.NodeExpander{g})
+	return vertices, incidenceGraph
 }
 
 func rebasePoset() {
