@@ -45,7 +45,7 @@ func (g *Graph) AddEdge(u, v int) {
 // edge from -> to
 // means we want order (..... from .... to..)
 // so to is larger/later ?
-func Sort(graph *Graph) ([]int, error) {
+func TopoSort(graph *Graph) ([]int, error) {
 	// map[int][]int, verticesCount int
 	incidence := graph.adjList
 	verticesCount := graph.vertices

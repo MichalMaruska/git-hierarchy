@@ -32,7 +32,7 @@ func TestTopoSort(t *testing.T) {
 	*/
 
 	// Call topologicalSort
-	result, err := Sort(graph)
+	result, err := TopoSort(graph)
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	} else {
@@ -57,7 +57,7 @@ func BenchmarkToposort(b *testing.B) {
 	b.ResetTimer()
 	for range b.N  { // b.Loop()
 	// Call topologicalSort
-	result, err := Sort(graph)
+	result, err := TopoSort(graph)
 	if err != nil {
 		// t.Errorf("Error: %s", err)
 	} else {
