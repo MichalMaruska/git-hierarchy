@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/michalmaruska/git-hierarchy/git-hierarchy"
-	"github.com/michalmaruska/git-hierarchy/graph"
+	// "github.com/michalmaruska/git-hierarchy/graph"
 	"os"
 	// "io"
 	"github.com/go-git/go-git/v5"
@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("Current head is", current.Name())
 	git_hierarchy.CheckIfError(err, "finding repository")
 
-	git_hierarchy.Walk_graph(current)
+	git_hierarchy.WalkHierarchy(current)
 	fmt.Println(current)
 	// walk_down_from()
 	// mark
