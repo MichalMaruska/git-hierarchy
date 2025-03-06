@@ -166,13 +166,11 @@ func segmentStart(name string) plumbing.ReferenceName {
 	return plumbing.ReferenceName(fmt.Sprintf(segmentStartPattern, name))
 }
 
-func isSegment(name string, repository *git.Repository) (bool,*plumbing.Reference) {
-	s := fmt.Sprintf(segmentBasePattern, name)
+func isSegment(name string, repository *git.Repository) (bool, *plumbing.Reference) {
+	s := segmentBase(name)
 
-	// returns the base and boolean?
-	base , err :=repository.Reference(plumbing.ReferenceName(s), false)
+	base , err := repository.Reference(s, false)
 	return (err == nil), base
-	// return referenceExists(repository, s)
 }
 
 //  *plumbing.ReferenceName
