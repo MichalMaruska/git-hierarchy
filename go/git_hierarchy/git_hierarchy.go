@@ -145,8 +145,8 @@ func summand_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbin
 
 
 // return collection
-func sumSummands(repository *git.Repository, sName string) []*plumbing.Reference {
-	return refsWithPrefix(repository,  sumSummandPrefix + sName + "/")
+func sumSummands(repository *git.Repository, name string) []*plumbing.Reference {
+	return refsWithPrefix(repository,  sumSummandPrefix + name + "/")
 }
 
 func isSum(name string, repository *git.Repository) (bool, []*plumbing.Reference) {
