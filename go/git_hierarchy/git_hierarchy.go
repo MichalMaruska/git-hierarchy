@@ -330,13 +330,13 @@ type GitHierarchy interface{
 }
 
 type  Segment struct {
-	ref *plumbing.Reference
+	Ref *plumbing.Reference
 	Base *plumbing.Reference
 	Start *plumbing.Reference // Hash
 }
 
 func (s Segment) Name() string {
-	return branchName(s.ref)
+	return branchName(s.Ref)
 }
 
 // only references
