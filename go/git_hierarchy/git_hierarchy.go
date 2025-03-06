@@ -12,7 +12,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	// "github.com/go-git/go-git/v5/plumbing/storer"
 	_ "github.com/go-git/go-git/v5/config"
-	_ "github.com/go-git/go-git/v5/plumbing/storer"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 
 	"github.com/samber/lo"
 	lom "github.com/samber/lo/mutable"
@@ -339,6 +339,36 @@ type  Segment struct {
 func (s Segment) Name() string {
 	return branchName(s.Ref)
 }
+
+func setReferenceTo(repository *git.Repository, reference *plumbing.Reference, target *plumbing.Reference) {
+	// target: ref, hash, ...
+	ref, err := storer.ResolveReference(repository.Storer, target.Name())
+	CheckIfError(err)
+
+	hash := ref.Hash() // assert it's a hash?
+
+	// , err := repository.Reference(segment.Base, true)
+	// plumbing.NewHash()
+	fmt.Println("setting", reference.Name(), "to", target.Name(), "= hash", hash)
+
+	// segment.SetStart(hash)
+	newRef := plumbing.NewHashReference(reference.Name(), hash)
+	err = repository.Storer.CheckAndSetReference(newRef, reference)
+	CheckIfError(err)
+}
+
+
+// set start to base/ref
+func (segment Segment) SegmentResetStart() {
+	// 1. why symbolic?
+	// how to reset to
+	// err := repository.Storer.SetReference(*plumbing.Reference)
+	// new base:
+	// ref, err :=
+	// CheckIfError(err)
+	setReferenceTo(TheRepository, segment.Start, segment.Base)
+}
+
 
 // only references
 func (s Segment) Children() []*plumbing.Reference {
