@@ -134,7 +134,8 @@ func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefi
 	return refs
 }
 
-func base_for(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference {
+//   { segment, @ref is base of }
+func base_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference {
 	// iterate over given prefix
 	return symbolic_refs_to(repository, ref, "refs/base/")
 }
@@ -272,7 +273,7 @@ func Rename(repository *git.Repository, from string, to string) {
 
 	// walk all bases, sums,
 	// change those:
-	above := base_for(repository, full)
+	above := base_of(repository, full)
 	sums_with := summand_of(repository, full)
 
 	var ref *plumbing.Reference
