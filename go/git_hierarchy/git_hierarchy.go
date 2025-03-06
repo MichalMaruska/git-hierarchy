@@ -331,8 +331,8 @@ type gitHierarchy interface{
 
 type  Segment struct {
 	ref *plumbing.Reference
-	base *plumbing.Reference
-	start *plumbing.Reference // Hash
+	Base *plumbing.Reference
+	Start *plumbing.Reference // Hash
 }
 
 func (s Segment) Name() string {
