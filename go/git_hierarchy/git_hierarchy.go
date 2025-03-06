@@ -143,27 +143,25 @@ func base_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.R
 	return symbolic_refs_to(repository, ref, "refs/base/")
 }
 
+//  { sum,  @ref is summand of sum}
 func summand_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference{
 	return symbolic_refs_to(repository, ref, "refs/sums/")
 }
-
 
 // return collection
 func sumSummands(repository *git.Repository, name string) []*plumbing.Reference {
 	return refsWithPrefix(repository,  sumSummandPrefix + name + "/")
 }
 
+// @name is always without refs/heads
 func isSum(name string, repository *git.Repository) (bool, []*plumbing.Reference) {
 	// expand all subtree
 	summands := sumSummands(repository, name)
 	return len(summands) > 0, summands
 }
 
-
-// todo: implicit repository ... global variable?
 func segmentBase(name string) plumbing.ReferenceName {
-	return plumbing.ReferenceName(
-		fmt.Sprintf(segmentBasePattern, name))
+	return plumbing.ReferenceName(fmt.Sprintf(segmentBasePattern, name))
 }
 
 func segmentStart(name string) plumbing.ReferenceName {
