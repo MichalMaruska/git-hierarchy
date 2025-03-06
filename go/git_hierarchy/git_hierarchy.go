@@ -116,7 +116,10 @@ func refsWithPrefix(repository *git.Repository, prefix string) []*plumbing.Refer
 	return collector
 }
 
-func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []*plumbing.Reference{
+//  { ref; ref ~prefix &&  which expand to  "ref: prefix ...." }
+// given a prefix, find all refs, whose name matches?
+// todo: make a goroutine: filter, and search the contents.
+func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []*plumbing.Reference {
 	collector := refsWithPrefix(repository, prefix)
 
 	var refs []*plumbing.Reference
