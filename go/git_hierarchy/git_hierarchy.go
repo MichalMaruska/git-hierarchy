@@ -323,9 +323,9 @@ func Rename(repository *git.Repository, from string, to string) {
 
 var TheRepo *git.Repository
 
-type gitHierarchy interface{
+type GitHierarchy interface{
 	// segment | sum
-	Children() []*plumbing.Reference // gitHierarchy
+	Children() []*plumbing.Reference // GitHierarchy
 	Name() string
 }
 
@@ -388,10 +388,9 @@ func (s Base) Name() string {
 }
 
 
-// it is comparable. plumbing.Reference
 
 // method of ... but we cannot implement it here
-func convert(ref *plumbing.Reference) gitHierarchy {
+func convert(ref *plumbing.Reference) GitHierarchy {
 	repository := TheRepo
 
 	name, _ := strings.CutPrefix(ref.Name().String(), head_prefix)
@@ -420,12 +419,12 @@ func convert(ref *plumbing.Reference) gitHierarchy {
 // so duplicate Refs are not equal?
 // repository.Reference should cache.
 // I need
-func identity(gh gitHierarchy) string {
+func identity(gh GitHierarchy) string {
 	return gh.Name()
 }
 
 
-// so refname <--> gitHierarchy?
+// so refname <--> GitHierarchy?
 // man ^^^ on that?
 
 // I want to accept
@@ -451,13 +450,13 @@ func identity(gh gitHierarchy) string {
 // implement the interface:
 
 type adapter struct{
-	gh gitHierarchy
+	gh GitHierarchy
 }
 
-func GetHierarchy(a graph.NodeExpander) gitHierarchy {
+func GetHierarchy(a graph.NodeExpander) GitHierarchy {
 	return a.(adapter).gh
 }
-// invalid receiver type gitHierarchy (pointer or interface type)
+// invalid receiver type GitHierarchy (pointer or interface type)
 // NodeIdentity
 func (a adapter) NodeIdentity() string {
 	// fmt.Println("NodeIdentity", s.n)
@@ -493,7 +492,7 @@ func (a adapter) NodeChildren()  []graph.NodeExpander {
 
 // dump the linear graph from a given top.
 func WalkHierarchy(top *plumbing.Reference) (*[]graph.NodeExpander, *graph.Graph) {
-	// Create a gitHierarchy object/ array
+	// Create a GitHierarchy object/ array
 	// invoke
 	g := adapter{Base{top}}
 
