@@ -389,11 +389,6 @@ func (s Sum) Name() string {
 	return branchName(s.ref)
 }
 
-/*
-func sumResolvedSummands(repository *git.Repository, sName string) []*plumbing.Reference {
-	return refsWithPrefix(repository,  sumSummandPrefix + sName + "/")
-}
-*/
 func (s Sum) Children() []*plumbing.Reference {
 	repository := TheRepository
 	sr := s.summands
