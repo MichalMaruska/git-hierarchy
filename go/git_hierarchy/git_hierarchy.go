@@ -48,7 +48,7 @@ func Unimplemented(){
 
 // MatchAny returns true if any of the RefSpec match with the given ReferenceName.
 // Massage the user-provided branch name into full reference.
-func fullHeadName(repository *git.Repository, refName string) *plumbing.Reference {
+func FullHeadName(repository *git.Repository, refName string) *plumbing.Reference {
 	// HEAD -> ?
 	// name
 	// heads/name
@@ -249,7 +249,7 @@ func branchName(full *plumbing.Reference) string {
 // Given a head (sum or segment), rename it.
 func Rename(repository *git.Repository, from string, to string) {
 	// var found bool
-	full := fullHeadName(repository, from)
+	full := FullHeadName(repository, from)
 	if (full == nil) {
 		// return error("the branch does not exist")
 		return
@@ -258,7 +258,7 @@ func Rename(repository *git.Repository, from string, to string) {
 
 	// no.... just drop the
 	toFull := head_prefix + to
-		// fullHeadName(repository, to)
+		// FullHeadName(repository, to)
 
 
 	fmt.Println("would use ", sName, "as base for derived references")
