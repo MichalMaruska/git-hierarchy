@@ -93,6 +93,12 @@ func sumSummand(name string, n int) plumbing.ReferenceName {
 		fmt.Sprintf(sumSummandPattern, name, n))
 }
 
+func refsWithPrefixIter(iterator storer.ReferenceIter, prefix string) storer.ReferenceIter {
+	return storer.NewReferenceFilteredIter (
+		func (ref *plumbing.Reference) bool {
+			return strings.HasPrefix(ref.Name().String(), prefix)},
+		iterator)
+}
 
 func refsWithPrefix(repository *git.Repository, prefix string) []*plumbing.Reference {
 	collector := []*plumbing.Reference{}
@@ -120,19 +126,20 @@ func refsWithPrefix(repository *git.Repository, prefix string) []*plumbing.Refer
 // given a prefix, find all refs, whose name matches?
 // todo: make a goroutine: filter, and search the contents.
 func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []*plumbing.Reference {
-	collector := refsWithPrefix(repository, prefix)
+	refIter, _ := repository.References()
+	iter := refsWithPrefixIter(refIter, prefix)
 
 	var refs []*plumbing.Reference
 	// todo: a function for this:
 	s := "ref: " + ref.Name().String()
 
-	for _, ref := range collector {
+	iter.ForEach ( func(ref *plumbing.Reference) error {
 		content := dump_symbolic_ref(ref)
 		// reduced, _ := strings.CutPrefix(content, "ref: ")
 		if s == content {
 			refs = append(refs, ref)
 		}
-	}
+		return nil})
 
 	return refs
 }
