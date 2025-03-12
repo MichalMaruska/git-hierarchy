@@ -89,8 +89,7 @@ func referenceExists(repository *git.Repository, name string) bool {
 }
 
 func sumSummand(name string, n int) plumbing.ReferenceName {
-	return plumbing.ReferenceName(
-		fmt.Sprintf(sumSummandPattern, name, n))
+	return plumbing.ReferenceName(fmt.Sprintf(sumSummandPattern, name, n))
 }
 
 func refsWithPrefixIter(iterator storer.ReferenceIter, prefix string) storer.ReferenceIter {
@@ -233,8 +232,7 @@ func rename_symbolic_reference(repository *git.Repository,
 var verbose = true
 
 // not symbolic
-func rename_reference(repository *git.Repository, ref *plumbing.Reference,
-	newName plumbing.ReferenceName) {
+func rename_reference(repository *git.Repository, ref *plumbing.Reference, newName plumbing.ReferenceName) {
 
 	if verbose {fmt.Println("Renaming ref", ref.Name().String(), "to", newName.String())}
 
@@ -482,7 +480,7 @@ func identity(gh GitHierarchy) string {
 
 // implement the interface:
 
-type adapter struct{
+type adapter struct {
 	gh GitHierarchy
 }
 
