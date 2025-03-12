@@ -34,15 +34,29 @@ func main() {
 	}
 
 	// plan: collect the graph, linearized,
-	// current_branch()
 	repository, err := git.PlainOpen(".")
 	git_hierarchy.CheckIfError(err, "finding repository")
 	git_hierarchy.TheRepository = repository
 
-	current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
-	fmt.Println("Current head is", current.Name())
+	args := getopt.Args()
 
-	vertices, incidenceGraph := git_hierarchy.WalkHierarchy(current)
+	var top *plumbing.Reference
+	// var err Error
+	if len(args) > 0 {
+		// := leads to crash!
+		top = git_hierarchy.FullHeadName(repository, args[0])
+		if top == nil {
+			os.Exit(-1)
+		}
+		fmt.Println("Will descend from", top.Name())
+	} else {
+		current, err := repository.Head()
+		git_hierarchy.CheckIfError(err)
+		fmt.Println("Current head is", current.Name())
+		top = current
+	}
+
+	vertices, incidenceGraph := git_hierarchy.WalkHierarchy(top)
 
 	order, err := graph.TopoSort(incidenceGraph)
 	git_hierarchy.CheckIfError(err)
