@@ -527,18 +527,3 @@ func WalkHierarchy(top *plumbing.Reference) (*[]graph.NodeExpander, *graph.Graph
 	vertices, incidenceGraph := graph.DiscoverGraph( &[]graph.NodeExpander{g})
 	return vertices, incidenceGraph
 }
-
-/*
-func rebasePoset() {
-
-	order, err := graph.TopoSort(incidenceGraph)
-	CheckIfError(err)
-	// dump index -> vertices[i]
-	fmt.Println("order:", order)
-	for _, j := range order {
-		fmt.Println((*vertices)[j].NodeIdentity())
-	}
-
-}
-
-*/
