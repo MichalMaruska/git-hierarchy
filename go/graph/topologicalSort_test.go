@@ -69,15 +69,6 @@ func BenchmarkToposort(b *testing.B) {
     }
 }
 
-// func TestMain(m *testing.M){}
-
-/// Examples
-func ExampleHello() {
-    fmt.Println("hello")
-    // Output: hello
-}
-
-
 // Fuzzing
 // randomly generated inputs
 //  f.Fuzz(func(t *testing.T, in []byte) {
