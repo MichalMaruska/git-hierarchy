@@ -136,11 +136,11 @@ func RebaseSum(sum Sum, options map[string]string ) rebaseResult {
 	// git commit -> merge -> parents
 
 	// CommitIter*
-	citer := commit.Parents()
+	commitIter := commit.Parents()
 	var notFound []*object.Commit
 
 	// func(*Commit) error) error
-	err = citer.ForEach(func (commit *object.Commit) error {
+	err = commitIter.ForEach(func (commit *object.Commit) error {
 		// func (c *Commit) ID() plumbing.Hash
 		hash := commit.ID()
 
