@@ -376,7 +376,7 @@ func (s Sum) Children() []*plumbing.Reference {
 }
 
 type Base struct {
-	ref *plumbing.Reference
+	Ref *plumbing.Reference
 }
 
 func (s Base) Children() []*plumbing.Reference {
@@ -384,7 +384,7 @@ func (s Base) Children() []*plumbing.Reference {
 }
 
 func (s Base) Name() string {
-	return branchName(s.ref)
+	return branchName(s.Ref)
 }
 
 
@@ -466,7 +466,7 @@ func (a adapter) NodeIdentity() string {
 
 func (a adapter) NodePrepare() graph.NodeExpander { //  testGraph
 
-	return adapter{convert(a.gh.(Base).ref )}
+	return adapter{convert(a.gh.(Base).Ref )}
 }
 
 
