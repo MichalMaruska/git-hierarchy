@@ -251,9 +251,10 @@ func rename_reference(repository *git.Repository, ref *plumbing.Reference, newNa
 	CheckIfError(err)
 }
 
-func branchName(full *plumbing.Reference) string {
+// no way to override
+func branchName(full plumbing.ReferenceName) string {
 	// fmt.Println("extract name from", full.Name().String())
-	sName, _ := strings.CutPrefix(full.Name().String(), head_prefix) // todo: strip
+	sName, _ := strings.CutPrefix(full.String(), head_prefix) // todo: strip
 	return sName
 }
 
@@ -266,7 +267,7 @@ func Rename(repository *git.Repository, from string, to string) {
 		// return error("the branch does not exist")
 		return
 	}
-	sName := branchName(full)
+	sName := branchName(full.Name())
 
 	// no.... just drop the
 	toFull := head_prefix + to
@@ -354,7 +355,7 @@ type  Segment struct {
 }
 
 func (s Segment) Name() string {
-	return branchName(s.Ref)
+	return branchName(s.Ref.Name())
 }
 
 func setReferenceTo(repository *git.Repository, reference *plumbing.Reference, target *plumbing.Reference) {
@@ -405,7 +406,7 @@ type  Sum struct {
 
 // todo: identical. Generics?
 func (s Sum) Name() string {
-	return branchName(s.ref)
+	return branchName(s.ref.Name())
 }
 
 func (s Sum) Children() []*plumbing.Reference {
@@ -429,7 +430,7 @@ func (s Base) Children() []*plumbing.Reference {
 }
 
 func (s Base) Name() string {
-	return branchName(s.Ref)
+	return branchName(s.Ref.Name())
 }
 
 
