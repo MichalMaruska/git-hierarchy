@@ -71,6 +71,10 @@ func RebaseSegment(segment Segment, options map[string]string ) rebaseResult {
 	// options:
 	repository := TheRepository
 
+	//  *Reference
+	mark := plumbing.NewSymbolicReference(".segment-cherry-pick", segment.Ref.Name())
+	err := repository.Storer.SetReference(mark)
+
 	// onto :=  segmentBase(seg.Name())
 	onto := segment.Base
 	start := segment.Start.Name().String()
