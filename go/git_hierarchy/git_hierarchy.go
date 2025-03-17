@@ -388,10 +388,10 @@ func (s Base) Name() string {
 }
 
 
-
 // method of ... but we cannot implement it here
-func convert(ref *plumbing.Reference) GitHierarchy {
-	repository := TheRepo
+// lift from regular ref into ... Segment/Sum/Base
+func Convert(ref *plumbing.Reference) GitHierarchy {
+	repository := TheRepository
 
 	name, _ := strings.CutPrefix(ref.Name().String(), head_prefix)
 
@@ -466,7 +466,7 @@ func (a adapter) NodeIdentity() string {
 
 func (a adapter) NodePrepare() graph.NodeExpander { //  testGraph
 
-	return adapter{convert(a.gh.(Base).Ref )}
+	return adapter{Convert(a.gh.(Base).Ref )}
 }
 
 
