@@ -1,5 +1,4 @@
 package git_hierarchy
-// - syntax error: unexpected -, expected semicolon or newline
 
 import (
 	"fmt"
@@ -8,9 +7,10 @@ import (
 	"os"
 	// "io"
 	"github.com/go-git/go-git/v5"
+	// how come this git, not go-git ? or is that the whole module with git package inside?
+
 	// . "github.com/go-git/go-git/v5/_examples"
 	"github.com/go-git/go-git/v5/plumbing"
-	// "github.com/go-git/go-git/v5/plumbing/storer"
 	_ "github.com/go-git/go-git/v5/config"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 
@@ -82,6 +82,7 @@ const segmentBasePattern = "refs/base/%s"
 const segmentStartPattern = "refs/start/%s"
 
 
+// in the storer?
 func referenceExists(repository *git.Repository, name string) bool {
 	// not resolved
 	_, error := repository.Reference(plumbing.ReferenceName(name), false)
@@ -91,6 +92,8 @@ func referenceExists(repository *git.Repository, name string) bool {
 func sumSummand(name string, n int) plumbing.ReferenceName {
 	return plumbing.ReferenceName(fmt.Sprintf(sumSummandPattern, name, n))
 }
+
+/* todo: */
 
 func refsWithPrefixIter(iterator storer.ReferenceIter, prefix string) storer.ReferenceIter {
 	return storer.NewReferenceFilteredIter (
@@ -125,6 +128,7 @@ func refsWithPrefix(repository *git.Repository, prefix string) []*plumbing.Refer
 // given a prefix, find all refs, whose name matches?
 // todo: make a goroutine: filter, and search the contents.
 func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefix string) []*plumbing.Reference {
+	// collector := refsWithPrefix(repository, prefix)
 	refIter, _ := repository.References()
 	iter := refsWithPrefixIter(refIter, prefix)
 
@@ -132,6 +136,7 @@ func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefi
 	// todo: a function for this:
 	s := "ref: " + ref.Name().String()
 
+	// for _, ref := range collector {
 	iter.ForEach ( func(ref *plumbing.Reference) error {
 		content := dump_symbolic_ref(ref)
 		// reduced, _ := strings.CutPrefix(content, "ref: ")
@@ -142,6 +147,8 @@ func symbolic_refs_to(repository *git.Repository, ref *plumbing.Reference, prefi
 
 	return refs
 }
+
+/// Not exported!
 
 //   { segment, @ref is base of }
 func base_of(repository *git.Repository, ref *plumbing.Reference)  []*plumbing.Reference {
@@ -192,14 +199,13 @@ func dump_symbolic_ref(ref *plumbing.Reference) string {
 	// "ref:"
 }
 
-// drop
-// ReferenceStorer
 func set_symbolic_reference(repository *git.Repository,
 	refName plumbing.ReferenceName, content string) *plumbing.Reference {
 	// todo: NewReferenceFromStrings(content)
 	reduced, _ := strings.CutPrefix(content, "ref: ")
 
 	ref := plumbing.NewSymbolicReference(refName, plumbing.ReferenceName(reduced))
+	// ReferenceStorer
 	repository.Storer.SetReference(ref)
 	return ref
 }
@@ -246,11 +252,12 @@ func rename_reference(repository *git.Repository, ref *plumbing.Reference, newNa
 }
 
 func branchName(full *plumbing.Reference) string {
-	// fmt.Println("cut", head_prefix, "from", full.Name().String())
+	// fmt.Println("extract name from", full.Name().String())
 	sName, _ := strings.CutPrefix(full.Name().String(), head_prefix) // todo: strip
 	return sName
 }
 
+/// Public api:
 // Given a head (sum or segment), rename it.
 func Rename(repository *git.Repository, from string, to string) {
 	// var found bool
@@ -328,6 +335,11 @@ func Rename(repository *git.Repository, from string, to string) {
 
 var TheRepository *git.Repository
 
+/*
+type Rebasable interface{
+	rebase
+}
+*/
 
 type GitHierarchy interface{
 	// segment | sum
@@ -363,6 +375,7 @@ func setReferenceTo(repository *git.Repository, reference *plumbing.Reference, t
 }
 
 
+
 // set start to base/ref
 func (segment Segment) SegmentResetStart() {
 	// 1. why symbolic?
@@ -385,8 +398,9 @@ func (s Segment) Children() []*plumbing.Reference {
 
 
 type  Sum struct {
+	// why pointer? and it should be const.
 	ref *plumbing.Reference
-	summands  []*plumbing.Reference
+	summands []*plumbing.Reference // can be map[int]*plumbing.Reference, or just array
 }
 
 // todo: identical. Generics?
@@ -400,7 +414,7 @@ func (s Sum) Children() []*plumbing.Reference {
 	lom.Reverse(sr)
 	return lo.Map(sr,
 		func(x *plumbing.Reference, index int) *plumbing.Reference {
-			ref, err := repository.Reference(x.Name(), true)
+			ref, err := repository.Reference(x.Name(), true) // only 1 step!
 			CheckIfError(err)
 			return ref
 		})
@@ -424,7 +438,10 @@ func (s Base) Name() string {
 func Convert(ref *plumbing.Reference) GitHierarchy {
 	repository := TheRepository
 
-	name, _ := strings.CutPrefix(ref.Name().String(), head_prefix)
+	// todo: must be head, not tag or ...
+	name := ref.Name().String()
+	// assert(string.isPrefix(head_prefix, name)
+	name, _ = strings.CutPrefix(name, head_prefix)
 
 	if is, summands := isSum(name, repository); is {
 		return Sum{ref, summands}
@@ -441,19 +458,10 @@ func Convert(ref *plumbing.Reference) GitHierarchy {
 }
 
 // ErrStop
-// discover_subgraph
-// hopefully acyclic
-// type HandlerFunc func(ResponseWriter, *Request)
-// I need:
 
 // - not string ... what is required NewSet .. `Comparable'
 // so duplicate Refs are not equal?
 // repository.Reference should cache.
-// I need
-func identity(gh GitHierarchy) string {
-	return gh.Name()
-}
-
 
 // so refname <--> GitHierarchy?
 // man ^^^ on that?
@@ -463,22 +471,6 @@ func identity(gh GitHierarchy) string {
 //  (node)
 //  identity
 //  neighbors
-
-// so I have read-graph
-// then ... toposort.
-// which work by ...?
-//l
-
-// - no convert.
-// - callback to handle edges()
-
-// I need an interface, and wire
-// identity -> Name
-
-
-// any
-
-// implement the interface:
 
 type adapter struct {
 	gh GitHierarchy
@@ -495,7 +487,7 @@ func (a adapter) NodeIdentity() string {
 }
 
 
-func (a adapter) NodePrepare() graph.NodeExpander { //  testGraph
+func (a adapter) NodePrepare() graph.NodeExpander {
 
 	return adapter{Convert(a.gh.(Base).Ref )}
 }
@@ -510,24 +502,18 @@ func (a adapter) NodeChildren()  []graph.NodeExpander {
 
 	for i, x := range refs {
 		result[i] = adapter{Base{x}}
-			// graph.NodeExpander
 	}
 
 	return result
-	/*
-	var divisors []graph.NodeExpander
-	return divisors
-	*/
 }
 
 
 // dump the linear graph from a given top.
 func WalkHierarchy(top *plumbing.Reference) (*[]graph.NodeExpander, *graph.Graph) {
 	// Create a GitHierarchy object/ array
-	// invoke
 	g := adapter{Base{top}}
 
-	fmt.Println("starting with node", g.NodeIdentity())
+	// fmt.Println("walk: starting with node", g.NodeIdentity())
 
 	vertices, incidenceGraph := graph.DiscoverGraph( &[]graph.NodeExpander{g})
 	return vertices, incidenceGraph
