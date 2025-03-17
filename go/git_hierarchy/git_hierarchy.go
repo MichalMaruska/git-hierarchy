@@ -1,4 +1,5 @@
 package git_hierarchy
+// - syntax error: unexpected -, expected semicolon or newline
 
 import (
 	"fmt"
@@ -88,7 +89,6 @@ func referenceExists(repository *git.Repository, name string) bool {
 }
 
 func sumSummand(name string, n int) plumbing.ReferenceName {
-
 	return plumbing.ReferenceName(
 		fmt.Sprintf(sumSummandPattern, name, n))
 }
@@ -358,6 +358,11 @@ func (s Sum) Name() string {
 	return branchName(s.ref)
 }
 
+/*
+func sumResolvedSummands(repository *git.Repository, sName string) []*plumbing.Reference {
+	return refsWithPrefix(repository,  sumSummandPrefix + sName + "/")
+}
+*/
 func (s Sum) Children() []*plumbing.Reference {
 	repository := TheRepo
 	sr := s.summands
@@ -383,6 +388,7 @@ func (s Base) Name() string {
 }
 
 
+// it is comparable. plumbing.Reference
 
 // method of ... but we cannot implement it here
 func convert(ref *plumbing.Reference) gitHierarchy {
@@ -497,5 +503,17 @@ func WalkHierarchy(top *plumbing.Reference) (*[]graph.NodeExpander, *graph.Graph
 	return vertices, incidenceGraph
 }
 
+/*
 func rebasePoset() {
+
+	order, err := graph.TopoSort(incidenceGraph)
+	CheckIfError(err)
+	// dump index -> vertices[i]
+	fmt.Println("order:", order)
+	for _, j := range order {
+		fmt.Println((*vertices)[j].NodeIdentity())
+	}
+
 }
+
+*/

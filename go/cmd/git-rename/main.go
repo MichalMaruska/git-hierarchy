@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/michalmaruska/git-hierarchy/git-hierarchy"
+	"github.com/michalmaruska/git-hierarchy/git_hierarchy"
 
 	"fmt"
 	"os"

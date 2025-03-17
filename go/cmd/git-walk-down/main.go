@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/michalmaruska/git-hierarchy/git-hierarchy"
+	"github.com/michalmaruska/git-hierarchy/git_hierarchy"
 	"github.com/michalmaruska/git-hierarchy/graph"
 
 	"github.com/go-git/go-git/v5"
