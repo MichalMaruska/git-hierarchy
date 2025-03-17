@@ -67,15 +67,17 @@ func FetchUpstreamOf(ref *plumbing.Reference) {
 
 		CheckIfError(err, "load config")
 		config.Validate()
-		br := config.Branches[branchName(ref)] //  refName.String()
+		br := config.Branches[branchName(ref.Name())] //  refName.String()
 		if (br != nil) {
-			println("ok, found info: ", br.Name, br.Remote, br.Merge)
+			println("it follows a remote branch -- found info: ", br.Name, br.Remote, br.Merge)
 		}
 
 		// is it on it?
-		if compareRefs(ref, remoteBranch(br.Remote, br.Merge)) {
-			// gitRun("pull", refName, string(br.Merge) + ":")
-			gitRun("fetch", br.Remote, string(br.Merge) + ":")
+		if RefsToSameCommit(ref, remoteBranch(br.Remote, br.Merge)) {
+			println("so the remote branch is identical, let's fetch")
+			// gitRun("remote","prune", br.Remote)
+			gitRun("fetch", "--prune", "--progress", "--verbose", br.Remote, br.Merge.String() + ":" + refName.String())
+			// gitRun("fetch", br.Remote, string(br.Merge) + ":")
 		}
 		// git fetch debian refs/heads/main:
 
