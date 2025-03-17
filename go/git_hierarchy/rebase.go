@@ -2,6 +2,7 @@ package git_hierarchy
 
 import (
 	"fmt"
+	"iter"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 	"github.com/go-git/go-git/v5/plumbing/object"
@@ -110,6 +111,21 @@ func RebaseSegment(segment Segment, options map[string]string ) rebaseResult {
 	}
 
 	return RebaseSegmentFinish(segment)
+}
+
+// convert from error-push to bool-push:
+// func pushIterator[iface object.CommitIter, V *object.Commit] (ci iface) iter.Seq[V] {
+func pushIterator (ci object.CommitIter) iter.Seq[*object.Commit] {
+
+	return func(yield func(value *object.Commit) bool) {
+		ci.ForEach(func (value *object.Commit) error {
+			cont := yield(value)
+			if !cont {
+				return storer.ErrStop
+			}
+			return nil
+		})
+	}
 }
 
 // func (*Commit) IsAncestor
