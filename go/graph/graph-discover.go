@@ -1,27 +1,21 @@
 package graph
-// graphDiscover
 
 import (
-	// "fmt"
-	// mapset "github.com/deckarep/golang-set/v2"
-	// "container/list"
+	"fmt"
 )
 
+const debug = false
 
 type NodeExpander interface {
-	// these are all implicitly methods!
 	NodeIdentity() string
-	NodePrepare() NodeExpander
+	NodePrepare() NodeExpander   // visit ... pre-order?
 	NodeChildren() []NodeExpander
 }
 
 func DiscoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
-	// *list.List
-	// a slice:
 	var vertices []NodeExpander = *topNodes
-
 	// make([]*NodeExpander, 0, 10)
-	// list.New()
+
 	// vertices = append(vertices, top) // .PushFront
 	tail := len(*topNodes)
 	// |--------------------......|  vertices
@@ -29,7 +23,6 @@ func DiscoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 
 	// var known map[string]int
 	known  := make(map[string]int)
-	// mapset.NewSet[string]()
 	for i, node := range *topNodes {
 		known[node.NodeIdentity()] = i // current
 	}
@@ -40,7 +33,9 @@ func DiscoverGraph(topNodes *[]NodeExpander) (*[]NodeExpander, *Graph) {
 		this := vertices[current]
 
 		// Body. Only once per node. So terminates.
-		// fmt.Println("looking at", this.NodeIdentity())
+		if debug {
+			fmt.Println("looking at", this.NodeIdentity())
+		}
 
 		// todo: convert Ref -> gitHierarchy
 		node := this.NodePrepare()
