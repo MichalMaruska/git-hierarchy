@@ -17,8 +17,40 @@ func usage() {
 	getopt.PrintUsage(os.Stderr)
 }
 
+func contRebase(repository *git.Repository) {
+
+	ref, err := repository.Reference(".segment-cherry-pick", false)
+	git_hierarchy.CheckIfError(err, "finding mark")
+
+	ref1, err :=  repository.Reference(ref.Target(), false)
+	git_hierarchy.CheckIfError(err, "finding segment being rebased")
+
+	// git cherry-pick --abort
+	// if cherry-pick finished
+	gh := git_hierarchy.Convert(ref1)
+
+	// var result rebaseResult
+	switch v := gh.(type) {
+	case  git_hierarchy.Segment:
+		git_hierarchy.RebaseSegmentFinish(gh.(git_hierarchy.Segment))
+	default:
+		fmt.Println("unexpected git_hierarchy type", v)
+		// error("unexpected")
+		// result = RebaseFailed
+	}
+
+	// mark := plumbing.NewSymbolicReference(".segment-cherry-pick", segment.Ref.Name())
+	err = repository.Storer.RemoveReference(ref.Name())
+	git_hierarchy.CheckIfError(err, "removing Mark")
+
+	// echo -n "was rebasing $segment"
+	// gitRun("switch", segment)
+}
+
 func main() {
 	helpFlag := getopt.BoolLong("help", 'h', "display help")
+	contFlag := getopt.BoolLong("continue", 'c', "continue after manual fix")
+
 	// no errors, just fail:
 	getopt.SetUsage(func() {
 		getopt.PrintUsage(os.Stderr)
@@ -37,6 +69,12 @@ func main() {
 	repository, err := git.PlainOpen(".")
 	git_hierarchy.CheckIfError(err, "finding repository")
 	git_hierarchy.TheRepository = repository
+
+
+	if *contFlag {
+		contRebase(repository)
+		os.Exit(0)
+	}
 
 	args := getopt.Args()
 
