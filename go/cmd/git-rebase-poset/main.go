@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
+
 	"github.com/pborman/getopt/v2" // version 2
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -34,20 +36,22 @@ func main() {
 	// plan: collect the graph, linearized,
 	// current_branch()
 	repository, err := git.PlainOpen(".")
+	git_hierarchy.CheckIfError(err, "finding repository")
 	git_hierarchy.TheRepository = repository
 
 	current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
 	fmt.Println("Current head is", current.Name())
-	git_hierarchy.CheckIfError(err, "finding repository")
 
-	git_hierarchy.WalkHierarchy(current)
-	fmt.Println(current)
-	// walk_down_from()
-	// mark
-	// unmark
+	vertices, incidenceGraph := git_hierarchy.WalkHierarchy(current)
 
-	// state
-	// gitRebasePoset()
+	order, err := graph.TopoSort(incidenceGraph)
+	git_hierarchy.CheckIfError(err)
 
+	// I need reverse
+	for _, j := range slices.Backward(order) {
+		a := (*vertices)[j]
+		rebaseNode(a)
+	}
+	// fmt.Println(current)
 	os.Exit(0)
 }
