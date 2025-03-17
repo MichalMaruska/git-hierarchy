@@ -8,6 +8,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 	//                                     ^^ package
 	//                 ^^^^ module
+	"github.com/samber/lo"
 )
 
 // func ReferenceHash
@@ -128,51 +129,153 @@ func pushIterator (ci object.CommitIter) iter.Seq[*object.Commit] {
 	}
 }
 
-// func (*Commit) IsAncestor
-func RebaseSum(sum Sum, options map[string]string ) rebaseResult {
-	// is the sum a merge?
-	// func ParseObjectType(value string) (typ ObjectType, err error)
+func mapSummandsToCommitsReverse(sum Sum) map[plumbing.Hash]*plumbing.Reference {
 
-	// mmc: why?
 	var summands = make(map[plumbing.Hash]*plumbing.Reference)
 
 	for _, ref := range sum.summands {
 		hash, err := TheRepository.ResolveRevision(plumbing.Revision(ref.Name().String()))
 		CheckIfError(err, "resolving ref to hash")
-		// ref.Hash()
+
 		fmt.Println("summand", ref.Name(), "points at", hash)
 		summands[*hash] = ref
 	}
 
+	return summands
+}
+
+func sumParentIter(sum Sum) object.CommitIter {
 	// (*Commit, error)
 	commit, err := TheRepository.CommitObject(sum.ref.Hash())
-	// object.GetCommit(TheRepository.Storer, sum.ref.Hash())
-
 	CheckIfError(err, "resolving ref to commit")
+
 	// git commit -> merge -> parents
+	return commit.Parents()
+}
 
-	// CommitIter*
-	commitIter := commit.Parents()
-	var notFound []*object.Commit
+// iterate, match with a `map', return list/slice of missing (or iterator)                                    vvvv not Item.
+func findMissing[Item any, Item2, Id comparable](
+	iterator func(yield func(Item) bool),
+	id func(Item) Id,
+	known map[Id]Item2) []Item {
+	// where
+	// K comparable, V int64 | float64
 
-	// func(*Commit) error) error
-	err = commitIter.ForEach(func (commit *object.Commit) error {
-		// func (c *Commit) ID() plumbing.Hash
-		hash := commit.ID()
+	var notFound []Item
+	// = make([]Item, 5, 5) //
 
-		if elem, ok := summands[hash]; ok {
-			fmt.Println("parent", hash, "found to be", elem.Name())
+	for item := range iterator {
+		// err := iter.ForEach(func (item* Item) error {
+		hash := id(item)
+
+		if _, ok := known[hash]; ok { // elem
+			fmt.Println("parent", hash, "found to be") // id(elem)
 		} else {
 			fmt.Println("parent", hash, "NOT found in summands")
-			notFound = append(notFound, commit)
+
+			notFound = append(notFound, item)
+			fmt.Println("now :", len(notFound))
 		}
-		return nil
-	})
+	}
 
-	// if len(notFound)  // empty
+	// CheckIfError(err, "iteration")
+	fmt.Println("returning:", len(notFound))
+	return notFound
+}
 
+
+// 2 possible ways:
+//
+// we have Next() so `pull' iterator.
+// we could make a push one from that.
+// Pull returns 2  functions: next and stop()
+// Pull2  converts Seq2 to ... ^^^      ^^^
+func RebaseSum(sum Sum, options map[string]string ) rebaseResult {
+	// is the sum a merge?
+
+	hashToSummands := mapSummandsToCommitsReverse(sum) // to References !!
+
+	commitIter := sumParentIter(sum)
+
+	var notFound []*object.Commit
+
+	notFound = findMissing[*object.Commit, *plumbing.Reference, plumbing.Hash] (
+		// generate objects
+		pushIterator(commitIter),
+		// name the objects
+		func(commit *object.Commit) plumbing.Hash { return commit.ID() },
+		// set of known objects:
+		hashToSummands)
+
+	piecewise := false
+	// empty
+	if len(notFound) > 0 {
+		fmt.Println("so the sum is not up-to-date!")
+		// we have to remerge
+		// gitRun("checkout", "--detach", first)
+		// gitRuns"branch", "--force", work_branch, "HEAD")
+
+		// resolve & divide:
+		first, _ := TheRepository.Reference(sum.summands[0].Target(), false)
+
+		others := lo.Map(sum.summands[1:],
+			func (ref *plumbing.Reference, _ int) *plumbing.Reference {
+				pointerRef, _ := TheRepository.Reference(ref.Target(), false)
+				return pointerRef
+			})
+
+		tempHead := "temp-sum"
+
+		// why not checkout  --
+		gitRun("checkout", "--no-track", "-B", tempHead, first.Name().String())
+
+		var message = "Sum:" + sum.Name() + "\n\n" + first.Name().String()
+		for i, ref := range others {
+			// resolve them! maybe sum.summands should be a map N -> ref
+			// pointerRef, _ := TheRepository.Reference(ref.Target(), false)
+			message += " + " + ref.Name().String()
+			if i % 3 == 0 {
+				message += "\n"
+			}
+		}
+
+		otherNames := lo.Map(others,
+			func (ref *plumbing.Reference, _ int) string {
+				return ref.Name().String()})
+
+		// otherNames...  cannot use otherNames (variable of type []string) as []any value in argument to
+		fmt.Println("summands are:", first, otherNames)
+
+		if piecewise {
+			// reset & retry
+			// piecewise:
+			for _, next := range others {
+				gitRun("merge", "-m",
+					"Sum: " + next.Name().String() + " into " + sum.Name(),
+					"--rerere-autoupdate", next.Name().String())
+			}
+		} else {
+			/* fixme: https://go.dev/ref/spec#Passing_arguments_to_..._parameters */
+			err := gitRunStatus(append([]string{
+				"merge", "-m", message, // todo: newline -> file
+				"--rerere-autoupdate",
+				"--strategy", "octopus",
+				"--strategy", "recursive",
+				"--strategy-option", "patience",
+				"--strategy-option", "ignore-space-change"},
+				otherNames...)...)
+
+			if err != nil {
+				return RebaseFailed
+			}
+
+			// finish
+			gitRun("branch", "--force", sum.Name(), tempHead)
+			gitRun("switch", sum.Name())
+			gitRun("branch", "--delete", tempHead)
+		}
+	}
 	// do we have a hint -- another merge?
-// citer.Close()
 	// git merge
 	return RebaseDone
 }
