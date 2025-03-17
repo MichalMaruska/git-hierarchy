@@ -49,9 +49,15 @@ func main() {
 
 	// I need reverse
 	for _, j := range slices.Backward(order) {
-		a := (*vertices)[j]
-		rebaseNode(a)
+		gh := git_hierarchy.GetHierarchy((*vertices)[j])
+
+		status := git_hierarchy.RebaseNode(gh)
+		if status == git_hierarchy.RebaseFailed {
+			fmt.Println("failed on", gh.Name())
+			os.Exit(1)
+		}
 	}
+
 	// fmt.Println(current)
 	os.Exit(0)
 }
