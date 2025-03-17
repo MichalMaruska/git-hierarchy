@@ -321,7 +321,8 @@ func Rename(repository *git.Repository, from string, to string) {
 
 }
 
-var TheRepo *git.Repository
+var TheRepository *git.Repository
+
 
 type GitHierarchy interface{
 	// segment | sum
@@ -341,7 +342,7 @@ func (s Segment) Name() string {
 
 // only references
 func (s Segment) Children() []*plumbing.Reference {
-	repository := TheRepo
+	repository := TheRepository
 	base, err := repository.Reference(plumbing.ReferenceName(segmentBase(s.Name())), true)
 	CheckIfError(err)
 	return []*plumbing.Reference{base}
@@ -364,7 +365,7 @@ func sumResolvedSummands(repository *git.Repository, sName string) []*plumbing.R
 }
 */
 func (s Sum) Children() []*plumbing.Reference {
-	repository := TheRepo
+	repository := TheRepository
 	sr := s.summands
 	lom.Reverse(sr)
 	return lo.Map(sr,

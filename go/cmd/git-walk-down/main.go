@@ -13,7 +13,7 @@ import (
 func main() {
 
 	repository, err := git.PlainOpen(".")
-	git_hierarchy.TheRepo = repository
+	git_hierarchy.TheRepository = repository
 
 	current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
 	// fmt.Println(current)

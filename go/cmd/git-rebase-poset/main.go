@@ -34,7 +34,7 @@ func main() {
 	// plan: collect the graph, linearized,
 	// current_branch()
 	repository, err := git.PlainOpen(".")
-	git_hierarchy.TheRepo = repository
+	git_hierarchy.TheRepository = repository
 
 	current, err := repository.Reference(plumbing.ReferenceName("HEAD"), true)
 	fmt.Println("Current head is", current.Name())
