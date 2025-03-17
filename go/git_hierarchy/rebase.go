@@ -108,6 +108,55 @@ func RebaseSegment(segment Segment, options map[string]string ) rebaseResult {
 	return RebaseSegmentFinish(segment)
 }
 
+// func (*Commit) IsAncestor
+func RebaseSum(sum Sum, options map[string]string ) rebaseResult {
+	// is the sum a merge?
+	// func ParseObjectType(value string) (typ ObjectType, err error)
+
+	// mmc: why?
+	var summands = make(map[plumbing.Hash]*plumbing.Reference)
+
+	for _, ref := range sum.summands {
+		hash, err := TheRepository.ResolveRevision(plumbing.Revision(ref.Name().String()))
+		CheckIfError(err, "resolving ref to hash")
+		// ref.Hash()
+		fmt.Println("summand", ref.Name(), "points at", hash)
+		summands[*hash] = ref
+	}
+
+	// (*Commit, error)
+	commit, err := TheRepository.CommitObject(sum.ref.Hash())
+	// object.GetCommit(TheRepository.Storer, sum.ref.Hash())
+
+	CheckIfError(err, "resolving ref to commit")
+	// git commit -> merge -> parents
+
+	// CommitIter*
+	citer := commit.Parents()
+	var notFound []*object.Commit
+
+	// func(*Commit) error) error
+	err = citer.ForEach(func (commit *object.Commit) error {
+		// func (c *Commit) ID() plumbing.Hash
+		hash := commit.ID()
+
+		if elem, ok := summands[hash]; ok {
+			fmt.Println("parent", hash, "found to be", elem.Name())
+		} else {
+			fmt.Println("parent", hash, "NOT found in summands")
+			notFound = append(notFound, commit)
+		}
+		return nil
+	})
+
+	// if len(notFound)  // empty
+
+	// do we have a hint -- another merge?
+// citer.Close()
+	// git merge
+	return RebaseDone
+}
+
 // options map
 // debug, dry...
 // git-rebase-ref $dry_option $GIT_DEBUG_OPTIONS $ref;
@@ -129,8 +178,7 @@ func RebaseNode(gh GitHierarchy) rebaseResult {
 		return RebaseSegment(v, options)
 	case  Sum:
 		fmt.Println("sum !", v.Name())
-		// rebaseSum(v, options)
-		// return RebaseSum(v, options)
+		return RebaseSum(v, options)
 	case  Base:
 		fmt.Println("plain base reference", v.Name())
 		return RebaseDone
