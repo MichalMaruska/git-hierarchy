@@ -27,8 +27,14 @@ func SplitRemoteRef(refName plumbing.ReferenceName) (string, string) {
 	return remote, remoteBranch
 }
 
-func remoteBranch(remote string, remoteRef *plumbing.ReferenceName) plumbing.ReferenceName{
-	return plumbing.ReferenceName("remote/" + remote + branchName(remoteRef))
+// Given remote and branch name _on_ the remote (this is used ),
+// get the local name for that. Maybe we should use refspec?
+func remoteBranch(remote string, remoteRef plumbing.ReferenceName) *plumbing.Reference{
+	name := plumbing.ReferenceName("refs/remotes/" + remote + "/" + branchName(remoteRef))
+	println("searching for", name)
+	ref, err := TheRepository.Reference(name, true)
+	CheckIfError(err)
+	return ref
 }
 
 func FetchUpstreamOf(ref *plumbing.Reference) {
