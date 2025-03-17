@@ -3,7 +3,12 @@ package git_hierarchy
 import (
 	"fmt"
 	"strings"
+
+	// "github.com/go-git/go-git/v5" // why named git not go-git
 	"github.com/go-git/go-git/v5/plumbing"
+	// "github.com/go-git/go-git/v5/config"
+	// ~/git/go-git/config/branch.go
+	// "github.com/go-git/go-git/v5/format/config"
 )
 
 func SplitRemoteRef(refName plumbing.ReferenceName) (string, string) {
