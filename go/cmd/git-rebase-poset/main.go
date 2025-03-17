@@ -17,6 +17,34 @@ func usage() {
 	getopt.PrintUsage(os.Stderr)
 }
 
+func startRebase(top *plumbing.Reference) {
+	vertices, incidenceGraph := git_hierarchy.WalkHierarchy(top)
+
+	order, err := graph.TopoSort(incidenceGraph)
+	git_hierarchy.CheckIfError(err)
+
+	/* todo:
+	NewReferenceSliceIter(
+	    Map(order, func (index int) { git_hierarchy.GetHierarchy((*vertices)[index]) }
+	*/
+	// I need reverse
+	for _, j := range slices.Backward(order) {
+		gh := git_hierarchy.GetHierarchy((*vertices)[j])
+
+		fmt.Println("processing:", gh.Name())
+		switch gh.(type) {
+		case git_hierarchy.Base:
+			git_hierarchy.FetchUpstreamOf(gh.(git_hierarchy.Base).Ref)
+		default:
+			status := git_hierarchy.RebaseNode(gh)
+			if status == git_hierarchy.RebaseFailed {
+				fmt.Println("failed on", gh.Name())
+				os.Exit(1)
+			}
+		}
+	}
+}
+
 func contRebase(repository *git.Repository) {
 
 	ref, err := repository.Reference(".segment-cherry-pick", false)
@@ -94,21 +122,8 @@ func main() {
 		top = current
 	}
 
-	vertices, incidenceGraph := git_hierarchy.WalkHierarchy(top)
 
-	order, err := graph.TopoSort(incidenceGraph)
-	git_hierarchy.CheckIfError(err)
-
-	// I need reverse
-	for _, j := range slices.Backward(order) {
-		gh := git_hierarchy.GetHierarchy((*vertices)[j])
-
-		status := git_hierarchy.RebaseNode(gh)
-		if status == git_hierarchy.RebaseFailed {
-			fmt.Println("failed on", gh.Name())
-			os.Exit(1)
-		}
-	}
+	startRebase(top)
 
 	// fmt.Println(current)
 	os.Exit(0)
