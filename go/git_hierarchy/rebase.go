@@ -161,6 +161,15 @@ func RebaseSum(sum Sum, options map[string]string ) rebaseResult {
 	return RebaseDone
 }
 
+var stashCommit *object.Commit
+
+func unstashIfStashed() {
+	if stashCommit != nil {
+		// cecho yellow "unstashing now."
+		gitRun("stash", "pop", "--quiet")
+	}
+}
+
 // options map
 // debug, dry...
 // git-rebase-ref $dry_option $GIT_DEBUG_OPTIONS $ref;
@@ -176,19 +185,25 @@ func RebaseNode(gh GitHierarchy) rebaseResult {
 
 	// fmt.Println("rebasing now", gh.Name())
 
+	var result rebaseResult
 	switch v := gh.(type) {
 	case  Segment:
 		fmt.Println("segment", v.Name())
-		return RebaseSegment(v, options)
+		result = RebaseSegment(v, options)
 	case  Sum:
 		fmt.Println("sum !", v.Name())
-		return RebaseSum(v, options)
+		result = RebaseSum(v, options)
 	case  Base:
 		fmt.Println("plain base reference", v.Name())
-		return RebaseDone
+		result = RebaseDone
 	default:
 		fmt.Println("unexpected git_hierarchy type")
 		// error("unexpected")
-		return RebaseFailed
+		result = RebaseFailed
 	}
+
+	if (result != RebaseFailed) {
+		unstashIfStashed()
+	}
+	return result
 }
