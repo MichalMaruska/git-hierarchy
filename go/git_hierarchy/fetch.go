@@ -4,11 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	// "github.com/go-git/go-git/v5" // why named git not go-git
 	"github.com/go-git/go-git/v5/plumbing"
-	// "github.com/go-git/go-git/v5/config"
-	// ~/git/go-git/config/branch.go
-	// "github.com/go-git/go-git/v5/format/config"
 )
 
 func SplitRemoteRef(refName plumbing.ReferenceName) (string, string) {
@@ -64,20 +60,24 @@ func FetchUpstreamOf(ref *plumbing.Reference) {
 		// config.LoadConfig(config.LocalScope)
 		//  GlobalScope  ... ~/.gitconfig ... is broken. [x.y] section
 		// LocalScope should be read from the a ConfigStorer
-
 		CheckIfError(err, "load config")
 		config.Validate()
-		br := config.Branches[branchName(ref.Name())] //  refName.String()
-		if (br != nil) {
-			println("it follows a remote branch -- found info: ", br.Name, br.Remote, br.Merge)
+
+		branchInfo := config.Branches[branchName(ref.Name())] //  refName.String()
+		if (branchInfo == nil) {
+			println("it does not follow a remote branch")
+			return
 		}
 
+		println("it follows a remote branch -- found info: ", branchInfo.Name, branchInfo.Remote, branchInfo.Merge)
+
 		// is it on it?
-		if RefsToSameCommit(ref, remoteBranch(br.Remote, br.Merge)) {
+		if RefsToSameCommit(ref, remoteBranch(branchInfo.Remote, branchInfo.Merge)) {
 			println("so the remote branch is identical, let's fetch")
 			// gitRun("remote","prune", br.Remote)
-			gitRun("fetch", "--prune", "--progress", "--verbose", br.Remote, br.Merge.String() + ":" + refName.String())
-			// gitRun("fetch", br.Remote, string(br.Merge) + ":")
+			gitRun("fetch", "--prune", "--progress", "--verbose",
+				branchInfo.Remote, branchInfo.Merge.String() + ":" + refName.String())
+			// gitRun("fetch", branchInfo.Remote, string(branchInfo.Merge) + ":")
 		}
 		// git fetch debian refs/heads/main:
 
